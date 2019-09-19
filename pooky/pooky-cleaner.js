@@ -36,14 +36,14 @@ function literalNode(value){
 
 function isFunctionMasker(path){
    
-    if(path.get("body.body").length){
+  if(path.get("body.body").length){
 
-      return path.get("body.body.0").type == "VariableDeclaration" &&
+    return path.get("body.body.0").type == "VariableDeclaration" &&
       path.get("body.body.0.declarations.0.init").type == "ArrayExpression" &&
       path.get("body.body.0.declarations.0.init.elements.0.name").node;
-    }
+  }
 
-    return false;
+  return false;
 
 }
 
@@ -62,14 +62,14 @@ USELESS_LITERAL_VISITOR = {
   AssignmentExpression(path, state){
     if(!("uselessMembers" in state))state["uselessMembers"] = Object.create(null);
     if(checkForUselessMember(path)){
-        const rightValue = path.get("right").node.value;
-        const cleanedValue = cleanValue(rightValue);
-        const objectName = path.get("left.object.name").node;
-        const propertyName = path.get("left.property.name").node;
-        const memberFullName = objectName + "."+ propertyName;
-        if(propertyName !== undefined){
-          state["uselessMembers"][propertyName] = {"object" : objectName, "fullName" : memberFullName, "value" : cleanedValue}
-        }
+      const rightValue = path.get("right").node.value;
+      const cleanedValue = cleanValue(rightValue);
+      const objectName = path.get("left.object.name").node;
+      const propertyName = path.get("left.property.name").node;
+      const memberFullName = objectName + "."+ propertyName;
+      if(propertyName !== undefined){
+        state["uselessMembers"][propertyName] = {"object" : objectName, "fullName" : memberFullName, "value" : cleanedValue}
+      }
 
     }
   }
