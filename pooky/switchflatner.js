@@ -3,6 +3,7 @@ const t = require("@babel/types");
 const recast = require("recast");
 
 
+
 function getStateHolderType(path){
   const prev = path.getPrevSibling();
   const isVarDec = prev.type == "VariableDeclaration" && prev.get("declarations").length == 1;
@@ -112,6 +113,7 @@ function getAllStates(path) {
     states[currentState]["transitions"] = [];
 
     _case.get("consequent").forEach(function (_block) {
+			console.log("_block:", _block.type);
       if (!(isTransition(_block, stateHolderName))) {
 
         if (_block.type == "ReturnStatement") states["terminal"].push(currentState);
@@ -150,9 +152,10 @@ function doesStateLoopBack(states, currentState, currentStateValue, endStates){
   const transitions = currentState["transitions"]["states"];
   const newEndStates = [...endStates, currentStateValue];
   let _walked;
-  
+
   _walked = walkStates(states, transitions[0], newEndStates, [], false);
   if(_walked["endState"] == currentStateValue) return {'looped' : true, 'nodes' : _walked["nodes"]};
+
 
   _walked = walkStates(states, transitions[1], newEndStates, [], false);
   if(_walked["endState"] == currentStateValue) return {'looped' : true, 'nodes' : _walked["nodes"]};
@@ -166,19 +169,22 @@ function walkStates(states, initialState, endStates, nodes, pushEndNodes=true) {
 
   const currentStateValue = initialState;
   const currentState = states[currentStateValue];
- 
+
+  //console.log("currentStateValue:", currentStateValue);
+  //console.log("currentState:", currentState);
   const transitions = currentState["transitions"];
   const transitionStates = currentState["transitions"]["states"];
   let hasEndState = [];
-  console.log("currentStateValue:", currentStateValue);
+
+
   //console.log("currentState:", currentState);
   //If the switch only have 1 case then the implicit terminal state is that case
   if(Object.keys(states).length == 3){
-    console.log("wtf!!!");
     return {"endState" : initialState, "nodes" : currentState["nodes"]}
   }
-  console.log("endStates:", endStates);
-  console.log("transitionStates:", transitionStates);
+  
+  //console.log("endStates:", endStates);
+  //console.log("transitionStates:", transitionStates);
   if(transitionStates.length == 1){
     
     hasEndState = endStates.filter(t => transitionStates.includes(t))
@@ -186,16 +192,18 @@ function walkStates(states, initialState, endStates, nodes, pushEndNodes=true) {
     if (hasEndState.length) {
       if(pushEndNodes)nodes.push(...currentState["nodes"]);
 
-      console.log("wtf2!!!");
+      //console.log("wtf2!!!");
       return { "endState": hasEndState[0], "nodes": nodes };
     }
 
   }
-  console.log("transitions type:", transitions["type"]);
+  console.log("transitions type:", transitions["type"], currentStateValue);
   switch (transitions["type"]) {
 
     case "conditional":
-      console.log("currentStateValue is conditional:", currentStateValue);
+      //console.log("currentStateValue is conditional:", currentStateValue);
+      //console.log("currentStateValue:", currentStateValue);
+      //console.log("currentState:", currentState);
       const loopedState = doesStateLoopBack(states, currentState, currentStateValue, endStates);
       if(loopedState["looped"]){
         console.log("state does loop back:")
@@ -210,7 +218,9 @@ function walkStates(states, initialState, endStates, nodes, pushEndNodes=true) {
       
       const convergedState = doesStateConverge(states, currentState, currentStateValue, endStates);
       if (convergedState["converged"]) {
-        console.log("state does converge:")
+        console.log("converted state does converge:");
+        //console.log("converted currentStateValue:", currentStateValue);
+        //console.log("converted  currentState:", currentState);
         
         nodes.push(
           t.ifStatement(
@@ -222,9 +232,8 @@ function walkStates(states, initialState, endStates, nodes, pushEndNodes=true) {
         return walkStates(states, convergedState["direction"], endStates, nodes)
 
       }
-
-      const consequent = walkStates(states, transitions[0], endStates, nodes);
-      const alternate = walkStates(states, transitions[1], endStates, nodes);
+      const consequent = walkStates(states, transitionStates[0], endStates, nodes);
+      const alternate = walkStates(states, transitionStates[1], endStates, nodes);
 
       nodes.push(
         t.ifStatement(
@@ -241,6 +250,7 @@ function walkStates(states, initialState, endStates, nodes, pushEndNodes=true) {
       const newInitialState = currentState["transitions"]["states"][0]
       nodes.push(...currentState["nodes"]);
       
+      console.log("states in transition:");
       return walkStates(states, newInitialState, endStates, nodes)
 
   }
@@ -254,7 +264,7 @@ SWITCH_TRANSITION_VISITOR = {
       const initialState = getInitialState(path);
       const states = getAllStates(path);
       const nodes = [];
-      //console.log(states);
+      console.log(states);
      
       const ast = walkStates(states, initialState, states["terminal"], nodes)
 
@@ -275,7 +285,3 @@ const flatSwitch = (ast) => {
 }
 
 module.exports = flatSwitch;
-//default mo
-//module.exports = {
-//  flatSwitch
-//}
