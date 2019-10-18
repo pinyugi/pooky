@@ -1,8 +1,7 @@
 const t = require("@babel/types");
 const recast = require("recast");
+const { SINGLE_PATH, DUAL_PATH } = require("./constants.js").transition;
 
-SINGLE_PATH = 'single';
-DUAL_PATH = 'conditional'
 
 function Transition(props){
 

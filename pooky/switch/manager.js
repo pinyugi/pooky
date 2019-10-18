@@ -7,7 +7,9 @@ const {
   isConditionalTransition, 
   isTransition, 
   createConditionalTransition, 
-  createTransition 
+  createTransition,
+	createEmptyStateManager
+
 } = require("./transition.js");
 
 function StateManager(states){
@@ -51,7 +53,6 @@ function fromSwitch(path){
 
 };
   
-
 function buildStateManager(path) {
 
   const manager = fromSwitch(path);
@@ -60,6 +61,17 @@ function buildStateManager(path) {
   manager.markTerminalState(explicitTerminalState);
   
   return manager;
+}
+
+function createEmptyStateManager(){
+
+	const manager = StateManager();
+	manager.addState(new State(1));
+	manager.setInitialState(1);
+	manager.markTerminalState(1);
+
+	return manager;
+
 }
 
 Object.assign(StateManager.prototype, {
@@ -76,8 +88,25 @@ Object.assign(StateManager.prototype, {
 	  const name = this.getStateName(state);
 	  return this.states.hasOwnProperty(name) ? this.states[name] : 0;
   },
-
+	
+	getAllStates : function(){
+    return this.states;
+  },
   
+  getStateNodes : function(state){
+    let stateNodes = [];
+    const _state = this.getState(state);
+    return _state ? _state.getNodes() : 0
+  },
+  
+  getStateName : function(state){
+    return state instanceof State ? state.getName() : state;
+  },
+	
+	getInitialState : function(){
+		return this.initial !== undefined ? this.getState(this.initial) : 0
+	},
+
   removeState : function(state){
 	  const name = this.getStateName(state);
 	  if(this.states.hasOwnProperty(name)) delete this.states[name];
@@ -102,20 +131,6 @@ Object.assign(StateManager.prototype, {
 
   },
 
-  getAllStates : function(){
-    return this.states;
-  },
-  
-  getStateNodes : function(state){
-    let stateNodes = [];
-    const _state = this.getState(state);
-    return _state ? _state.getNodes() : 0
-  },
-  
-  getStateName : function(state){
-    return state instanceof State ? state.getName() : state;
-  },
-  
   isStateTerminal : function(state){
     const name = this.getStateName(state);
     return this.terminal.has(name);
@@ -129,3 +144,4 @@ module.exports = {
   fromSwitch,
   buildStateManager
 };
+

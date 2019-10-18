@@ -1,6 +1,7 @@
 const recast = require("recast");
 
-module.exports = {
+
+const utils = {
 	
   getStateHolderType(path){
     const prev = path.getPrevSibling();
@@ -15,7 +16,7 @@ module.exports = {
   getStateHolderName(path) {
 
     const prev = path.getPrevSibling();
-    const _type = this.getStateHolderType(path);
+    const _type = utils.getStateHolderType(path);
 
     return _type == "vardec" ? recast.print(prev.get("declarations.0.id").node).code : 
       type == "assignment" ? recast.print(prev.get("expression.left").node).code : false;
@@ -26,27 +27,27 @@ module.exports = {
   getInitialState(path) {
   
     const prev = path.getPrevSibling();
-    const _type = this.getStateHolderType(path);
+    const _type = utils.getStateHolderType(path);
 
     return _type == "vardec" ? prev.get("declarations.0.init.value").node : 
       type == "assignment" ? prev.get("expression.right.value").node : false;
   },
   
   hasStateHolder(path){
-    return this.getStateHolderName(path) && this.getInitialState(path);
+    return utils.getStateHolderName(path) && utils.getInitialState(path);
   
   },
 
   hasGoToSibling(path){
-    return (this.hasStateHolder(path) &&
-      this.getStateHolderName(path) == recast.print(path.get("test.left").node).code);
+    return (utils.hasStateHolder(path) &&
+      utils.getStateHolderName(path) == recast.print(path.get("test.left").node).code);
   },
   
   isWhileAGoToSwitch(path){
     return (path.type == "WhileStatement" &&
       path.get("test").type == "BinaryExpression" &&
       path.get("test.operator").node == "!==" &&
-      this.hasGoToSibling(path));
+      utils.hasGoToSibling(path));
   
   },
   
@@ -56,6 +57,8 @@ module.exports = {
       path.get("init").node === null &&
       path.get("test").type == "BinaryExpression" &&
       path.get("test.operator").node == "!==" &&
-      this.hasGoToSibling(path);
+      utils.hasGoToSibling(path);
   }
 };
+
+module.exports = utils;

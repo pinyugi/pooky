@@ -9,7 +9,8 @@ const {
   fromStateManager,
   StateManager, 
   State, 
-  Transition, 
+  Transition,
+	Graph
 } = require("../pooky/switch");
 
 
@@ -132,11 +133,16 @@ SWITCH_TRANSITION_VISITOR = {
       const manager = buildStateManager(path);
       const nodes = [];
       const graph = fromStateManager(manager);
-      console.log(graph.$().leaves().predecessors('edge'));
+      const alle = graph.$().nodes();
+      console.log(alle);
+      const alln = graph.$().leaves().predecessors('edge').edges();
+      console.log(alln);
+      //console.log(alle.diff(graph.$id('5').edges()));
+      //console.log(graph.$('edge').edges());
+
+      //console.log(graph.$().absoluteComplement(graph.$().leaves().predecessors('edge'));
      
 
-      //path.getPrevSibling().remove();
-      //path.replaceWithMultiple(ast["nodes"]);
     }
   }
 
