@@ -3,38 +3,38 @@ const recast = require("recast");
 const { SINGLE_PATH, DUAL_PATH } = require("./constants.js").transition;
 
 
-function Transition(props){
+class Transition {
 
-  this.states = [];
-  this.setStates(props.states || this.states);
-  this.setTest(props.test || null);
-  this.setType(props.type);
+  constructor(config){
 
-}
+    this.states = [];
+    this.setStates(config.states || this.states);
+    this.setTest(config.test || null);
+    this.setType(config.type);
 
-Object.assign(Transition.prototype, {
+  }
 
 
-  isConditional : function(){
+  isConditional(){
     return !this.type == SINGLE_PATH;
-  },
+  }
 
-  hash : function(){
+  hash(){
 	  return [this.states.join(","), this.type, this.test].join("|");
 
-  },
+  }
 
-  getStates : function(){
+  getStates(){
     return this.states;
 
-  },
+  }
 
-  getTest : function(){
+  getTest(){
     return this.test;
 
-  },
+  }
 
-  setStates : function(states){
+  setStates(states){
     if(!(states instanceof Array) && !(states instanceof String)) states = [states];
     if(!states.length && (states.length == 1 || states.length == 2)){
     	throw Error("A transition cannot have no states. It must have at least 1 or 2 state(s) max");
@@ -55,15 +55,15 @@ Object.assign(Transition.prototype, {
       }
     }	
 
-  },
+  }
 
-  setTest : function(test){
+  setTest(test){
 	  test === null || t.assertNode(test);
-	  this.test = test === null ? test : test.node.value
+	  this.test = test === null ? test : test.node.value;
 
-  },
+  }
 
-  setType : function(_type){
+  setType(_type){
 	  if(![SINGLE_PATH, DUAL_PATH].includes(_type)){
 		  throw Error(`Transition type must be either ${SINGLE_PATH} or ${DUAL_PATH}`);
 	  }
@@ -72,44 +72,39 @@ Object.assign(Transition.prototype, {
 
   }
 
-});
-
-function isTransition(path, stateHolderName) {
+  static isTransition(path, stateHolderName) {
 	
-  return path.get("expression").type !== undefined &&
-	  path.get("expression").type == "AssignmentExpression" &&
-	  recast.print(path.get("expression.left").node).code == stateHolderName;
-}
-  
-function isConditionalTransition(path, stateHolderName) {
-  return isTransition(path, stateHolderName) &&
-	  path.get("expression.right").type == "ConditionalExpression";
-}
-  
-function createTransition(path) {
-  return new Transition({
-    type : SINGLE_PATH,
-    states : [path.get("expression.right")],
-    test : null
-  });
+    return path.get("expression").type !== undefined &&
+  	  path.get("expression").type == "AssignmentExpression" &&
+  	  recast.print(path.get("expression.left").node).code == stateHolderName;
+  }
 
-}
+  static isConditionalTransition(path, stateHolderName) {
+    return isTransition(path, stateHolderName) &&
+  	  path.get("expression.right").type == "ConditionalExpression";
+  }
   
-function createConditionalTransition(path) {
-  return new Transition({
-    type : DUAL_PATH,
-    states : [path.get("expression.right.consequent"), path.get("expression.right.alternate")],
-    test : path.get("expression.right.test")
-  });
+  static createTransition(path) {
+    return new Transition({
+      type : SINGLE_PATH,
+      states : [path.get("expression.right")],
+      test : null
+    });
+  }
+
+  static createConditionalTransition(path) {
+    return new Transition({
+      type : DUAL_PATH,
+      states : [path.get("expression.right.consequent"), path.get("expression.right.alternate")],
+      test : path.get("expression.right.test")
+    });
+  }
+
 }
 
 
 module.exports = {
   SINGLE_PATH,
   DUAL_PATH, 
-  isTransition,
-  isConditionalTransition,
-  createConditionalTransition,
-  createTransition,
   Transition
 }

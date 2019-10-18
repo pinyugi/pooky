@@ -1,64 +1,83 @@
 
 const { StateManager, createEmptyStateManager } = require("./manager.js");
-const { StructTraverser } = require("./structs.js");
+const { StructTraverser } = require("./traverser.js");
 const cytoscape = require('cytoscape');
 const _ = require("lodash");
 
 
 
-function Graph(config){
+class Graph {
 
-	defaults = {
-		manager : createEmptyStateManager(),
-		graph : cytoscape()
-	};
+  constructor(config){
 
-	Object.assign(this, _.defaultDeeps(config, defaults));
-	this.addStatesToGraph(this.manager, this.graph);
+  	defaults = {
+  		manager : createEmptyStateManager(),
+  		graph : cytoscape()
+  	};
 
-}
+  	Object.assign(this, _.defaultDeeps(config, defaults));
+  	this.addStatesToGraph(this.manager, this.graph);
+  }
 
-Object.assign(Graph.prototype, {
 
-	getAllStructs : function(){
-		const structs = [];
+  getAllStructs(){
 
-		let currentState = this.manager.getInitialState().getName();
-		do{
+    const structs = [];
+    const traverser = new StructTraverser();
 
-			if(nextStruct){
-				structs.push(nextStruct);
-				currentState = end;
-			}
+    do{
 
-		}while(!nextStruct)
+      const nextStruct = traverser.getNextStruct();
+
+      if(nextStruct){
+        structs.push(nextStruct);
+      }
+
+    }while(nextStruct)
 
     return structs;
 		
-  },
+  }
 
-	simplify : function(){
-		
-		const nodes = [];
+  simplify(config){
 
-		this.getAllStructs().forEach(function(struct){
-			nodes.push(struct);
-		})
+    defaults = {
+      path : null,
+      removeSibling : false,
+      replaceNodes : false
+    };
 
-		return nodes;
+    config = _.defaultDeeps(config, defaults);
 
-	},
+    const { path, removeSibling, replaceNodes } = config;
+
+    if(path.constructor.name !== "NodePath"){
+      throw Error("path needs to be a NodePath from the Babel library")
+    }
+
+    const structs = this.getAllStructs();
+
+    if(removeSibling){
+      path.getPrevSibling().remove();
+    };
+
+    if(replaceNodes){
+      path.replaceWithMultiple(structs);
+    }
+
+
+  }
  
-	addStatesToGraph : function(manager, graph){
-		this.verifyStateManager(this.manager);
+  addStatesToGraph(manager, graph){
+    this.verifyStateManager(this.manager);
 	
     const states = manager.getAllStates();
 
     const elems = [];
     for(name of Object.keys(states)){
 
-			const state = states[name];
-			const sourceState = state.getName();
+      const state = states[name];
+      const sourceState = state.getName();
 
       elems.push({
         group : "nodes",
@@ -90,15 +109,15 @@ Object.assign(Graph.prototype, {
     graph.add(elems);
 
 
-  },
+  }
 
-	verifyStateManager : function(manager){
+  verifyStateManager(manager){
     if(!(manager instanceof StateManager)){
       throw Error("manager needs to be an instance of StateManager");
     }
   }
 
-});
+}
 
 module.exports = {
   Graph
