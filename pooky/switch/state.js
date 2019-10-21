@@ -12,13 +12,6 @@ class State{
   }
 
 
-  getName(){
-    return this.name;
-  }
-
-  getTransition(){
-    return this.transition;
-  }
 
   setTransition(transition, update=1){
     if(transition !== null && transition instanceof Transition){
@@ -35,7 +28,7 @@ class State{
   }
 
   hasConditionalTransition(){
-    return this.transition ==! null ? this.transition.isConditional() : false;
+    return this.transition === null ? false : this.transition.isConditional();
   }
 
   addNode(node){
@@ -44,9 +37,6 @@ class State{
 
   } 
 
-  getNodes(){
-	  return this.nodes;
-  }
 	
 };
 

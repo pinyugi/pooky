@@ -73,12 +73,29 @@ n599.E0k = function() {
                             break;
                         case 9:
                             j0j = 0;
+                            //w0k = 8;
+                            w0k = 91;
+                            break;
+                        case 91:
+                            bullshit = 'lol';
+                            w0k = 92;
+                            break;
+                        case 92:
+                            bullshit = 'lollol';
                             w0k = 8;
                             break;
                         case 3:
                             w0k = j0j === r0j.length ? 9 : 8;
                             break;
                         case 8:
+                            L0j += D366.H366(s0j.a366(c0j) ^ r0j.a366(j0j));
+                            w0k = 81;
+                            break;
+                        case 81:
+                            L0j += D366.H366(s0j.a366(c0j) ^ r0j.a366(j0j));
+                            w0k = 82;
+                            break;
+                        case 82:
                             L0j += D366.H366(s0j.a366(c0j) ^ r0j.a366(j0j));
                             w0k = 7;
                             break;

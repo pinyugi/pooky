@@ -1,18 +1,28 @@
-const {
-  StateManager, 
-  fromSwitch
-} = require("./manager.js");
-const State = require("./state.js");
-const {
-  Transition, 
+const { StateManager, createEmptyStateManager } = require("./manager.js");
+const { State } = require("./state.js");
+const { 
+  Transition,
+  isTransition,
+  isConditionalTransition,
+  createTransition,
+  createConditionalTransition
 }  = require("./transition.js");
-const { fromStateManager } = require("./graph.js");
-
+const { Graph } = require("./graph.js");
+const { Evaluator } = require("./evaluator.js");
+const { StructTraverser } = require("./traverser.js");
+const utils = require("./utils.js");
 
 module.exports = {
-  fromSwitch,
+  utils,
   StateManager,
+  createEmptyStateManager,
   State,
   Transition,
-  fromStateManager
-}
+  isTransition, 
+  isConditionalTransition,
+  createTransition, 
+  createConditionalTransition,
+  Graph,
+  Evaluator,
+  StructTraverser,
+};

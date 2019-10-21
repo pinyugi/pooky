@@ -1,39 +1,15 @@
 
 
 const { structs } = require("./constants.js");
-const { Graph } = require("./graph.js");
-const { Evaluator } = require("./evaluator.js");
-const { 
-  SimpleStruct, 
-  WhileStruct, 
-  DoWhileStruct, 
-  IfThenStruct, 
-  IfThenElseStruct 
-} = require("./structs");
-const _ = require("lodash");
-
 
 class StructTraverser{
 
-  constructor(options){
+  constructor(graph){
 
-    defaults = {
-      graph : new Graph(),
-      evaluator : null,
-      currentState : null,
-      nonLoopingEdges : this.findNonLoopingEdges()
-    };
 
-    Object.assign(this, _.defaultDeeps(options, defaults));
-
-    this.nonLoopingEdges = this.findNonLoopingEdges();
+    this.graph = graph || new Graph();
+    this.currentState = null;
     this.evaluate = new Evaluator(this.graph);
-
-
-  }
-
-  findNonLoopingEdges(){
-    return this.graph.$().leaves().predecessors('edge').edges();
   }
 
 
@@ -42,13 +18,14 @@ class StructTraverser{
   }
 
   getCurrentState(){
+
     if(this.currentState === null){
       this.currentState = this.graph.manager.getInitialState();
     }
     
     return this.currentState;
-                    
   }
+                    
 
   getStructEndState(startState, type){
 
@@ -133,3 +110,15 @@ class StructTraverser{
 module.exports = {
   StructTraverser
 };
+
+
+const { Graph } = require("./graph.js");
+const { Evaluator } = require("./evaluator.js");
+const { 
+  SimpleStruct, 
+  WhileStruct, 
+  DoWhileStruct, 
+  IfThenStruct, 
+  IfThenElseStruct 
+} = require("./structs.js");
+

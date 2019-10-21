@@ -1,15 +1,5 @@
+
 const t = require("@babel/types");
-const State =  require("./state.js").State;
-const utils = require("./utils.js");
-
-const {
-  Transition, 
-  isConditionalTransition, 
-  isTransition, 
-  createConditionalTransition, 
-  createTransition
-
-} = require("./transition.js");
 
 class StateManager {
 
@@ -25,18 +15,14 @@ class StateManager {
   addState(state, update=1){
     if(
       !this.states.hasOwnProperty(state)  ||
-		(this.states.hasOwnProperty(state) && update)
-    ) this.states[state.getName()] = state;
+		  (this.states.hasOwnProperty(state) && update)
+    ) this.states[state.name] = state;
   
   }
   
   getState(state){
 	  const name = this.getStateName(state);
 	  return this.states.hasOwnProperty(name) ? this.states[name] : 0;
-  }
-	
-  getAllStates(){
-    return this.states;
   }
   
   getStateNodes(state){
@@ -46,7 +32,7 @@ class StateManager {
   }
   
   getStateName(state){
-    return state instanceof State ? state.getName() : state;
+    return state instanceof State ? state.name : state;
   }
 	
   getInitialState(){
@@ -114,32 +100,45 @@ class StateManager {
 
   }
 
-  static buildStateManager(path){
+  static fromPath(path){
 
-    const manager = fromSwitch(path);
+    const manager = StateManager.fromSwitch(path);
     const explicitTerminalState = path.get("test.right.value").node;
-    manager.setInitialState(getInitialState(path));
+    manager.setInitialState(utils.getInitialState(path));
     manager.markTerminalState(explicitTerminalState);
     
     return manager;
-
   }
 
-  static createEmptyStateManager(){
-
-    const manager = StateManager();
-    manager.addState(new State(1));
-    manager.setInitialState(1);
-    manager.markTerminalState(1);
-
-    return manager;
-  
-  }
   
 }
 
+function createEmptyStateManager(){
+
+  const manager = new StateManager();
+  manager.addState(new State(1));
+  manager.setInitialState(1);
+  manager.markTerminalState(1);
+
+  return manager;
+
+}
   
 module.exports = {
-  StateManager 
+  StateManager,
+  createEmptyStateManager
 };
 
+
+
+const { 
+  isTransition,
+  isConditionalTransition,
+  createTransition,
+  createConditionalTransition,
+  Transition,
+} = require("./transition.js");
+
+
+const { State } = require("./state.js");
+const utils = require("./utils.js");

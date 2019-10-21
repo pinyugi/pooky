@@ -1,22 +1,15 @@
-
-const { StateManager, createEmptyStateManager } = require("./manager.js");
-const { StructTraverser } = require("./traverser.js");
 const cytoscape = require('cytoscape');
-const _ = require("lodash");
-
 
 
 class Graph {
 
-  constructor(config){
+  constructor(manager){
 
-  	defaults = {
-  		manager : createEmptyStateManager(),
-  		graph : cytoscape()
-  	};
 
-  	Object.assign(this, _.defaultDeeps(config, defaults));
-  	this.addStatesToGraph(this.manager, this.graph);
+    this.manager = manager || createEmptyStateManager();;
+    this.graph = cytoscape();
+
+    this.addStatesToGraph(this.manager, this.graph);
   }
 
 
@@ -69,15 +62,15 @@ class Graph {
   }
  
   addStatesToGraph(manager, graph){
-    this.verifyStateManager(this.manager);
+    this.verifyStateManager(manager);
 	
-    const states = manager.getAllStates();
+    const { states } = manager;
 
     const elems = [];
-    for(name of Object.keys(states)){
+    for(let name of Object.keys(states)){
 
       const state = states[name];
-      const sourceState = state.getName();
+      const sourceState = state.name;
 
       elems.push({
         group : "nodes",
@@ -87,17 +80,17 @@ class Graph {
         }
       });
 				
-      const transition = state.getTransition();
+      const transition = state.transition;
 
       if(transition !== null){
-        for(targetState of transition.getStates()){
+        for(let targetState of transition.states){
 			
           elems.push({
             group : "edges",
             data : {
-              id : `${sourceState}=>${targetState}`,
-              test : transition.getTest(),
-              isConditional : transition.isConditional(),
+              id : `${sourceState}->${targetState}`,
+              test : transition.test,
+              isConditional : transition.isConditional() ,
               source : sourceState, 
               target : targetState
             }
@@ -121,4 +114,8 @@ class Graph {
 
 module.exports = {
   Graph
-}
+};
+
+
+const { StateManager, createEmptyStateManager } = require("./manager.js");
+const { StructTraverser } = require("./traverser.js");
