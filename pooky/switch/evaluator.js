@@ -41,20 +41,37 @@ class Evaluator{
 
   }
 
-  toId(state){
-    return `#${state}`;
-  }
-
 
   edgeId(fromState, toState){
     return `#${fromState}->${toState}`;
 
   }
 
+  findTargetInEges(edges, target, state){
+
+    let index = -1
+    let isLast = false;
+    edges.map(function(edge, i, edges){
+
+      const targetId = edge.target().map(getEleId)[0];
+      const source = edge.source().map(getEleId)[0];
+
+      if(targetId == target && source != state){
+        index = i;
+        isLast =  i == (edges.size() -1) 
+        return;
+      }
+
+    })
+
+    return { "index" : index, "isLast" : isLast};
+
+
+  }
+
   getTransitionSuccessors(transition){
 
-    const successors = this.G.graph.$(toId(transition)).successors().edges();
-    return successors;
+    return this.G.graph.$(toId(transition)).successors().edges();
 
   }
 
@@ -68,10 +85,6 @@ class Evaluator{
 
     if(data['isConditional']){
       transitions = this.G.graph.$(stateId).outgoers().nodes().map(getEleId);
-
-      //transitionA = this.G.graph.$(toId(transitions[0])).outgoers().nodes().map(getEleId)[0];
-      //transitionB = this.G.graph.$(toId(transitions[1])).outgoers().nodes().map(getEleId)[0];
-
       hasTransitions = true;
 
     }
@@ -107,9 +120,7 @@ class Evaluator{
 
   isIfThen(state){
 
-
     const { hasTransitions, transitions } = this.getStateTransitions(state);
-    const isStruct = false;
 
     if(!hasTransitions){
       return false;
@@ -118,65 +129,45 @@ class Evaluator{
     const successorsA = this.getTransitionSuccessors(transitions[0]);
     const successorsB = this.getTransitionSuccessors(transitions[1]);
 
-    const firstSuccessorA = successorsA.map(getEleId)[0];
-    const firstSuccessorB = successorsB.map(getEleId)[0];
+    const findTransitionBinA = this.findTargetInEges(successorsA, transitions[1], state);
+    const findTransitionAinB = this.findTargetInEges(successorsB, transitions[0], state);
 
-    const transitionAinB = null;
-    const transitionBinA = null;
-
-    const allSuccessors = [
-      {
-        'type' : 'A',
-        'successors' : successorsA
-      },
-      {
-        'type' : 'B',
-        'successors' : successorsB
-
-      }
-    ];
-
-    for(let successor of allSuccessors){
-      
+    if(findTransitionBinA['index'] == -1 && findTransitionAinB['index'] == -1){
+      return false;
     }
-    for(var i = 0; i < successorsA.size(); i++){
 
-      const sourceId = edge.source().map(getEleId)[0];
-      const targetId = edge.target().map(getEleId)[0];
+    if(findTransitionBinA['index'] != -1 && findTransitionBinA['isLast']){
+      return true;
+    }else{
+      const nextEdge = successorsA[findTransitionBinA['index']+1].map(getEleId)[0];
+      const firstEdge = successorsB[0].map(getEleId)[0];
+      return nextEdge == firstEdge; 
 
     }
 
 
-    successorsA.map(function(edge){
-      const sourceId = edge.source().map(getEleId)[0];
-      const targetId = edge.target().map(getEleId)[0];
-
-      if(targetId === transitions[1]){
-        transitionBinA = edge.source
-
-      }
-
-      console.log(sourceId, ":", targetId);
-
-      //console.log(edge.source());
-    })
+    if(findTransitionAinB['index'] != -1 && findTransitionAinB['isLast']){
+      return true;
+    }else{
+      const nextEdge = successorsB[findTransitionAinB['index']+1].map(getEleId)[0];
+      const firstEdge = successorsA[0].map(getEleId)[0];
+      return nextEdge == firstEdge; 
+    }
 
 
-    //console.log('successors:', true, successorsA, successorsB);
-
-
-
- 
   }
 
   isIfThenElse(state){
 
-    const { data, id } = this.stateInfo(state);
+    const { hasTransitions, transitions } = this.getStateTransitions(state);
 
-    if(!data['isConditional']){
+    if(!hasTransitions){
       return false;
-
     }
+
+    const successorsA = this.getTransitionSuccessors(transitions[0]);
+    const successorsB = this.getTransitionSuccessors(transitions[1]);
+
 
   }
 

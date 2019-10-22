@@ -20,7 +20,8 @@ const tree = {
   'While-state5' : fromFile("flowcharts/n2cc.w1k.js"),
   'ifThen-state3' : fromFile("flowcharts/n599.E0k.js"),
   'ifThenElse-state2' : fromFile("flowcharts/N0j.js"),
-  'M1k' : fromFile("flowcharts/M1k.js")
+  'M1k' : fromFile("flowcharts/M1k.js"),
+  'ifthen' : fromFile("flowcharts/ifthen.js")
 };
 
 
@@ -29,14 +30,18 @@ const tree = {
 SWITCH_TRANSITION_VISITOR = {
   "ForStatement|WhileStatement"(path) {
     if (utils.isForAGoToSwitch(path) || utils.isWhileAGoToSwitch(path)) {
+      const stateHolderName = utils.getStateHolderName(path);
+      console.log(stateHolderName);
+      if(stateHolderName == "X0k"){
 
-      const initialState = utils.getInitialState(path);
-      const manager = StateManager.fromPath(path);
-      const nodes = [];
-      const G = new Graph(manager);
-      const evaluate = new Evaluator(G);
-      //console.log("ifThen:", evaluate.isIfThen(5));
-      console.log("ifThen:", evaluate.isIfThen(3));
+        const initialState = utils.getInitialState(path);
+        const manager = StateManager.fromPath(path);
+        const nodes = [];
+        const G = new Graph(manager);
+        const evaluate = new Evaluator(G);
+        //console.log("ifThen:", evaluate.isIfThen(5));
+        console.log("ifThen:", evaluate.isIfThen(3));
+      }
      
 
     }
@@ -46,9 +51,10 @@ SWITCH_TRANSITION_VISITOR = {
 }
 
 
-
+let currentTree;
 //const currentTree = tree["ifThenElse-state2"];
-const currentTree = tree["ifThen-state3"];
+currentTree = tree["ifthen"];
+currentTree = tree["ifThen-state3"];
 //const currentTree = tree["While-state5"];
 console.log(State);
 traverse(currentTree, SWITCH_TRANSITION_VISITOR);
