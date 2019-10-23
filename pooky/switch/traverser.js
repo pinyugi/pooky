@@ -9,7 +9,7 @@ class StructTraverser{
 
     this.graph = graph || new Graph();
     this.currentState = null;
-    this.evaluate = new Evaluator(this.graph);
+    this.evaluator = new Evaluator(this.graph);
   }
 
 
@@ -31,32 +31,9 @@ class StructTraverser{
 
   }
 
-  findStructType(startState){
-
-    let structType = structs.SIMPLE;
-
-    if(this.evaluate.isWhileLoop(startState)){
-      structType = structs.WHILE;
-
-    }else if(this.evaluate.isDoWhileLoop(startState)){
-      structType = structs.DO_WHILE;
-
-    }else if(this.evaluate.isIfThen(startState)){
-      structType = structs.IF_THEN;
-
-    }else if(this.evaluate.isIfThenElse(startState)){
-      structType = structs.IF_THEN_ELSE;
-    }else{
-      structType = null;
-
-    }
-
-    return structType;  
-
-  }
 
   createStruct(startState){
-    const type = this.findStructType(startState);
+    const type = this.evaluator.interpret(startState);
     const end  = this.getStructEndState(startState, type);
 
     switch(type){
