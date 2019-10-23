@@ -15,50 +15,50 @@ const {
 
 
 const tree = {
-  'pooky' : fromFile("fixtures/pooky.min.2d8ba5f04df1bcd5a874.js"),
-  'doWhile-state5' : fromFile("flowcharts/v0j.js"),
-  'While-state5' : fromFile("flowcharts/n2cc.w1k.js"),
-  'ifThen-state3' : fromFile("flowcharts/n599.E0k.js"),
-  'ifThenElse-state2' : fromFile("flowcharts/N0j.js"),
-  'M1k' : fromFile("flowcharts/M1k.js"),
-  'ifthen' : fromFile("flowcharts/ifthen.js")
+  'do_while_loop' : fromFile("flowcharts/do_while_loop.js"),
+  'do_while_loop_break_if_then_else' : fromFile("flowcharts/do_while_loop_break_if_then_else.js"),
+  'do_while_loop_if_then' : fromFile("flowcharts/do_while_loop_if_then.js"),
+  'do_while_loop_if_then_else' : fromFile("flowcharts/do_while_loop_if_then_else.js"),
+  'do_while_loop_not_conditional_ending' : fromFile("flowcharts/do_while_loop_not_conditional_ending.js"),
+  'while_loop' : fromFile("flowcharts/while_loop.js"),
+  'while_loop_if_then_ending' : fromFile("flowcharts/while_loop_if_then_ending.js"),
+  'while_loop_break_if_then' : fromFile("flowcharts/while_loop_break_if_then.js"),
+  'infinite_loop' : fromFile("flowcharts/infinite_loop.js"),
+  'if_then' : fromFile("flowcharts/if_then.js"),
+  'if_then_else' : fromFile("flowcharts/if_then_else.js")
 };
-
-
-
 
 SWITCH_TRANSITION_VISITOR = {
   "ForStatement|WhileStatement"(path) {
     if (utils.isForAGoToSwitch(path) || utils.isWhileAGoToSwitch(path)) {
       const stateHolderName = utils.getStateHolderName(path);
       console.log(stateHolderName);
-      if(stateHolderName == "X0k"){
 
-        const initialState = utils.getInitialState(path);
-        const manager = StateManager.fromPath(path);
-        const nodes = [];
-        const G = new Graph(manager);
-        const evaluate = new Evaluator(G);
-        //console.log("ifThen:", evaluate.isIfThen(5));
-        console.log("ifThen:", evaluate.isIfThen(3));
-      }
-     
+      const initialState = utils.getInitialState(path);
+      const manager = StateManager.fromPath(path);
+      const nodes = [];
+      const G = new Graph(manager);
+      const evaluator = new Evaluator(G);
+      console.log(evaluator.interpret(3));
 
     }
   }
-
-
 }
 
 
 let currentTree;
 //const currentTree = tree["ifThenElse-state2"];
-currentTree = tree["ifthen"];
-currentTree = tree["ifThen-state3"];
-//const currentTree = tree["While-state5"];
-console.log(State);
+//currentTree = tree['do_while_loop'];
+//currentTree = tree['do_while_loop_break_if_then_else'];
+//currentTree = tree['do_while_loop_if_then'];
+//currentTree = tree['do_while_loop_if_then_else'];
+//currentTree = tree['do_while_loop_not_conditional_ending'];
+//currentTree = tree['while_loop'];
+//currentTree = tree['while_loop_if_then_ending'];
+//currentTree = tree['while_loop_break_if_then'];
+//currentTree = tree['infinite_loop'];
+//currentTree = tree['if_then'];
+//currentTree = tree['if_then_else'];
 traverse(currentTree, SWITCH_TRANSITION_VISITOR);
 //console.log(recast.print(currentTree).code);
 
-
-  

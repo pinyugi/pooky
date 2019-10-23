@@ -9,7 +9,8 @@ const structs = {
 	WHILE : 'while', 
 	DO_WHILE : 'dowhile', 
 	IF_THEN : 'ifthen', 
-	IF_THEN_ELSE : 'ifthenelse'
+	IF_THEN_ELSE : 'ifthenelse',
+	INFINITE_LOOP : 'infinite'
 };
 
 

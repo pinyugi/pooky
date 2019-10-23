@@ -30,22 +30,39 @@ class Evaluator{
   }
 
 
-  isSuccessorAndPredecessor(state){
-    const { id } = this.stateInfo(state);
+  interpret(state){
 
-    const successors = this.G.graph.$(id).successors().nodes();
-    const predecessors = this.G.graph.$(id).predecessors().nodes();
-    const hasOwnState = function(n){ return n.id() == state};
+    if(this.isInfiniteLoop(state)){
+      return structs.INFINITE_LOOP;
+    }
 
-    return successors.some(hasOwnState) && predecessors.some(hasOwnState);
+		if(this.isWhileLoop(state)){
+			return structs.WHILE;
+
+		}
+
+
+    return structs.SIMPLE;
+
 
   }
 
+  isInfiniteLoop(state){
 
-  edgeId(fromState, toState){
-    return `#${fromState}->${toState}`;
+    const { hasTransitions, transitions } = this.getStateTransitions(state);
+
+    if(!hasTransitions){
+      return false;
+    }
+
+		const endStates = this.getEndStates();
+    const successorsA = this.getTransitionSuccessors(transitions[0], "nodes");
+    const successorsB = this.getTransitionSuccessors(transitions[1], "nodes");
+
+		return successorsA.same(successorsB) && !successorsA.contains(endStates);
 
   }
+
 
   findTargetInEges(edges, target, state){
 
@@ -69,9 +86,15 @@ class Evaluator{
 
   }
 
-  getTransitionSuccessors(transition){
+	getEndStates(){
+		return this.G.graph.$().leaves();
+	}
 
-    return this.G.graph.$(toId(transition)).successors().edges();
+  getTransitionSuccessors(transition, element="edges"){
+		
+		return element == "nodes"
+			? this.G.graph.$(toId(transition)).successors().nodes() 
+			: this.G.graph.$(toId(transition)).successors().edges();
 
   }
 
@@ -97,16 +120,25 @@ class Evaluator{
   }
 
   isWhileLoop(state){
-    /*
+		
+		const { hasTransitions, transitions } = this.getStateTransitions(state);
 
-    !this.isIfThen(state) && !this.isIfThenElse(state) && data['isConditional'] 
+    if(!hasTransitions){
+      return false;
+    }
 
-    */
-    /*
-    const { data } = this.stateInfo(state);
-    return this.isSuccessorAndPredecessor(state) && data['isConditional'];
-    */
+		const endStates = this.getEndStates();
+    const successorsA = this.getTransitionSuccessors(transitions[0], "nodes");
+    const successorsB = this.getTransitionSuccessors(transitions[1], "nodes");
 
+		if(successorsA.size() == successorsB.size()){
+			return false;
+		}
+
+		const biggest = successorsA.size() > successorsB.size() ? successorsA : successorsB;
+
+		return biggest.contains(toId(state));
+    
   }
 
   isDoWhileLoop(state){
@@ -179,3 +211,4 @@ module.exports = {
 };
 
 const { Graph } = require("./graph.js");
+const { structs } = require("./constants.js");
