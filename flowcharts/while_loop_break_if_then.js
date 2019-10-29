@@ -14,22 +14,31 @@ function while_loop_break_if_then(){
         break;
 
       case 31:
-        state = 4
+        state = 4;
+        break;
 
       case 4:
         state = 41;
         break;
 
       case 41:
+        state = !0 ? 42 : 43;
+        break;
+
+      case 42:
         state = 5;
-        break
+        break;
+
+      case 43:
+        state = 5;
+        break;
 
       case 5:
         state = !0 ? 6 : 8;
         break;
 
       case 6:
-        state = 7
+        state = 7;
         break;
 
       case 7:
@@ -37,10 +46,13 @@ function while_loop_break_if_then(){
         break;
 
       case 8:
-        state = 9
+        state = 9;
         break;
 
       case 9:
+        state = 10;
+        break;
+      case 10:
         return !0;
         break;
     }

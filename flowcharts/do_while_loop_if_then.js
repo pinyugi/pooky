@@ -3,8 +3,17 @@ function do_while_loop_if_then(){
   for (; state !== 99; ) {
     switch (state) {
       case 1:
-        state = 2;
+        state = 11;
         break;
+
+      case 11:
+        state = 12;
+        break;
+
+      case 12:
+        state =!0 ? 2 : 71;
+        break;
+
       case 2:
         state = 3;
         break;
@@ -19,7 +28,7 @@ function do_while_loop_if_then(){
 
       case 41:
         state = 5;
-        break
+        break;
 
       case 5:
         state = 6;
@@ -30,6 +39,10 @@ function do_while_loop_if_then(){
         break;
 
       case 7:
+        state = 12;
+        break;
+
+      case 71:
         state = 8;
         break;
 

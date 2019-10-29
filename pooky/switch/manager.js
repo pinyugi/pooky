@@ -1,11 +1,11 @@
 
-const t = require("@babel/types");
-
 class StateManager {
 
   constructor(states){
 
     this.states = {};
+    this.graph = cytoscape();
+    this.traverser = null;
     this.terminal = new Set();
     this.initial = null;
     
@@ -44,6 +44,11 @@ class StateManager {
 	  if(this.states.hasOwnProperty(name)) delete this.states[name];
   
   }
+
+  clearStates(){
+    this.states = {};
+
+  }
   
   markTerminalState(state){
 	  const name = this.getStateName(state);
@@ -66,6 +71,53 @@ class StateManager {
   isStateTerminal(state){
     const name = this.getStateName(state);
     return this.terminal.has(name);
+  }
+
+  setupGraph(){
+
+    this.graph = cytoscape();
+
+    const elems = [];
+    for(let name of Object.keys(this.states)){
+
+      const state = this.states[name];
+      const sourceState = state.name;
+
+      elems.push({
+        group : "nodes",
+        data : {
+          isConditional : state.hasConditionalTransition(),
+          id : sourceState
+        }
+      });
+        
+      const transition = state.transition;
+
+      if(transition !== null){
+        for(let targetState of transition.states){
+      
+          elems.push({
+            group : "edges",
+            data : {
+              id : `${sourceState}->${targetState}`,
+              test : transition.test,
+              isConditional : transition.isConditional() ,
+              source : sourceState, 
+              target : targetState
+            }
+          });
+        }
+      }
+    }
+
+    this.graph.add(elems);
+
+  }
+
+
+  setupTraverser(){
+    this.traverser = new StructTraverser(this.graph);
+
   }
 
   static fromSwitch(path){
@@ -106,6 +158,9 @@ class StateManager {
     const explicitTerminalState = path.get("test.right.value").node;
     manager.setInitialState(utils.getInitialState(path));
     manager.markTerminalState(explicitTerminalState);
+
+    manager.setupGraph();
+    manager.setupTraverser();
     
     return manager;
   }
@@ -119,6 +174,9 @@ function createEmptyStateManager(){
   manager.addState(new State(1));
   manager.setInitialState(1);
   manager.markTerminalState(1);
+
+  manager.setupGraph();
+  manager.setupTraverser();
 
   return manager;
 
@@ -140,5 +198,9 @@ const {
 } = require("./transition.js");
 
 
+
+const t = require("@babel/types");
+const cytoscape = require('cytoscape');
 const { State } = require("./state.js");
+const { StructTraverser } = require("./traverser.js");
 const utils = require("./utils.js");

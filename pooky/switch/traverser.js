@@ -1,13 +1,12 @@
 
 
-const { structs } = require("./constants.js");
 
 class StructTraverser{
 
   constructor(graph){
 
 
-    this.graph = graph || new Graph();
+    this.graph = graph || cytoscape();
     this.currentState = null;
     this.evaluator = new Evaluator(this.graph);
   }
@@ -20,7 +19,7 @@ class StructTraverser{
   getCurrentState(){
 
     if(this.currentState === null){
-      this.currentState = this.graph.manager.getInitialState();
+      this.currentState = this.graph.$().roots().map(getEleId)[0];
     }
     
     return this.currentState;
@@ -89,7 +88,8 @@ module.exports = {
 };
 
 
-const { Graph } = require("./graph.js");
+
+const { structs } = require("./constants.js");
 const { Evaluator } = require("./evaluator.js");
 const { 
   SimpleStruct, 
@@ -99,3 +99,5 @@ const {
   IfThenElseStruct 
 } = require("./structs.js");
 
+
+const cytoscape = require("cytoscape");

@@ -1,5 +1,3 @@
-const recast = require("recast");
-
 
 const utils = {
 	
@@ -64,3 +62,5 @@ const utils = {
 };
 
 module.exports = utils;
+
+const recast = require("recast");

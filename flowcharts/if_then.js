@@ -6,7 +6,7 @@ function if_then(){
         state = 2;
         break;
       case 2:
-        state = 3;
+        state = !0 ? 3 : 8;
         break;
 
       case 3:
@@ -26,12 +26,20 @@ function if_then(){
         break;
 
       case 7:
-        state = 8;
+        state = 71;
+        break;
+
+      case 71:
+        state = 2;
         break;
 
       case 8:
+        state = 81;
+        break; 
+
+      case 81:
         state = 9;
-        
+        break; 
       case 9:
         return !0
         break;

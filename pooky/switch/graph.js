@@ -1,121 +1,115 @@
-const cytoscape = require('cytoscape');
+
+const G = {
+
+  getEleId(node){
+    return node.id();
+
+  },
+
+  getNodeData(state, graph){
+    const stateId = G.toId(state);
+    const data = graph.$(stateId).map(function(n){ return n.data()});
+
+    return data.length ? data[0] : false
+  },
 
 
-class Graph {
-
-  constructor(manager){
-
-
-    this.manager = manager || createEmptyStateManager();;
-    this.graph = cytoscape();
-
-    this.addStatesToGraph(this.manager, this.graph);
-  }
+  toId(state){
+    return `#${state}`;
+  },
 
 
-  getAllStructs(){
+  edgeId(fromState, toState){
+    return `#${fromState}->${toState}`;
+  },
 
-    const structs = [];
-    const traverser = new StructTraverser();
+  findNonLoopingEdges(graph){
+    return graph.$().leaves();
+  },
 
-    do{
 
-      const nextStruct = traverser.getNextStruct();
+  findTargetInEges(edges, target, state){
 
-      if(nextStruct){
-        structs.push(nextStruct);
+    let index = -1
+    let isLast = false;
+    edges.map(function(edge, i, edges){
+
+      const targetId = edge.target().map(G.getEleId)[0];
+      const source = edge.source().map(G.getEleId)[0];
+
+      if(targetId == target && source != state){
+        index = i;
+        isLast =  i == (edges.size() -1) 
+        return;
       }
 
-    }while(nextStruct)
+    })
 
-    return structs;
-		
-  }
+    return { "index" : index, "isLast" : isLast};
 
-  simplify(config){
 
-    defaults = {
-      path : null,
-      removeSibling : false,
-      replaceNodes : false
+  },
+
+  getEndStates(graph){
+    return graph.$().leaves();
+  },
+
+  getStateSuccessors(graph, transition, element="edges"){
+    
+    return element == "nodes"
+      ? graph.$(G.toId(transition)).successors().nodes() 
+      : graph.$(G.toId(transition)).successors().edges();
+
+  },
+
+  getStateTransitions(state, graph){
+
+    const stateId = G.toId(state);
+    const data = G.getNodeData(state, graph)
+
+    let hasTransitions = false;
+    let transitions = [];
+
+    if(data['isConditional']){
+      transitions = graph.$(stateId).outgoers().nodes().map(G.getEleId);
+      hasTransitions = true;
+
+    }
+
+    return {
+      'hasTransitions' : hasTransitions,
+      'transitions' : transitions
+    }
+
+  },
+
+  getStateInfo(state, graph){
+    
+    const { hasTransitions, transitions } = G.getStateTransitions(state, graph);
+
+    let transitionsEdges = [];
+    let transitionsNodes = [];
+
+    if(hasTransitions){
+      transitionsEdges.push(G.getStateSuccessors(graph, transitions[0], "edges"));
+      transitionsEdges.push(G.getStateSuccessors(graph, transitions[1], "edges"));
+
+      transitionsNodes.push(G.getStateSuccessors(graph, transitions[0], "nodes"));
+      transitionsNodes.push(G.getStateSuccessors(graph, transitions[1], "nodes"));
+    }
+
+    return {
+      'hasTransitions' : hasTransitions,
+      'transitions': transitions,
+      'transitionsEdges' : transitionsEdges,
+      'transitionsNodes' : transitionsNodes
     };
 
-    config = _.defaultDeeps(config, defaults);
-
-    const { path, removeSibling, replaceNodes } = config;
-
-    if(path.constructor.name !== "NodePath"){
-      throw Error("path needs to be a NodePath from the Babel library")
-    }
-
-    const structs = this.getAllStructs();
-
-    if(removeSibling){
-      path.getPrevSibling().remove();
-    };
-
-    if(replaceNodes){
-      path.replaceWithMultiple(structs);
-    }
-
-
-  }
- 
-  addStatesToGraph(manager, graph){
-    this.verifyStateManager(manager);
-	
-    const { states } = manager;
-
-    const elems = [];
-    for(let name of Object.keys(states)){
-
-      const state = states[name];
-      const sourceState = state.name;
-
-      elems.push({
-        group : "nodes",
-        data : {
-          isConditional : state.hasConditionalTransition(),
-          id : sourceState
-        }
-      });
-				
-      const transition = state.transition;
-
-      if(transition !== null){
-        for(let targetState of transition.states){
-			
-          elems.push({
-            group : "edges",
-            data : {
-              id : `${sourceState}->${targetState}`,
-              test : transition.test,
-              isConditional : transition.isConditional() ,
-              source : sourceState, 
-              target : targetState
-            }
-          });
-        }
-      }
-    }
-
-    graph.add(elems);
-
-
   }
 
-  verifyStateManager(manager){
-    if(!(manager instanceof StateManager)){
-      throw Error("manager needs to be an instance of StateManager");
-    }
-  }
-
-}
-
-module.exports = {
-  Graph
 };
 
+module.exports = G;
 
-const { StateManager, createEmptyStateManager } = require("./manager.js");
-const { StructTraverser } = require("./traverser.js");
+
+const cytoscape = require('cytoscape');
