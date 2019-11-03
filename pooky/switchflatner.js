@@ -113,7 +113,7 @@ function getAllStates(path) {
     states[currentState]["transitions"] = [];
 
     _case.get("consequent").forEach(function (_block) {
-			console.log("_block:", _block.type);
+      console.log("_block:", _block.type);
       if (!(isTransition(_block, stateHolderName))) {
 
         if (_block.type == "ReturnStatement") states["terminal"].push(currentState);

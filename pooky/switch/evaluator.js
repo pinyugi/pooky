@@ -1,492 +1,443 @@
 const { 
-	structs, 
-	checkMode
+  structs, 
+  checkMode
 } = require("./constants.js");
 
-const STRUCT_CHECKS = {};
-
-STRUCT_CHECKS[structs.INFINITE_LOOP] = function(state, graph){
-	return isInfiniteLoop(state, graph);
-},
-
-STRUCT_CHECKS[structs.SIMPLE] = function(state, graph){
-	return isSimple(state, graph);
-},
-
-STRUCT_CHECKS[structs.A_B_CONVERGES] = function(state, graph){
-	return false;
-},
-
-STRUCT_CHECKS[structs.A_CONVERGES_TO_B] = function(state, graph){
-	const { doesConverge, whoConverges } =  doTransitionsConverge(state, graph)
-	return doesConverge && whoConverges == "A";
-},
-
-STRUCT_CHECKS[structs.B_CONVERGES_TO_A] = function(state, graph){
-	const { doesConverge, whoConverges } =  doTransitionsConverge(state, graph)
-	return doesConverge && whoConverges == "B";
-},
-
-STRUCT_CHECKS[structs.A_B_CONTINUE] = function(state, graph){
-	return false;
-},
-
-STRUCT_CHECKS[structs.A_B_BREAK] = function(state, graph){
-	return false;
-},
-
-STRUCT_CHECKS[structs.CONTINUE_A_PROCEED_B] = function(state, graph){
-	return false;
-},
-
-STRUCT_CHECKS[structs.CONTINUE_B_PROCEED_A] = function(state, graph){
-	return false;
-},
-
-STRUCT_CHECKS[structs.BREAK_A_PROCEED_B] = function(state, graph){
-	return false;
-},
-
-STRUCT_CHECKS[structs.BREAK_B_PROCEED_A] = function(state, graph){
-	return false;
-},
-
-STRUCT_CHECKS[structs.CONTINUE_A_BREAK_B] = function(state, graph){
-	return false;
-},
-
-STRUCT_CHECKS[structs.CONTINUE_B_BREAK_A] = function(state, graph){
-	return false;
-},
-
-STRUCT_CHECKS[structs.LATER_CONTINUE_A_PROCEED_B] = function(state, graph){
-	return false;
-},
-
-STRUCT_CHECKS[structs.LATER_CONTINUE_B_PROCEED_A] = function(state, graph){
-	return false;
-},
-
-STRUCT_CHECKS[structs.LATER_BREAK_A_PROCEED_B] = function(state, graph){
-	return false;
-},
-
-STRUCT_CHECKS[structs.LATER_BREAK_B_PROCEED_A] = function(state, graph){
-	return false;
-},
-
-STRUCT_CHECKS[structs.DO_WHILE_LOOP] = function(state, graph){
-	return isDoWhileLoop(state, graph);
-},
-
-STRUCT_CHECKS[structs.WHILE_LOOP] = function(state, graph){
-	return isWhileLoop(state, graph);
-}
-
-
-STRUCT_CHECKS[structs.WHILE_LOOP_INSIDE_DO_WHILE_LOOP] = function(state, graph){
-	return isWhileLoopInsideDoWhileLoop(state, graph);
-}
-
+const loopFound = {
+  NONE : 0,
+  WHILE_LOOP : 1,
+  WHILE_LOOP_DO_WHILE_LOOP : 2
+};
 
 
 function getSourcesToState(state, graph){
-	return graph.$(`[target = "${state}"]`).sources().map(getEleId);
+  const query = `[target = "${state}"]`;
+  return graph.$(`[target = "${state}"]`).sources().map(getEleId);
+}
+
+function getShortestPath(fromState, toState, graph){
+
+  const dijkstra = graph.elements().dijkstra({ root : toId(fromState), directed : true});
+  return dijkstra.pathTo(graph.$(toId(toState))).edges();
+}
+
+function getAllShortestsPaths(fromStates, toStates, graph){
+  const paths = {};
+
+  toStates.forEach((ts) => {
+    paths[ts] = {};
+		
+    fromStates.forEach((fs) => {
+      paths[ts][fs] = getShortestPath(fs, ts, graph);
+    });
+  });
+
+  return paths;
+
 }
 
 
+function getSymDiffOnAllDirectPaths(state, graph){
 
-function displayShit(state, graph){
-	const { both, left, right, successors, predecessors } = getDiffOnSuccessorsAndPredecessors(state, graph);
+  const { transitions } = getStateTransitions(state, graph);
+  const sourcesToState = getSourcesToState(state, graph);
+  const shortestPaths = getAllShortestsPaths(transitions, sourcesToState, graph);
+  const directPaths = {};
+  directPaths[transitions[0]] = [];
+  directPaths[transitions[1]] = [];
 
-	console.log("both:", both.map(getEleId));
-	console.log("left:", left.map(getEleId));
-	console.log("right:", right.map(getEleId));
-	console.log("successors:", successors.edges().map(getEleId));
-	console.log("predecessors:", predecessors.edges().map(getEleId));
-		
+  const noDirectPath = (n) => n.target().map(getEleId)[0] == state;
+  console.log("state:", state);
+  for(let st in shortestPaths){
+    for(let tr in shortestPaths[st]){
+      !shortestPaths[st][tr].some(noDirectPath) ? directPaths[tr].push(st) : "";
+    }
+  }
+
+  const t1 = directPaths[transitions[0]];
+  const t2 = directPaths[transitions[1]];
+
+  console.log("directPaths:", directPaths);
+  return t1.filter(x => !t2.includes(x)).concat(t2.filter(x => !t1.includes(x)));
 
 
 }
 
 function isInsideLoop(state, graph){
 
-	const sourcesToState =  getSourcesToState(state, graph);
-	let insideLoop = false;
+  const sourcesToState =  getSourcesToState(state, graph);
+  let insideLoop = false;
 
-	for(let i = 0; i<sourcesToState.length; i++){
+  for(let i = 0; i<sourcesToState.length; i++){
 
-		const { both, right, left } = getDiffOnSuccessorsAndPredecessors(sourcesToState[i], graph,mode="edges");
+    const { both } = getDiffOnSuccessorsAndPredecessors(sourcesToState[i], graph,mode="edges");
 
-		if(both.size() != 0){
-			insideLoop = true;
-			break;
-		}
+    if(both.size() != 0){
+      insideLoop = true;
+      break;
+    }
 		
-	}
-
-	return insideLoop;
+  }
+  return insideLoop;
 
 }
 
 function getDiffOnSuccessorsAndPredecessors(state, graph, mode="edges"){
 		
-	const predecessors = graph.$(toId(state)).predecessors();
-	const successors = graph.$(toId(state)).successors();
-	let diff = {
-		both  : [],
-		left  : [],
-		right : []
-	};
+  const predecessors = graph.$(toId(state)).predecessors();
+  const successors = graph.$(toId(state)).successors();
+  let diff = {
+    both  : [],
+    left  : [],
+    right : []
+  };
 
-	if(mode == "edges"){
-		diff = predecessors.edges().diff(successors.edges());
-	}else if(mode == "nodes"){
-		diff = predecessors.nodes().diff(successors.nodes());
-	}else if(mode == "all"){
-		diff = predecessors.diff(successors);
-	}
+  if(mode == "edges"){
+    diff = predecessors.edges().diff(successors.edges());
+  }else if(mode == "nodes"){
+    diff = predecessors.nodes().diff(successors.nodes());
+  }else if(mode == "all"){
+    diff = predecessors.diff(successors);
+  }
 
-	return {
-		predecessors : predecessors,
-		successors : successors,
-		both : diff.both,
-		left : diff.left,
-		right : diff.right
-	};
+  return {
+    predecessors : predecessors,
+    successors : successors,
+    both : diff.both,
+    left : diff.left,
+    right : diff.right
+  };
 }
 
 function isInfiniteLoop(state, graph){
 
-	const { hasTransitions, transitions } = getStateInfo(state, graph);
+  const { hasTransitions, transitions } = getStateInfo(state, graph);
 
-	if(!hasTransitions) return false;
+  if(!hasTransitions) return false;
   
-	const endStates = getEndStates(graph);
-	const successorsA = getStateSuccessors(graph, transitions[0], "nodes");
-	const successorsB = getStateSuccessors(graph, transitions[1], "nodes");
+  const endStates = getEndStates(graph);
+  const successorsA = getStateSuccessors(graph, transitions[0], "nodes");
+  const successorsB = getStateSuccessors(graph, transitions[1], "nodes");
 
-	return successorsA.same(successorsB) && !successorsA.contains(endStates);
+  return successorsA.same(successorsB) && !successorsA.contains(endStates);
 
 }
 
-
 function isSimple(state, graph){
 
-	/*
+  /*
 	 
 	 A simple node should have no transitions and not be a DoWhileLoop.So no looping back. 
 
 
 	*/
 
-	const { hasTransitions } = getStateInfo(state, graph);
+  const { hasTransitions, transitions } = getStateInfo(state, graph);
 
-	if(hasTransitions) return false;
-	return !isDoWhileLoop(state, graph);
+  if(hasTransitions) return false;
+  return !isDoWhileLoop(state, graph);
 
 
 }
 
-function isWhileLoop(state, graph){
+function isSimpleIfThen(state, graph){
+  return { hasSimpleIfThen : false, convergedState : null };
+}
 
-	const { hasTransitions, transitions } = getStateInfo(state, graph);
-	if(!hasTransitions) return false;
-
-	const sourcesToState = getSourcesToState(state, graph);
-
-	//If we have less than 1 source leading to our state then we definitely do not have a WhileLoop	
-	//Because we need at least one state coming back from a loop, and one state leading to our state normally
-	if(sourcesToState.length < 2){
-		return false;
-	}
-
-	let foundTransitions = {};
-	const dijkstraA = graph.elements().dijkstra({ root : toId(transitions[0]), directed : true});
-	const dijkstraB = graph.elements().dijkstra({ root : toId(transitions[1]), directed : true});
-	const shortestPathBtoA = dijkstraB.pathTo(graph.$(toId(transitions[0]))).edges();
-	const shortestPathAtoB = dijkstraA.pathTo(graph.$(toId(transitions[1]))).edges();
-
-	//If both path's are empty then it is defintely not a WhileLoop since we need a loop back.
-	if(shortestPathAtoB.size() == 0 && shortestPathBtoA.size() == 0){
-		return false;
-	}
-
-	/*
-	 
-	 Let's check if one of the shortestPath(AtoB or BtoA) is empty and the one that is not empty has a our state as a target. 
-	 In other words, it had to loop back to get to the second transition.
-	 
-	*/
-
-
-	const hasStateAsTarget = (n) => n.target().map(getEleId)[0] == state; 
-
-	if( shortestPathAtoB.size() == 0 || shortestPathBtoA.size() == 0){
-		const nonEmptyPath = shortestPathAtoB.size() == 0 ? shortestPathBtoA : shortestPathAtoB;
-		
-		//If the nonEmptyPath contains at least 1 edge with the target as our state, then it is a loop back.
-		if(nonEmptyPath.some(hasStateAsTarget)){
-			return true;
-		}
-
-
-	}else{
-
-		/*
-			Now let's check for a special case where both transitions end up converging before looping back(if inside a loop). We
-			need to do a diff on both of the shortestpaths. From the left and right map grab the last edge. If they both have the same
-			target, then it is not a WhileLoop and both transitions converged before there was a loop back to the original state.
-
-		*/
-
-		const { left, right } = shortestPathAtoB.diff(shortestPathBtoA);
-		const getTarget = (n) => n.target().map(getEleId)[0];
-
-		if(right.slice(-1).map(getTarget) == left.slice(-1).map(getTarget)){
-			return false;
-		}
-
-		/*
-
-			Last but not least we need to differentiate a WhileLoop from an IfThen that is inside a loop. The former has a state looping back
-			while the other one doesn't. 
-
-			To do this we are going to basically find the shortest path for both transitions to each source state. If it's a WhileLoop, then 
-			to get to one of the source state it must PASS through another source state to get to the source state that it is inside a loop.
-
-			If none of the transitions pass through another source state to get to a different source state, then it is not a WhileLoop.
-
-		*/
-
-
-		const sourcesToState = getSourcesToState(state, graph);
-		for(let i=0; i<transitions.length ; i++){
-
-			const dijkstraTransition = graph.elements().dijkstra({ root : toId(transitions[i]), directed : true});
-
-			for(let j=0; j < sourcesToState.length; j++){
-
-				const shortestPath = dijkstraTransition.pathTo(graph.$(toId(sourcesToState[j]))).edges();
-				const targets = shortestPath.map( (n) => n.target().map(getEleId)[0]);
-				
-				const foundTargets = targets.filter( (x) => sourcesToState.includes(x));
-				if(foundTargets.length > 1){
-					return true;
-				}
-
-			}
-		}
-
-	}
-
-
-	return false;
-
-
-
+function isSimpleIfThenElse(state, graph){
+  return { hasSimpleIfThenElse : false, convergedState : null };
 }
 
 function isDoWhileLoop(state, graph){
 
-	/*
-	 
+  let defaultResult = {
+    hasDoWhileLoop : false, 
+    doWhileType : null, 
+    endLoopState : null, 
+    loopState: null, 
+    nonLoopState: null
+  };
 
-	 Note:A DoWhileLoop can only be a normal state. Sometimes the normal state can be inside a loop and it is hard
-	 to distinguish the incoming states that are part of a loop or not. In that case we need to use dijkstra algorithm to 
-	 basically find the shortest path for all the states with a target to our state.
-	 
-	 This needs to be done without going backwards(directed = true) which will get us a common set of paths one must follow to get 
-	 to our state. Iterate through all the states that connect to our states, and find the shortest path for each one without looping(directed = true). 
+  const { hasTransitions, transitions } = getStateTransitions(state, graph);
 
-	 With the collection of each state's path, we will need to do a diff on the current path collection to the previous path collection.
+  if(!hasTransitions){
+    return defaultResult;
+  }
 
-	 If there is an empty right map or empty left map then it means that we have found a state that loops back, which will mean it is a DoWhileLoop.
-	 However, in the case that we never found an empty right or empty left, then it means that we have found a simple node that simply converged two nodes
-	 and does not have any states that loop back.
+  const endStates = getEndStates(graph);
+  const sourcesToState =  getSourcesToState(state, graph);
 
+  for(let st in sourcesToState){
+    const hasParent = graph.$(`[target = "${sourcesToState[st]}"]`).edges();
+
+    if(hasParent.size() > 0){
+
+      const edgeId =  hasParent.map((n) => n.id());
+      const removedState = graph.$(`[id = "${edgeId}"]`).remove();
+      const maybeNeeded = graph.$(toId(state)).successors().nodes();
+      const isNeeded = maybeNeeded.some((n) => endStates.map(getEleId).includes(n.id())) ? false : true;
+      removedState.restore();
+
+      if(isNeeded){
+
+        const endLoopState = hasParent.map((n) => n.target().map(getEleId)[0]);
+
+        defaultResult['hasDoWhileLoop'] = true;
+        defaultResult['endLoopState'] = endLoopState[0];
+
+        if(transitions.length == 2){
+
+          defaultResult['doWhileType'] = structs.WHILE_LOOP_INSIDE_DO_WHILE_LOOP;
+          const transitionAtoNeeded = getShortestPath(transitions[0],endLoopState[0], graph);
+          const transitionBtoNeeded = getShortestPath(transitions[1],endLoopState[0], graph);
+
+          const transitionACrossesB = transitionAtoNeeded.some((n) => n.target().map(getEleId)[0] == transitions[1]);
+          const transitionBCrossesA = transitionBtoNeeded.some((n) => n.target().map(getEleId)[0] == transitions[0]);
+
+          if(transitionACrossesB){
+            defaultResult['loopState'] = transitions[1];
+            defaultResult['nonLoopState'] = transitions[0];
+          }
+					
+          if(transitionACrossesB){
+            defaultResult['loopState'] = transitions[0];
+            defaultResult['nonLoopState'] = transitions[1];
+          }
+
+        }else{
+          defaultResult['doWhileType'] = structs.DO_WHILE_TYPE;
+        }
+      }
+    }
+  }
+
+  return defaultResult;
+
+}
+
+function isWhileLoop(state, graph){
 	
-	*/
+  const defaultResult = {
+    hasWhileLoop : false, 
+    loopState: null, 
+    nonLoopState: null
+  };
 
 
-	const { hasTransitions, transitions, transitionsEdges, transitionsNodes } = getStateInfo(state, graph);
-	let hasDoWhileLoop = false;
+  const { hasTransitions, transitions } = getStateTransitions(state, graph);
+  const hasLoop = isInsideLoop(state, graph);
+  const { hasDoWhileLoop } = isDoWhileLoop(state, graph);
 
-	if(hasTransitions) return hasDoWhileLoop;	
+  if(!hasTransitions || !hasLoop || hasDoWhileLoop){
+    return defaultResult;
+  }
 
-	const { both, right, left } = getDiffOnSuccessorsAndPredecessors(state, graph,mode="all");
-	const dijkstra = both.dijkstra({root : toId(state), directed : true});
-	const sourcesToState =  getSourcesToState(state, graph);
-
-	let previousNode = dijkstra.pathTo(graph.$(toId(sourcesToState[0]))).edges();
-
-	for(let i=1; i<sourcesToState.length; i++){
-
-		const currentState = graph.$(toId(sourcesToState[i]));
-		const currentNode = dijkstra.pathTo(currentState).edges();
-		const diff = previousNode.diff(currentNode);
-		/*
+  const successorsA = graph.$(toId(transitions[0])).successors().edges();
+  const successorsB = graph.$(toId(transitions[1])).successors().edges();
+  const diff = successorsA.diff(successorsB);
+	
+  if(diff.right.size() == 0 && diff.left.size() == 0){
+    /*
+		 We are inside another loop, so now let's find the shortest path
+		 for each transition to all of the source states.And if any of
+		 the transitions has to go through our state to get to any source state
+		 but the other transition didn't on that same source state, then we have a WhileLoop.
+		 */
 		
-			Basically if once we do a diff, then if we have an empty left or right map then it means that
-			currentNode or previousNode contains all the other nodes of the other. 
+    const symDiff = getSymDiffOnAllDirectPaths(state, graph);
+    if(symDiff.length == 0){
+      /*
+			 This is not a WhileLoop is most likely an if then or if then else inside a loop
+			 */
+      return defaultResult;
+    }
 
-		*/
-		if(diff.left.size() == 0 || diff.right.size() == 0){
-			hasDoWhileLoop = true;
-			break;
-
-		}else{
-			previousNode = currentNode;
-		}
-
-	}
-	
-	return hasDoWhileLoop;
-	
-
-}
-
-function isWhileLoopInsideDoWhileLoop(state, graph){
-}
-function doTransitionsConverge(state, graph){
-
-	/*
-	 
-		There are two ways two transitions are going to converge. 
-		If it is a WhileLoop 
-	
-	*/
-
-	return false;
-	displayShit(state, graph);
-	const { hasTransitions, transitions } = getStateInfo(state, graph);
-
-	const { both, left, right, successors, predecessors } = getDiffOnSuccessorsAndPredecessors(state, graph);
-	//const {both, right, left } = getDiffOnSuccessorsAndPredecessors(state, graph);
-	
-
-	const incomingStates = graph.$(`[target = "${state}"]`).sources().map(getEleId);
-	console.log("incoming states:", incomingStates);
-
-	let whoConverges = null; 
-	let doesConverge = false; 
-
-
-	if(!hasTransitions){
-		return {
-			whoConverges : whoConverges,
-			doesConverge : doesConverge
-		};
-	}
-
-	if(isWhileLoop(state, graph)){
+    const endStates = getEndStates(graph);
+    const removedState = graph.$(`[id = "${state}->${transitions[0]}"]`).remove();
+    const maybeNeeded = graph.$(toId(state)).successors().nodes();
+    const isNeeded = maybeNeeded.some((n) => endStates.map(getEleId).includes(n.id())) ? false : true;
+    removedState.restore();
 		
-		return {
-			whoConverges : whoConverges,
-			doesConverge : doesConverge
-		};
+    const loopState = isNeeded ? transitions[1] : transitions[0];
+    const nonLoopState = isNeeded ? transitions[0] : transitions[1];
+		
+    defaultResult['hasWhileLoop'] = true;
+    defaultResult['loopState'] = loopState;
+    defaultResult['nonLoopState'] = nonLoopState;
 
-	}
+  }else if(diff.right.size() == 0 || diff.left.size() == 0){
+    const loopState = diff.right.size() == 0 ? transitions[0] : transitions[1];
+    const nonLoopState = diff.right.size() == 0 ? transitions[1] : transitions[0];
 
-	const transitionADegrees = graph.$(`#${transitions[0]}`).indegree();
-	const transitionBDegrees = graph.$(`#${transitions[1]}`).indegree();
+    defaultResult['hasWhileLoop'] = true;
+    defaultResult['loopState'] = loopState;
+    defaultResult['nonLoopState'] = nonLoopState;
 
-	doesConverge = ( 
-		transitionADegrees == 2 ||
-		transitionBDegrees == 2  
-	);
+
+  }
+
+  return defaultResult;
 	
-	if(doesConverge){
-		whoConverges = transitionBDegrees > transitionADegrees ? "A" : "B";
-	}
-
-	return {
-		whoConverges : whoConverges,
-		doesConverge : doesConverge
-	};
-
 
 }
+
+function isIfThen(state, graph){
+  return { hasIfThen : false, convergedState: null };
+
+}
+
+function isIfThenElse(state, graph){
+
+  const defaultResult = { 
+    hasIfThenElse : false, 
+    convergedState: null 
+  };
+
+  const sourcesToState =  getSourcesToState(state, graph);
+  const { transitions } = getStateTransitions(state, graph);
+
+  const transitionAtoB = getShortestPath(transitions[0], transitions[1], graph);
+  const transitionBtoA = getShortestPath(transitions[1], transitions[0], graph);
+  const shortestPaths = getAllShortestsPaths(transitions, [sourcesToState[0]], graph);
+
+  const beforePath = shortestPaths[Object.keys(shortestPaths)[0]];
+
+  console.log("transitionAtoB:", transitionAtoB.map(getEleId));
+  console.log("transitionBtoA:", transitionBtoA.map(getEleId));
+
+  const diff = beforePath[transitions[0]].diff(beforePath[transitions[1]]);
+
+  if(!diff.both.length && !diff.right.length && !diff.left.length){
+    return defaultResult;
+  }
+
+  if(!diff.both.length){
+    //const nonEmpty = !diff.right.length ? diff.left : diff.right;
+
+    //console.log("noneeeempty:", nonEmpty[0]);
+    //console.log("nonEmpty:", nonEmpty[0].map(getEleId));
+		
+
+
+  }
+  console.log("both:", diff.both.map(getEleId));
+  console.log("left:", diff.left.map(getEleId));
+  console.log("right:", diff.right.map(getEleId));
+
+
+
+  return defaultResult;
+}
+
 class Evaluator{
 
 
   constructor(graph){
     this.graph = graph || cytoscape();
   }
-
-
 	
-	
-  interpret(state, mode=checkMode.CHECK_EVERY_THING){
+  interpret(state){
 
-		let structType = 0;
-		for(let check of Object.keys(STRUCT_CHECKS)){
-			if((mode & check) == check){
-				structType |= STRUCT_CHECKS[check](state, this.graph)  ? check : structType;
-			}
-		}
-			
+    if(isInfiniteLoop(state, this.graph)){
+      return { struct : structs.INFINITE_LOOP, meta : {} };
+    }
 
-		return structType;
+    const { hasTransitions, transitions } = getStateTransitions(state, this.graph);
 
-  }
+    if(!hasTransitions) {
+      return { struct : structs.END_STATE, meta : {} };
+    }
 
-	someShit(state){
+    const hasLoop = isInsideLoop(state, this.graph);
+
+    if(hasTransitions.length == 2 && !hasLoop){
+
+      a : {
+
+        const { hasSimpleIfThen, convergedState } = isSimpleIfThen(state, this.graph);
+
+        if(hasSimpleIfThen){
+          return { struct : structs.IF_THEN, meta : { convergedState } };
+        }
+      }
+
+      a : {
+
+        const { hasSimpleIfThenElse, convergedState } = isSimpleIfThenElse(state, this.graph);
+
+        if(hasSimpleIfThenElse){
+          return { struct : structs.IF_THEN_ELSE, meta : { convergedState } };
+        }
+      }
+
+
+    }else if(hasTransitions && hasLoop){
+
+      a : {
+        const { 
+          hasDoWhileLoop, 
+          doWhileType, 
+          endLoopState, 
+          loopState, 
+          nonLoopState
+        } = isDoWhileLoop(state, this.graph); 
+
+        if(hasDoWhileLoop){
+          return { struct : doWhileType, meta : { endLoopState, loopState, nonLoopState } };
+        }
+      }
+
+      a : {
+        const { 
+          hasWhileLoop, 
+          loopState, 
+          nonLoopState
+        } = isWhileLoop(state, this.graph); 
+
+        if(hasWhileLoop){
+          return { struct : structs.WHILE_LOOP, meta : { loopState, nonLoopState } };
+        }
+      }
+
+      a : {
+        const { 
+          hasIfThen,
+          convergedState
+        } = isIfThen(state, this.graph); 
+
+        if(hasIfThen){
+          return { struct : structs.IF_THEN, meta : { convergedState } };
+        }
+      }
+
+      a : {
+        const { 
+          hasIfThenElse,
+          hasIfThenElseType,
+          convergedState
+        } = isIfThenElse(state, this.graph); 
+
+        if(hasIfThenElse){
+          return { struct : hasIfThenElseType, meta : { convergedState } };
+        }
+
+      }
+
+    }	
 		
-		const { hasTransitions, transitions, transitionsEdges, transitionsNodes } = getStateInfo(state, this.graph);
-
-		console.log("edges A:", transitionsEdges[0].map(getEleId));
-		console.log("edges B:", transitionsEdges[1].map(getEleId));
-		console.log("nodes A:", transitionsNodes[0].map(getEleId));
-		console.log("nodes B:", transitionsNodes[1].map(getEleId));
-		const statePredecessors = this.graph.$(toId(state)).predecessors().edges();
-		const stateSuccessors = this.graph.$(toId(state)).successors().edges();
-
-		const left = statePredecessors.diff(stateSuccessors).left;
-		const right = statePredecessors.diff(stateSuccessors).right;
-		const both = statePredecessors.diff(stateSuccessors).both;
-		const connectedEdges = this.graph.$(toId(state)).connectedEdges();
-		const hasStateAsTarget = this.graph.$('edge[target="3"]');
-		console.log("State :", state, " predecessors :", statePredecessors.map(getEleId));
-		console.log("State :", state, " successors  :", stateSuccessors.map(getEleId));
-		console.log("State :", state, " complement :", statePredecessors.complement(transitionsEdges[0]).edges().map(getEleId));
-		console.log("State :", state, " connected edges :", connectedEdges.map(getEleId));
-		console.log("State :", state, " successors diff of  predecessors left :", left.map(getEleId))
-		console.log("State :", state, " successors diff of  predecessors right :", right.map(getEleId))
-		console.log("State :", state, " successors diff of  predecessors both :", both.map(getEleId))
-		console.log("State :", state, " whats left after removing ", connectedEdges.not(left).not(right).edges().map(getEleId))
-		console.log("State :", state, " first loop back ", connectedEdges.not(hasStateAsTarget).map(getEleId));
-		console.log("predecessors state 4 :",  this.graph.$(toId(4)).predecessors().edges().map(getEleId));
-
-		const stopNodes = [3, 4];
-		const edges = [];
-
-		this.graph.elements().dfs({
-			roots : "#3",
-			visit : function(v, e, u, i){
-				
-				console.log("v:", v.map(getEleId), " e:", e !== undefined ? e.map(getEleId) : "" , "u:", u !== undefined ? u.map(getEleId) : "");
-			},
-			directed : true
-		})
-
-
-
-
-    
+    return { struct : structs.UNKNOWN, meta : {} };
   }
-
-
 
 };
+
 
 module.exports = {
   Evaluator
 };
 
 const { 
-	toId,
-	getEleId,
+  toId,
+  getEleId,
   getStateInfo,
   getStateTransitions,
   getEndStates,

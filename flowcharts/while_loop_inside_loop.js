@@ -2,63 +2,28 @@ function while_loop_inside_loop(){
   var state = 1;
   for (; state !== 99; ) {
     switch (state) {
+
       case 1:
         state = 2;
         break;
+
       case 2:
-        state = 21;
-        break;
-
-      case 21:
-        state = !0 ? 22 : 61;
-        break;
-
-      case 22:
         state = 3;
         break;
 
       case 3:
-        state = !0 ? 31 : 366;
-        break;
-
-      case 31:
-        state = 32;
-        break;
-        
-      case 32:
-        state = 33;
-        break;
-
-      case 33:
-        state = !0 ? 4 : 5;
+        state = !0 ? 4 : 11;
         break;
 
       case 4:
-        state = 6;
+        state = 5;
         break;
-
 
       case 5:
-        state = !0 ? 6 :  366;
+        state = !0 ? 6 : 9;
         break;
-
-      //case 5:
-      //  state = !0 ? 6 :  366;
-      //  break;
 
       case 6:
-        state = 3;
-        break;
-
-      case 366:
-        state = 60;
-        break;
-
-      case 60:
-        state = !0 ? 21 : 61;
-        break;
-
-      case 61:
         state = 7;
         break;
 
@@ -67,6 +32,30 @@ function while_loop_inside_loop(){
         break;
 
       case 8:
+        state = 5;
+        break;
+
+      case 9:
+        state = 10;
+        break;
+
+      case 10:
+        state = 3;
+        break;
+
+      case 11:
+        state = 12;
+        break;
+
+      case 12:
+        state = 13;
+        break;
+
+      case 13:
+        state = 98;
+        break;
+
+      case 98:
         return !0;
         break;
     }

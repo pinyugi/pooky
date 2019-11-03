@@ -38,3 +38,6 @@ https://assets.supremenewyork.com/assets/pooky.min.db95baa07accf98a7ba2.js
 https://assets.supremenewyork.com/assets/pooky.min.28f5d42fc4153d69cd26.js
 https://assets.supremenewyork.com/assets/pooky.min.09fae8f462d73d571c97.js
 https://assets.supremenewyork.com/assets/pooky.min.71db4fd882c3d9d90e13.js
+https://assets.supremenewyork.com/assets/pooky.min.04f7d76bdd1fbde6e284.js
+https://assets.supremenewyork.com/assets/pooky.min.0c4daed4e99a9b90d520.js
+https://assets.supremenewyork.com/assets/pooky.min.a32d107d1e0c251a0811.js
