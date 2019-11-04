@@ -7,7 +7,6 @@ const {
   createTransition,
   createConditionalTransition
 }  = require("./transition.js");
-const { Graph } = require("./graph.js");
 const { Evaluator } = require("./evaluator.js");
 const { StructTraverser } = require("./traverser.js");
 const utils = require("./utils.js");
@@ -22,7 +21,6 @@ module.exports = {
   isConditionalTransition,
   createTransition, 
   createConditionalTransition,
-  Graph,
   Evaluator,
   StructTraverser,
 };

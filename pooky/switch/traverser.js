@@ -89,8 +89,7 @@ module.exports = {
 
 
 
-const { structs } = require("./constants.js");
-const { Evaluator } = require("./evaluator.js");
+const { Evaluator, structs } = require("./evaluator.js");
 const { 
   SimpleStruct, 
   WhileStruct, 

@@ -1,4 +1,4 @@
-function while_loop(){
+function if_then_else(){
   var state = 1;
   for (; state !== 99; ) {
     switch (state) {
@@ -22,22 +22,7 @@ function while_loop(){
         break;
 
       case 6:
-        state = 61;
-        break;
-
-      case 61:
-        state = !0 ? 62 : 7;
-        break;
-      case 62:
-        state = 63;
-        break;
-
-      case 63:
-        state = 64;
-        break;
-
-      case 64:
-        state = 3;
+        state = 9;
         break;
 
       case 7:

@@ -12,12 +12,12 @@ function while_loop_inside_loop(){
         break;
 
       case 3:
-        state = !0 ? 4 : 11;
+        state = !0 ? 5 : 11;
         break;
 
-      case 4:
-        state = 5;
-        break;
+      //case 4:
+      //  state = 5;
+      //  break;
 
       case 5:
         state = !0 ? 6 : 9;

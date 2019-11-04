@@ -2,6 +2,12 @@ const t = require("@babel/types");
 const recast = require("recast");
 
 
+const transitions = {
+  SINGLE_PATH : 1,
+  DUAL_PATH : 2
+};
+
+
 class Transition {
 
   constructor(config){
@@ -14,7 +20,7 @@ class Transition {
   }
 
   isConditional(){
-    return this.type === DUAL_PATH;
+    return this.type === transitions.DUAL_PATH;
   }
 
   hash(){
@@ -53,8 +59,8 @@ class Transition {
   }
 
   setType(type){
-	  if(![SINGLE_PATH, DUAL_PATH].includes(type)){
-		  throw Error(`Transition type must be either ${SINGLE_PATH} or ${DUAL_PATH}`);
+	  if(![transitions.SINGLE_PATH, transitions.DUAL_PATH].includes(type)){
+		  throw Error(`Transition type must be either ${transitions.SINGLE_PATH} or ${transitions.DUAL_PATH}`);
 	  }
 
 	  this.type = type;
@@ -77,7 +83,7 @@ function isConditionalTransition(path, stateHolderName) {
 
 function createTransition(path) {
   return new Transition({
-    type : SINGLE_PATH,
+    type : transitions.SINGLE_PATH,
     states : [path.get("expression.right")],
     test : null
   });
@@ -85,7 +91,7 @@ function createTransition(path) {
 
 function createConditionalTransition(path) {
   return new Transition({
-    type : DUAL_PATH,
+    type : transitions.DUAL_PATH,
     states : [path.get("expression.right.consequent"), path.get("expression.right.alternate")],
     test : path.get("expression.right.test")
   });
@@ -101,5 +107,3 @@ module.exports = {
   createConditionalTransition
 };
 
-
-const { SINGLE_PATH, DUAL_PATH } = require("./constants.js").transitions;
