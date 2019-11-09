@@ -102,6 +102,7 @@ function do_and_while_loop(){
         //state = 20;
         break;
 
+
       case 20:
         state = 21;
         break;

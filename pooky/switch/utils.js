@@ -17,7 +17,7 @@ const utils = {
     const _type = utils.getStateHolderType(path);
 
     return _type == "vardec" ? recast.print(prev.get("declarations.0.id").node).code : 
-      type == "assignment" ? recast.print(prev.get("expression.left").node).code : false;
+      _type == "assignment" ? recast.print(prev.get("expression.left").node).code : false;
 
   
   },
@@ -28,7 +28,7 @@ const utils = {
     const _type = utils.getStateHolderType(path);
 
     return _type == "vardec" ? prev.get("declarations.0.init.value").node : 
-      type == "assignment" ? prev.get("expression.right.value").node : false;
+      _type == "assignment" ? prev.get("expression.right.value").node : false;
   },
   
   hasStateHolder(path){

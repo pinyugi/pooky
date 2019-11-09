@@ -78,6 +78,7 @@ class StateManager {
     this.graph = cytoscape();
 
     const elems = [];
+
     for(let name of Object.keys(this.states)){
 
       const state = this.states[name];
@@ -112,6 +113,9 @@ class StateManager {
 
     this.graph.add(elems);
 
+  }
+
+  simplify(){
   }
 
 
@@ -157,6 +161,8 @@ class StateManager {
     const manager = StateManager.fromSwitch(path);
     const explicitTerminalState = path.get("test.right.value").node;
     manager.setInitialState(utils.getInitialState(path));
+
+    manager.addState(new State(explicitTerminalState));
     manager.markTerminalState(explicitTerminalState);
 
     manager.setupGraph();

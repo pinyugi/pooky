@@ -57,8 +57,32 @@ function do_and_while_loop_inside_loop(){
         break;
 
       case 8:
-        state = !0 ? 11 : 9;
+        state = !0 ? 888 : 887;
         //state = 9;
+        break;
+
+      case 888:
+        state = 8881;
+        break;
+
+      case 8881:
+        state = 8882;
+        break;
+
+      case 8882:
+        state = 9;
+        break;
+
+      case 887:
+        state = 8871;
+        break;
+
+      case 8871:
+        state = 8872;
+        break;
+
+      case 8872:
+        state = 9;
         break;
 
       case 9:
@@ -102,13 +126,13 @@ function do_and_while_loop_inside_loop(){
         break;
 
       case 19:
-        state = !0 ? 191 : 20;
+        state = !0 ? 3 : 20;
         //state = 20;
         break;
 
-      case 191:
-        state = 3;
-        break;
+      //case 191:
+      //  state = 3;
+      //  break;
 
       case 20:
         state = 21;
