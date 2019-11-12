@@ -1,6 +1,6 @@
 {    
 	"parserOptions": {
-		"ecmaVersion": 2015
+		"ecmaVersion": 9
 	},
 	"env": {
 		"es6": true

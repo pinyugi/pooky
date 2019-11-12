@@ -67,7 +67,7 @@ function isForAGoToSwitch(path) {
     path.get("test").type == "BinaryExpression" &&
     path.get("test.operator").node == "!==" &&
     hasGoToSibling(path);
-};
+}
 
 function isTransition(path, stateHolderName) {
   return path.get("expression").type !== undefined &&

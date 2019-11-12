@@ -11,33 +11,38 @@ class StructTraverser{
   }
 
 
-  getNextStruct(){
+  getNextStruct(opts){
 
-    const { result, meta }  = this.evaluator.interpret(this.currentState);
-    console.log("state:", state, " evaluated:", result, " meta:", meta);
+    const { states, statistics, history } = opts;
+    const currentState = this.getCurrentState();
+    const structType = states[currentState]["result"];
 
-    switch(result){
+    switch(structType){
 
       case (structs.DOES_NOT_CONVERGE):
-        return IfThenElseStruct(state, this.manager, meta);
+        return new IfThenElseStruct({state : currentState, traverser : this, ...opts}).simplify();
 
       case (structs.SIMPLE):
-        return SimpleStruct(state, this.manager, meta);
+        return new SimpleStruct({state : currentState, traverser : this, ...opts}).simplify();
 
       case (structs.IF_THEN):
-        return IfThenStruct(state, this.manager, meta);
+        return new IfThenStruct({state : currentState, traverser : this, ...opts}).simplify();
 
-      case (structs.IF_THEN_ELSE):
-        return IfThenElseStruct(state, this.manager, meta);
+			case (structs.IF_THEN_ELSE):
+      case (structs.IF_THEN_ELSE | structs.DOES_NOT_CONVERGE):
+        return new IfThenElseStruct({state : currentState, traverser : this, ...opts}).simplify();
 
       case (structs.WHILE_LOOP):
-        return WhileLoopStruct(state, this.manager, meta);
+      case (structs.WHILE_LOOP | structs.IF_THEN):
+      case (structs.WHILE_LOOP | structs.IF_THEN_ELSE):
+        return new WhileLoopStruct({state : currentState, traverser : this, ...opts}).simplify();
+			
 
       case (structs.DO_WHILE_LOOP):
-        return DoWhileLoopStruct(state, this.manager, meta);
+        return new DoWhileLoopStruct({state : currentState, traverser : this, ...opts}).simplify();
 
       case (structs.END_STATE):
-        return SimpleStruct(state, this.manager, meta);
+        return new EndStateStruct({state : currentState, traverser : this, ...opts}).simplify();
 			
       default:
         console.log("Could not evaluate:", evaluated.result);
@@ -45,6 +50,27 @@ class StructTraverser{
     }
 
 
+  }
+
+  visitAll(){
+
+    const statistics = {};
+    const states = {
+      'endStates' : []
+    };
+
+    this.graph.$().nodes().forEach((n) =>{
+      const stateId = n.id();
+      const { result, meta } = states[stateId] = this.evaluator.interpret(stateId);
+      statistics[result] = result in statistics ? statistics[result] + 1 : 1;
+
+      if(result == structs.END_STATE){
+        states['endStates'].push(stateId);
+      }
+
+    })
+
+    return { states, statistics }
   }
 
   getStatistics(){
@@ -81,15 +107,19 @@ module.exports = {
 
 
 
-const { Evaluator } = require("./evaluator.js");
+const { Evaluator  } = require("./evaluator.js");
+const { getEndStates, getEleId } = require("./graph.js");
 const { 
   SimpleStruct, 
+  EndStateStruct, 
   WhileStruct, 
   DoWhileStruct, 
   IfThenStruct, 
   IfThenElseStruct,
   structs
 } = require("./structs.js");
+
+
 
 
 const cytoscape = require("cytoscape");

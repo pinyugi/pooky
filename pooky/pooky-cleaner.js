@@ -6,7 +6,7 @@ function checkForUselessMember(path){
   return path.get("left").type == "MemberExpression" && 
     path.get("operator").node == "=" && 
     ["StringLiteral", "NumericLiteral"].includes(path.get("right").type);
-};
+}
 
 
 function shouldRemoveUselessMember(path, state){
@@ -55,7 +55,7 @@ function isFunctionMaybeUseless(path, state){
 
 function isAssignmentFromUselessFunc(path, state){
 
-};
+}
 
 USELESS_LITERAL_VISITOR = {
 

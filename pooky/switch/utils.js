@@ -41,14 +41,6 @@ const utils = {
       utils.getStateHolderName(path) == recast.print(path.get("test.left").node).code);
   },
   
-  isWhileAGoToSwitch(path){
-    return (path.type == "WhileStatement" &&
-      path.get("test").type == "BinaryExpression" &&
-      path.get("test.operator").node == "!==" &&
-      utils.hasGoToSibling(path));
-  
-  },
-  
   isForAGoToSwitch(path) {
    
     return path.type == "ForStatement" &&

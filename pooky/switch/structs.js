@@ -15,47 +15,209 @@ const structs = {
 };
 
 
+class Struct {
 
-function SimpleStruct(state, manager, meta){
+  constructor(opts){
+    this.state = opts.state;
+    this.states = opts.states;
+    this.statistics = opts.statistics;
+    this.history = opts.history;
+    this.traverser = opts.traverser;
 
-  const { doWhileEndStates, whileNonLoopState, whileLoopState } = meta;;
-  const { traverser, evaluator, graph } = manager;
-
-  if(doWhileEndStates !== undefined){
-
-    //const {
   }
- 
-  return "SimpleStruct";
+  simplify(){
+    throw Error("Need to Implement!");
+  }
+
+
+
+  getStateTransitions(){
+
+    const transition = this.states[this.state]["transition"];
+    if(transition === null){
+      return [];
+    }
+
+    return transition.states;
+  }
+
+  getResultFromEvaluator(){
+    return this.states[this.state]["result"];
+  }
+
+  getStateMeta(){
+    return this.states[this.state]["meta"];
+  }
+
+  getTestExpression(){
+
+    return this.states[this.state]["transition"]["test"];
+	
+  }
+
+
+  traverseUntil(stop){
+    throw Error("Need to Implement!");
+  }
+
+  isStateABreak(){
+    /*
+
+		if(this.whileStart !== undefined){
+			return this.state == this.whileNonLoopState;
+
+		}
+		*/
+
+    return false;
+
+  }
+
+  isStateAContinue(){
+
+    /*
+		if(this.whileStart !== undefined){
+			return this.state == this.whileLoopState;
+
+		}
+		*/
+
+    return false;
+
+
+  }
+
+  isStateADoWhileEndState(){
+		
+    /*
+		if(this.doWhileEndStates !== undefined){
+			return Object.keys(this.doWhileEndStates).includes(this.state);
+		}
+		*/
+
+    return false;
+
+
+  }
 
 }
 
-function WhileStruct(state, manager, meta){
-  return "WhileStruct";
+
+class SimpleStruct extends Struct {
+
+  constructor(opts){
+    super(opts);
+  }
+
+  simplify(){
+
+    const nodes = this.states[this.state]["nodes"];
+    const transitions = this.getStateTransitions();
+		
+    this.traverser.currentState = transitions[0];
+    this.history.push(this.state);
+
+    return { nodes , result : this.getResultFromEvaluator() };
+
+  }
 
 }
 
-function DoWhileStruct(state, manager, meta){
-  return "DoWhileStruct";
+class IfThenStruct extends Struct {
+
+  constructor(opts){
+    super(opts);
+  }
+	
+  simplify(){
+		
+    const transitions = this.getStateTransitions();
+    const meta = this.getStateMeta();
+    const convergedState = meta["ifThenConvergedState"];
+
+    this.traverser.currentState = convergedState == transitions[0] ? transitions[1] : transitions[0];
+    this.history.push(this.state);
+
+    let getNextStruct = false;
+
+
+    const nodes = this.traverseUntil(stop=convergedState);
+    const ifThenNode = t.ifStatement(this.getTestExpression(), t.blockStatement(nodes));
+
+    return { nodes : [ifThenNode], result : this.getResultFromEvaluator()};
+
+  }
 
 }
 
-function IfThenStruct(state, manager, meta){
-  return "IfThenStruct";
+class IfThenElseStruct extends Struct {
+
+  constructor(opts){
+    super(opts);
+  }
+	
+  simplify(){
+
+    return { nodes : [], result : this.getResultFromEvaluator() };
+  }
 
 }
 
-function IfThenElseStruct(state, manager, meta){
-  return "IfThenElseStruct";
+class WhileStruct extends Struct {
+
+  constructor(opts){
+    super(opts);
+  }
+	
+  simplify(){
+
+    return false;
+  }
+}
+
+class DoWhileStruct extends Struct {
+
+  constructor(opts){
+    super(opts);
+  }
+	
+  simplify(){
+
+    return { nodes : [], result : this.getResultFromEvaluator() };
+  }
+
 
 }
+
+class EndStateStruct extends Struct {
+
+  constructor(opts){
+    super(opts);
+  }
+	
+  simplify(){
+		
+    const nodes = this.states[this.state]["nodes"];
+    const transitions = this.getStateTransitions();
+		
+    this.history.push(this.state);
+
+
+    return { nodes : [], result : this.getResultFromEvaluator() };
+  }
+
+
+}
+
+
 
 
 module.exports = {
   SimpleStruct,
-  WhileStruct,
-  DoWhileStruct,
+  EndStateStruct,
   IfThenStruct,
   IfThenElseStruct,
+  WhileStruct,
+  DoWhileStruct,
   structs
 };

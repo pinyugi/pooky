@@ -115,7 +115,37 @@ class StateManager {
 
   }
 
+	
   simplify(){
+
+    const { states, statistics } = this.traverser.visitAll();
+    const history = [];
+    const nodez = [];
+
+
+    Object.keys(this.states).forEach((stateName) => {
+      states[stateName]["nodes"] = this.states[stateName]["nodes"];
+      states[stateName]["transition"] = this.states[stateName]["transition"];
+    });
+
+    let getNextStruct = true;
+
+    do{
+
+      const { nodes, result } = this.traverser.getNextStruct({states, statistics, history});
+
+      if(nodes){
+        nodez.push(...nodes);
+      }
+
+      if(result == structs.END_STATE){
+        getNextStruct = false;
+      }
+
+    }while(getNextStruct)
+
+    return nodez;
+		
   }
 
 
@@ -209,4 +239,5 @@ const t = require("@babel/types");
 const cytoscape = require('cytoscape');
 const { State } = require("./state.js");
 const { StructTraverser } = require("./traverser.js");
+const { structs } = require("./structs.js");
 const utils = require("./utils.js");

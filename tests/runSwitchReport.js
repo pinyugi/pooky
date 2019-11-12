@@ -17,19 +17,20 @@ const {
 console.log(process.argv.slice(-1)[0]);
 const tree = {
   'pooky' : fromFile(process.argv.slice(-1)[0]),
-  //'pooky' : fromFile("fixtures/pookyparts/i89C.js")
 };
 
 const allStates = {};
 const zeroes = [];
 const statelines = [];
+let count = 0;
+const uniqueStates = new Set();
 // write to a new file named 2pac.txt
 
 SWITCH_TRANSITION_VISITOR = {
   "ForStatement|WhileStatement"(path) {
 
     const states = {};
-    if (utils.isForAGoToSwitch(path) || utils.isWhileAGoToSwitch(path)) {
+    if (utils.isForAGoToSwitch(path) ) {
       const stateHolderName = utils.getStateHolderName(path);
 
       const initialState = utils.getInitialState(path);
@@ -52,8 +53,9 @@ SWITCH_TRANSITION_VISITOR = {
 
       console.log(stateHolderName ,":", states);
       statelines.push(`${stateHolderName}:${JSON.stringify(states)}`);
+      uniqueStates.add(JSON.stringify(states));
+      count += 1;
 
-      return false; 
 
     }
   }
@@ -61,17 +63,23 @@ SWITCH_TRANSITION_VISITOR = {
 
 let currentTree;
 currentTree = tree['pooky'];
-//currentTree = tree['pooky-i89C'];
 traverse(currentTree, SWITCH_TRANSITION_VISITOR);
 
 console.log("Total States :", JSON.stringify(allStates));
+console.log("Total Switches:", count);
 console.log("Total Zeroes :", zeroes.length);
 
-fs.writeFile('zeroes.txt', zeroes.join("\n"), (err) => {
+
+
+fs.writeFile('reports/uniqueStates.txt', Array.from(uniqueStates).join("\n"), (err) =>{
+  console.log("uniqueStates saved!");
+});
+
+fs.writeFile('reports/zeroes.txt', zeroes.join("\n"), (err) => {
   console.log('Zeroes saved!');
 });
 
 
-fs.writeFile('statesreport.txt', statelines.join("\n"), (err) => {
+fs.writeFile('reports/statesreport.txt', statelines.join("\n"), (err) => {
   console.log('states saved!');
 });

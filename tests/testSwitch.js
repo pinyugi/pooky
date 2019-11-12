@@ -31,6 +31,7 @@ const tree = {
   'pooky-X1mC' : fromFile("fixtures/pookyparts/X1mC.js"),
   'pooky-H9VC' : fromFile("fixtures/pookyparts/H9VC.js"),
   'pooky-k7qC' : fromFile("fixtures/pookyparts/k7qC.js"),
+  'pooky-s1Z' : fromFile("fixtures/pookyparts/s1Z.js"),
 };
 
 //const states = {};
@@ -44,43 +45,30 @@ const statelines = [];
 SWITCH_TRANSITION_VISITOR = {
   "ForStatement|WhileStatement"(path) {
 
-    const states = {};
-    if (utils.isForAGoToSwitch(path) || utils.isWhileAGoToSwitch(path)) {
+    if (utils.isForAGoToSwitch(path)) {
       const stateHolderName = utils.getStateHolderName(path);
 
       const initialState = utils.getInitialState(path);
       const manager = StateManager.fromPath(path);
-      const statistics = manager.traverser.getStatistics();
-      console.log("statistics:", statistics);
-      /*
-			for(st of Object.keys(manager.states)){
+      const nodes = manager.simplify();
+
+      path.getPrevSibling().remove();
+      path.replaceWithMultiple(nodes);
+
+      console.log("nodes:", nodes);
 
 
-        if(st == '47'){
-          const evaluated = manager.traverser.evaluator.interpret(st);
-          states[evaluated.result] = evaluated.result in states ? states[evaluated.result] + 1 : 1;
-          console.log("state:", st, " evaluate:", manager.traverser.evaluator.interpret(st).result);
-        }
-			}
-      if(states.hasOwnProperty(0)){
-        zeroes.push(stateHolderName);
-
-      }
-
-      console.log(stateHolderName ,":", states);
-      statelines.push(`${stateHolderName}:${JSON.stringify(states)}`);
-      Object.assign(allStates, states);
-      */
+      currentlimit += 1
 
     }
   }
 }
 
 let currentTree;
-const onlyState = 
-//currentTree = tree['pooky-i89C'];
-//currentTree = tree['pooky-H9VC'];
-currentTree = tree['pooky-k7qC'];
+currentTree = tree['pooky-s1Z'];
+//currentTree = tree['do_and_while_loop_inside_loop_B'];
+//currentTree = tree['do_while_loop'];
+//currentTree = tree['while_loop'];
 traverse(currentTree, SWITCH_TRANSITION_VISITOR);
-//console.log(recast.print(currentTree).code);
+console.log(recast.print(currentTree).code);
 
