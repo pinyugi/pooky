@@ -20,7 +20,7 @@ class StructTraverser{
     switch(structType){
 
       case (structs.DOES_NOT_CONVERGE):
-        return new IfThenElseStruct({state : currentState, traverser : this, ...opts}).simplify();
+        return new DoesNotConvergeStruct({state : currentState, traverser : this, ...opts}).simplify();
 
       case (structs.SIMPLE):
         return new SimpleStruct({state : currentState, traverser : this, ...opts}).simplify();
@@ -28,25 +28,26 @@ class StructTraverser{
       case (structs.IF_THEN):
         return new IfThenStruct({state : currentState, traverser : this, ...opts}).simplify();
 
-			case (structs.IF_THEN_ELSE):
+      case (structs.IF_THEN_ELSE):
       case (structs.IF_THEN_ELSE | structs.DOES_NOT_CONVERGE):
         return new IfThenElseStruct({state : currentState, traverser : this, ...opts}).simplify();
 
       case (structs.WHILE_LOOP):
       case (structs.WHILE_LOOP | structs.IF_THEN):
       case (structs.WHILE_LOOP | structs.IF_THEN_ELSE):
-        return new WhileLoopStruct({state : currentState, traverser : this, ...opts}).simplify();
+        return new WhileStruct({state : currentState, traverser : this, ...opts}).simplify();
 			
 
       case (structs.DO_WHILE_LOOP):
-        return new DoWhileLoopStruct({state : currentState, traverser : this, ...opts}).simplify();
+        return new DoWhileStruct({state : currentState, traverser : this, ...opts}).simplify();
 
       case (structs.END_STATE):
         return new EndStateStruct({state : currentState, traverser : this, ...opts}).simplify();
-			
+
       default:
         console.log("Could not evaluate:", evaluated.result);
-        break;
+        return [];
+        
     }
 
 
@@ -109,7 +110,8 @@ module.exports = {
 
 const { Evaluator  } = require("./evaluator.js");
 const { getEndStates, getEleId } = require("./graph.js");
-const { 
+const {
+  DoesNotConvergeStruct, 
   SimpleStruct, 
   EndStateStruct, 
   WhileStruct, 

@@ -222,9 +222,6 @@ class Evaluator{
 
         if(isDirectPath){
 
-          const { found : hasIfThen } = this.isIfThen(state);
-
-          //if(
           defaultResult["found"] = true;
           defaultResult["meta"]["whileNonLoopState"] = neededTransition;
           defaultResult["meta"]["whileLoopState"] = notNeededTransition;

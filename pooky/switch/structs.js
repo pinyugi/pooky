@@ -29,7 +29,9 @@ class Struct {
     throw Error("Need to Implement!");
   }
 
-
+  previousSeenInHistory(states){
+    return states.filter(s=> this.history.indexOf(s) >= 0)
+  }
 
   getStateTransitions(){
 
@@ -56,11 +58,58 @@ class Struct {
   }
 
 
-  traverseUntil(stop){
-    throw Error("Need to Implement!");
+  traverseUntil(stop, stopSign="state"){
+    const nodez = [];
+    let getNextStruct = true;
+ 
+    do{
+
+      const { 
+        nodes, 
+        result 
+      } = this.traverser.getNextStruct(
+        {
+          states : this.states, 
+          statistics : this.statistics, 
+          history : this.history
+        }
+      );
+
+      if(nodes){
+        nodez.push(...nodes);
+      }
+      
+      if(stopSign == "state"){
+        if(this.traverser.currentState == stop){
+          getNextStruct = false;
+        }
+
+      }else if(stopSign == "result"){
+        if(result == stop){
+          getNextStruct = false;
+        }
+
+      }
+      if(result == structs.END_STATE){
+        getNextStruct = false;
+      }
+
+    }while(getNextStruct)
+
+    return nodez;
+    
+  }
+  traverseUntilState(stop){
+    
+    return this.traverseUntil(stop, stopSign="state");
   }
 
-  isStateABreak(){
+  traverseUntilResult(stop){
+
+    return this.traverseUntil(stop, stopSign="result");
+  }
+
+  isStateABreak(state){
     /*
 
 		if(this.whileStart !== undefined){
@@ -73,7 +122,7 @@ class Struct {
 
   }
 
-  isStateAContinue(){
+  isStateAContinue(state){
 
     /*
 		if(this.whileStart !== undefined){
@@ -117,6 +166,8 @@ class SimpleStruct extends Struct {
     this.traverser.currentState = transitions[0];
     this.history.push(this.state);
 
+
+
     return { nodes , result : this.getResultFromEvaluator() };
 
   }
@@ -130,19 +181,31 @@ class IfThenStruct extends Struct {
   }
 	
   simplify(){
-		
+    
+    let ifThenNode = null;
+    const testNode = this.getTestExpression();
     const transitions = this.getStateTransitions();
     const meta = this.getStateMeta();
     const convergedState = meta["ifThenConvergedState"];
 
+    const previousSeen = this.previousSeenInHistory(transitions);
+    
     this.traverser.currentState = convergedState == transitions[0] ? transitions[1] : transitions[0];
     this.history.push(this.state);
 
-    let getNextStruct = false;
+    if(previousSeen){
+      const isFirstTransition = previousSeen[0] == transitions[0] ? true : false;
+      const testExpression = isFirstTransition ?  testNode : t.unaryExpression("!",testNode);
+      ifThenNode = t.ifStatement(testExpression, t.blockStatement(t.continueStatement()));
 
+    }else{
 
-    const nodes = this.traverseUntil(stop=convergedState);
-    const ifThenNode = t.ifStatement(this.getTestExpression(), t.blockStatement(nodes));
+      const testExpression = convergedState == transition[1] ? testNode : t.unaryExpression("!", testNode)
+      const nodes = this.traverseUntilState(convergedState);
+      ifThenNode = t.ifStatement(testExpression, t.blockStatement(nodes));
+
+    }
+    this.traverser.currentState = convergedState == transitions[0] ? transitions[0] : transitions[1];
 
     return { nodes : [ifThenNode], result : this.getResultFromEvaluator()};
 
@@ -158,7 +221,23 @@ class IfThenElseStruct extends Struct {
 	
   simplify(){
 
-    return { nodes : [], result : this.getResultFromEvaluator() };
+    const transitions = this.getStateTransitions();
+    const meta = this.getStateMeta();
+    const convergedState = meta["ifThenElseConvergedState"];
+    this.history.push(this.state);
+
+    this.traverser.currentState = transitions[0];
+    const transitionANodes = this.traverseUntilState(convergedState);
+    this.traverser.currentState = transitions[1];
+    const transitionBNodes = this.traverseUntilState(convergedState);
+    
+    const ifThenElseNode = t.ifStatement(
+      this.getTestExpression(),
+      t.blockStatement(transitionANodes),
+      t.blockStatement(transitionBNodes)
+    );
+
+    return { nodes : [ifThenElseNode], result : this.getResultFromEvaluator() };
   }
 
 }
@@ -171,7 +250,55 @@ class WhileStruct extends Struct {
 	
   simplify(){
 
-    return false;
+    let whileNode = null;
+    const testNode = this.getTestExpression();
+    const transitions = this.getStateTransitions();
+    const meta = this.getStateMeta();
+    const convergedState = meta["ifThenConvergedState"];
+    const whileNonLoopState = meta["whileNonLoopState"];
+    const whileLoopState = meta["whileLoopState"];
+
+    const previousSeen = this.previousSeenInHistory(transitions);
+    let isLoop = false;
+    let isEndOfDoWhile = false;
+    let isBreak = false;
+
+    if(convergedState !== undefined){
+      if(convergedState == whileLoopState){
+        isEndOfDoWhile = true;
+      }else{
+        if(previousSeen){
+          isBreak = true;
+        }else{
+          isLoop = true;
+        }
+      }
+    }else{
+      isLoop = true;
+    }
+
+    this.history.push(this.state);
+
+    if(isEndOfDoWhile){
+
+    }
+
+    if(isBreak){
+
+    }
+
+    if(isLoop){
+      this.traverser.currentState = whileLoopState;
+      const nodes = this.traverseUntilResult(structs.DOES_NOT_CONVERGE);
+      const testExpression = convergedState == transition[1] ? testNode : t.unaryExpression("!", testNode)
+
+      whileNode = t.whileStatement(testExpression, t.blockStatement(nodes));
+
+
+    }
+
+    //return { nodes : [], result : this.getResultFromEvaluator() }; 
+    return { nodes : [whileNode], result : structs.END_STATE };
   }
 }
 
@@ -188,6 +315,26 @@ class DoWhileStruct extends Struct {
 
 
 }
+
+class DoesNotConvergeStruct extends Struct {
+  constructor(opts){
+    super(opts);
+  }
+	
+  simplify(){
+		
+    const nodes = this.states[this.state]["nodes"];
+    const transitions = this.getStateTransitions();
+		
+    this.history.push(this.state);
+
+
+    return { nodes : [], result : this.getResultFromEvaluator() };
+  }
+
+
+}
+
 
 class EndStateStruct extends Struct {
 
@@ -213,6 +360,7 @@ class EndStateStruct extends Struct {
 
 
 module.exports = {
+  DoesNotConvergeStruct,
   SimpleStruct,
   EndStateStruct,
   IfThenStruct,
