@@ -23,7 +23,10 @@ class Evaluator{
   interpret(state, mode=DEFAULT_MODE){
 
     let result = 0;
-    const meta = {};
+    const meta = {
+			"doesNotConverge" : false
+		};
+
 
     const useModez = this.getModes();
 
@@ -86,6 +89,7 @@ class Evaluator{
     const areBothNotNeeded = (!isTransitionANeeded && !isTransitionBNeeded);
     if(areBothNotNeeded){
       defaultResult["found"] = true;
+      defaultResult["meta"]["doesNotConverge"] = true;
     }
 
     return defaultResult;
@@ -198,6 +202,7 @@ class Evaluator{
       return defaultResult;
     }
 
+		const endStates = getEndStates(this.graph);
     const sourcesToState =  getSourcesToState(state, this.graph);
 
 
@@ -206,6 +211,8 @@ class Evaluator{
     const isTransitionANeeded = isMaybeNeeded(transitionASources, state, this.graph);
     const isTransitionBNeeded = isMaybeNeeded(transitionBSources, state, this.graph);
     const areBothNotNeeded = (!isTransitionANeeded && !isTransitionBNeeded);
+
+
 
     if(!areBothNotNeeded){
       const neededTransition = isTransitionANeeded ? transitions[0] : transitions[1];
@@ -229,7 +236,36 @@ class Evaluator{
           break;
         }
       }
-    }
+    }else{
+			for(let st of sourcesToState){
+				for(let tr of transitions){
+					if(tr == st){
+						defaultResult["found"] = true;
+						defaultResult["meta"]["whileNonLoopState"] = tr == transitions[0] ? transitions[1] : transitions[0];
+						defaultResult["meta"]["whileLoopState"] = tr;
+						defaultResult["meta"]["whileStart"] = state;
+
+						return defaultResult;
+					}
+					const hasOwnState = (n) => n.target().map(getEleId)[0] == state;
+					const hasNeededTransition = (n) => n.target().map(getEleId)[0] == ( tr == transitions[0] ? transitions[1] : transitions[0]);
+					const filterDirectOnly = (n) => hasOwnState(n) || hasNeededTransition(n);
+					const shortestPath = getShortestPath(tr, st, this.graph);
+
+					const isDirectPath = !shortestPath.some(filterDirectOnly);
+
+					if(isDirectPath && shortestPath.size()){
+
+						defaultResult["found"] = true;
+						defaultResult["meta"]["whileNonLoopState"] = tr == transitions[0] ? transitions[1] : transitions[0];
+						defaultResult["meta"]["whileLoopState"] = tr;
+						defaultResult["meta"]["whileStart"] = state;
+						return defaultResult;
+					}
+				}
+      }
+
+		}
     return defaultResult;
 
   }

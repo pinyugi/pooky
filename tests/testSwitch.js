@@ -33,6 +33,9 @@ const tree = {
   'pooky-k7qC' : fromFile("fixtures/pookyparts/k7qC.js"),
   'pooky-s1Z' : fromFile("fixtures/pookyparts/s1Z.js"),
   'pooky-Z2Z' : fromFile("fixtures/pookyparts/Z2Z.js"),
+  'pooky-q9qC' : fromFile("fixtures/pookyparts/q8qC.js"),
+  'pooky-H9qC' : fromFile("fixtures/pookyparts/H9qC.js"),
+  'pooky-M7w' : fromFile("fixtures/pookyparts/M7w.js"),
 };
 
 //const states = {};
@@ -59,14 +62,13 @@ SWITCH_TRANSITION_VISITOR = {
       //console.log("nodes:", nodes);
 
 
-      currentlimit += 1
 
     }
   }
 }
 
 let currentTree;
-currentTree = tree['pooky-Z2Z'];
+currentTree = tree['pooky-H9qC'];
 //currentTree = tree['do_and_while_loop_inside_loop_B'];
 //currentTree = tree['do_while_loop'];
 //currentTree = tree['while_loop'];

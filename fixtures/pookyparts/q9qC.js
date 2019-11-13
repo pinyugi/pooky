@@ -30,8 +30,14 @@ function a(){
         q9qC = d7qC[m9qC[8]](m9qC[9]) && typeof d7qC[m9qC[10]] === m9qC[11] ? 10 : 20;
         break;
       case 35:
-        q9qC = h7qC === 2 ? 34 : 21;
+        //q9qC = h7qC === 2 ? 34 : 21;
+        q9qC = h7qC === 2 ? 34 : 211;
         break;
+
+			case 211:
+				q9qC = 21;
+				break;
+
       case 15:
         q9qC = m9qC[46] in d7qC[m9qC[47]][m9qC[48]] ? 27 : 25;
         break;
@@ -327,7 +333,8 @@ function a(){
         break;
       case 33:
         h7qC = 1;
-        q9qC = 21;
+        //q9qC = 21;
+        q9qC = 38;
         break;
       case 34:
         (function() {
