@@ -34,9 +34,9 @@ class StructTraverser{
 
       case (structs.WHILE_LOOP):
       case (structs.WHILE_LOOP | structs.DOES_NOT_CONVERGE): //34
-			case (structs.WHILE_LOOP | structs.IF_THEN):// 40
-			case (structs.WHILE_LOOP | structs.IF_THEN | structs.DOES_NOT_CONVERGE):// 42
-			case (structs.WHILE_LOOP | structs.IF_THEN_ELSE):// 48
+      case (structs.WHILE_LOOP | structs.IF_THEN):// 40
+      case (structs.WHILE_LOOP | structs.IF_THEN | structs.DOES_NOT_CONVERGE):// 42
+      case (structs.WHILE_LOOP | structs.IF_THEN_ELSE):// 48
       case (structs.WHILE_LOOP | structs.IF_THEN_ELSE | structs.DOES_NOT_CONVERGE): //50
         return new WhileStruct({state : currentState, traverser : this, ...opts}).simplify();
 			
