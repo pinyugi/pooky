@@ -14,7 +14,6 @@ const G = {
 
 
     const maybeNeeded = graph.$(G.toId(state)).successors().edges();
-    const maybeNeeded2 = graph.$(G.toId(state)).successors().edges();
     const getTarget = (n) => `${n.target().map(G.getEleId)[0]}`;
 
     isNeeded = !maybeNeeded.some((n) => endStates.map(G.getEleId).includes(getTarget(n)));

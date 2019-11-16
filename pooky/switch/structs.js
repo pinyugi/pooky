@@ -111,27 +111,21 @@ class Struct {
 
   isStateABreak(state){
     /*
-
-		if(this.whileStart !== undefined){
-			return this.state == this.whileNonLoopState;
-
 		}
 		*/
 
-    return false;
+    //return false;
 
   }
 
   isStateAContinue(state){
 
     /*
-		if(this.whileStart !== undefined){
-			return this.state == this.whileLoopState;
 
 		}
 		*/
 
-    return false;
+    //return false;
 
 
   }

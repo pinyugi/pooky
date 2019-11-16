@@ -230,7 +230,6 @@ const {
   isConditionalTransition,
   createTransition,
   createConditionalTransition,
-  Transition,
 } = require("./transition.js");
 
 

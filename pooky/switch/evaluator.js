@@ -130,8 +130,6 @@ class Evaluator{
       return defaultResult;
     }
 		
-    const edgeId = (st, t) => `[id = "${st}->${t}"]`
-
     const convergedState = findConvergence(state, this.graph);
 
     if(convergedState){
@@ -202,9 +200,7 @@ class Evaluator{
       return defaultResult;
     }
 
-    const endStates = getEndStates(this.graph);
     const sourcesToState =  getSourcesToState(state, this.graph);
-
 
     const transitionASources = Array.from(getSourcesToState(transitions[0], this.graph), s => toEdgeId(s, transitions[0]));
     const transitionBSources = Array.from(getSourcesToState(transitions[1], this.graph), s => toEdgeId(s, transitions[1]));
@@ -287,7 +283,6 @@ class Evaluator{
       return defaultResult;
     }
 
-    const endStates = getEndStates(this.graph);
     const sourcesToState =  getSourcesToState(state, this.graph);
 
     if(sourcesToState.length == 1){
@@ -304,7 +299,6 @@ class Evaluator{
 
           defaultResult["found"] = true;
 
-          const endLoopState = sources.map((n) => n.target().map(getEleId)[0]);
           const sourceTransitionA = getTargetFromEdgeId(edgesId[0]);
           const sourceTransitionB = getTargetFromEdgeId(edgesId[1]);
 
@@ -346,7 +340,6 @@ const { structs } = require("./structs.js");
 const {
   isMaybeNeeded,
   getEleId,
-  getNodeData,
   toId,
   toEdgeId,
   getTargetFromEdgeId,
@@ -355,7 +348,6 @@ const {
   getStateTransitions,
   getSourcesToState,
   getShortestPath,
-  getDiffOnSuccessorsAndPredecessors,
   findConvergence,
   isInsideLoop
 } = require("./graph.js");
