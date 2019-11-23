@@ -45,6 +45,7 @@ const utils = {
    
     return path.type == "ForStatement" &&
       path.get("init").node === null &&
+      path.get("update").node == null &&
       path.get("test").type == "BinaryExpression" &&
       path.get("test.operator").node == "!==" &&
       utils.hasGoToSibling(path);

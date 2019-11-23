@@ -7,15 +7,17 @@ class Evaluator{
   }
 
   getModes(filter){
-    const modez = {};
-    modez[structs.INFINITE_LOOP] = this.isInfiniteLoop.bind(this);
-    modez[structs.DOES_NOT_CONVERGE] = this.isNotConverging.bind(this);
-    modez[structs.SIMPLE] = this.isSimple.bind(this);
-    modez[structs.IF_THEN] = this.isIfThen.bind(this);
-    modez[structs.IF_THEN_ELSE] = this.isIfThenElse.bind(this);
-    modez[structs.DO_WHILE_LOOP] = this.isDoWhileLoop.bind(this);
-    modez[structs.WHILE_LOOP] = this.isWhileLoop.bind(this);
-    modez[structs.END_STATE] = this.isEndState.bind(this);
+    const modez = {
+      [structs.INFINITE_LOOP] : this.isInfiniteLoop.bind(this),
+      [structs.DOES_NOT_CONVERGE] : this.isNotConverging.bind(this),
+      [structs.SIMPLE] : this.isSimple.bind(this),
+      [structs.IF_THEN] : this.isIfThen.bind(this),
+      [structs.IF_THEN_ELSE] : this.isIfThenElse.bind(this),
+      [structs.DO_WHILE_LOOP] : this.isDoWhileLoop.bind(this),
+      [structs.WHILE_LOOP] : this.isWhileLoop.bind(this),
+      [structs.END_STATE] : this.isEndState.bind(this),
+      [structs.SAME_TRANSITION] : this.isSameTransition.bind(this)
+    };
 
     return modez;
   }
@@ -74,7 +76,7 @@ class Evaluator{
     const defaultResult = {
       found : false,
       meta : {}
-    }
+    };
 
     const { hasTransitions, transitions } = getStateTransitions(state, this.graph);
 
@@ -156,7 +158,7 @@ class Evaluator{
       return defaultResult;
     }
 
-    const edgeId = (st, t) => `[id = "${st}->${t}"]`
+    const edgeId = (st, t) => `[id = "${st}->${t}"]`;
     const cutTransitionA = this.graph.$(edgeId(state, transitions[0])).remove();
     const cutTransitionB = this.graph.$(edgeId(state, transitions[1])).remove();
     const successorsA = this.graph.$(toId(transitions[0])).successors().edges();
@@ -167,8 +169,9 @@ class Evaluator{
     if(diff.left.size() && diff.right.size()){
       const lastEdgeA = diff.left.slice(-1).map((n) => n.target().map(getEleId)[0]);
       const lastEdgeB = diff.right.slice(-1).map((n) => n.target().map(getEleId)[0]);
-    
-      if(lastEdgeA[0] == lastEdgeB[0]){
+
+      //Make sure our converged state is not our own state because that will mean it is actually a while loop
+      if(lastEdgeA[0] == lastEdgeB[0] && lastEdgeA[0] !== state){
         defaultResult["found"] = true;
         defaultResult["meta"]["ifThenElseConvergedState"] = lastEdgeA[0];
       }
@@ -208,15 +211,13 @@ class Evaluator{
     const isTransitionBNeeded = isMaybeNeeded(transitionBSources, state, this.graph);
     const areBothNotNeeded = (!isTransitionANeeded && !isTransitionBNeeded);
 
-
-
     if(!areBothNotNeeded){
       const neededTransition = isTransitionANeeded ? transitions[0] : transitions[1];
       const notNeededTransition = isTransitionANeeded ? transitions[1] : transitions[0];
 
       const hasOwnState = (n) => n.target().map(getEleId)[0] == state;
       const hasNeededTransition = (n) => n.target().map(getEleId)[0] == neededTransition;
-      const filterDirectOnly = (n) => hasOwnState(n) || hasNeededTransition(n)
+      const filterDirectOnly = (n) => hasOwnState(n) || hasNeededTransition(n);
 
       for(let st of sourcesToState){
         const shortestPath = getShortestPath(notNeededTransition, st, this.graph);
@@ -331,6 +332,28 @@ class Evaluator{
 
     return defaultResult;
   }
+
+  isSameTransition(state){
+		
+    const defaultResult = {
+      found : false,
+      meta : {}
+    };
+
+    const { hasTransitions, transitions } = getStateTransitions(state, this.graph);
+		
+    if(!hasTransitions) {
+      defaultResult["found"] = false;
+    }
+
+    if(transitions.includes(state)){
+      defaultResult["found"] = true;
+    }
+
+    return defaultResult;
+
+  }
+
 
 }
 

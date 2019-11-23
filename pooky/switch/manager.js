@@ -9,14 +9,16 @@ class StateManager {
     this.terminal = new Set();
     this.initial = null;
     
-    if(states !== undefined && states.length) for(let state of states) this.addState(state);
+    if(states !== undefined && states.length){
+      for(let state of states) this.addState(state);
+    }
   }
   
   addState(state, update=1){
-    if(
-      !this.states.hasOwnProperty(state)  ||
-		  (this.states.hasOwnProperty(state) && update)
-    ) this.states[state.name] = state;
+    if(!this.states.hasOwnProperty(state)  ||
+      (this.states.hasOwnProperty(state) && update)) 
+
+      this.states[state.name] = state;
   
   }
   
@@ -28,7 +30,7 @@ class StateManager {
   getStateNodes(state){
     let stateNodes = [];
     const _state = this.getState(state);
-    return _state ? _state.getNodes() : 0
+    return _state ? _state.getNodes() : 0;
   }
   
   getStateName(state){
@@ -36,7 +38,7 @@ class StateManager {
   }
 	
   getInitialState(){
-    return this.initial !== undefined ? this.getState(this.initial) : 0
+    return this.initial !== undefined ? this.getState(this.initial) : 0;
   }
 
   removeState(state){
@@ -63,7 +65,7 @@ class StateManager {
         "State " +
         name +
         " does not exist.Thus cannot be set as the initial state."
-      )}
+      );}
     this.initial = name;
 
   }
@@ -76,7 +78,6 @@ class StateManager {
   setupGraph(){
 
     this.graph = cytoscape();
-
     const elems = [];
 
     for(let name of Object.keys(this.states)){
@@ -116,7 +117,7 @@ class StateManager {
   }
 
 	
-  simplify(){
+  simplify(path){
 
     const { states, statistics } = this.traverser.visitAll();
     const history = [];
@@ -142,9 +143,10 @@ class StateManager {
         getNextStruct = false;
       }
 
-    }while(getNextStruct)
-
-    return nodez;
+    }while(getNextStruct);
+		
+    path.getPrevSibling().remove();
+    path.replaceWithMultiple(nodez);
 		
   }
 

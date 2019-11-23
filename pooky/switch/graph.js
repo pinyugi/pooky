@@ -35,7 +35,7 @@ const G = {
 	
   getNodeData(state, graph){
     const stateId = G.toId(state);
-    const data = graph.$(stateId).map((n) => { return n.data()});
+    const data = graph.$(stateId).map((n) => { return n.data();});
 
     return data.length ? data[0] : false;
   },
@@ -71,7 +71,7 @@ const G = {
   getStateTransitions(state, graph){
 
     const stateId = G.toId(state);
-    const data = G.getNodeData(state, graph)
+    const data = G.getNodeData(state, graph);
 
     let hasTransitions = false;
     let transitions = [];
@@ -83,7 +83,7 @@ const G = {
     return {
       'hasTransitions' : hasTransitions,
       'transitions' : transitions
-    }
+    };
 
   },
 

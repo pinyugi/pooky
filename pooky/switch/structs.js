@@ -11,7 +11,8 @@ const structs = {
   IF_THEN_ELSE : 16,
   WHILE_LOOP : 32,
   DO_WHILE_LOOP : 64, 
-  END_STATE : 128
+  END_STATE : 128,
+  SAME_TRANSITION : 256
 };
 
 
@@ -30,11 +31,10 @@ class Struct {
   }
 
   previousSeenInHistory(states){
-    return states.filter(s=> this.history.indexOf(s) >= 0)
+    return states.filter(s => this.history.indexOf(s) >= 0);
   }
 
   getStateTransitions(){
-
     const transition = this.states[this.state]["transition"];
     if(transition === null){
       return [];
@@ -48,17 +48,21 @@ class Struct {
   }
 
   getStateMeta(){
+
     return this.states[this.state]["meta"];
   }
 
   getTestExpression(){
 
     return this.states[this.state]["transition"]["test"];
-	
   }
 
+  getEndStates(){
+    return this.states["endStates"];
 
-  traverseUntil(stop, stopSign="state"){
+  }
+
+  traverseUntilStates(stopStates){
     const nodez = [];
     let getNextStruct = true;
  
@@ -74,74 +78,45 @@ class Struct {
           history : this.history
         }
       );
-
       if(nodes){
         nodez.push(...nodes);
       }
       
-      if(stopSign == "state"){
-        if(this.traverser.currentState == stop){
-          getNextStruct = false;
-        }
-
-      }else if(stopSign == "result"){
-        if(result == stop){
-          getNextStruct = false;
-        }
-
+      if(stopStates.includes(this.traverser.currentState)){
+        getNextStruct = false;
       }
+      
       if(result == structs.END_STATE){
         getNextStruct = false;
       }
 
-    }while(getNextStruct)
+    }while(getNextStruct);
 
     return nodez;
     
   }
-  traverseUntilState(stop){
-    
-    return this.traverseUntil(stop, stopSign="state");
-  }
 
-  traverseUntilResult(stop){
+	isWhileLoop(){
 
-    return this.traverseUntil(stop, stopSign="result");
-  }
+		const result = this.getResultFromEvaluator();
+		const transitions = this.getStateTransitions();
+		const maybeLoop = structs.WHILE_LOOP; 
+		const maybeLoopWithBreak = structs.WHILE_LOOP | structs.IF_THEN;
+		const maybeLoopWithEndState = structs.WHILE_LOOP | structs.DOES_NOT_CONVERGE;
+		const maybeLoopTypes = [maybeLoop, maybeLoopWithBreak, maybeLoopWithEndState];
 
-  isStateABreak(state){
-    /*
+		if(!maybeLoopTypes.includes(result)){
+			return false;
 		}
-		*/
 
-    //return false;
+		return this.previousSeenInHistory(transitions);
 
-  }
+	}
 
-  isStateAContinue(state){
-
-    /*
-
-		}
-		*/
-
-    //return false;
+	isEndOfDoWhileLoop(){
+	}
 
 
-  }
-
-  isStateADoWhileEndState(){
-		
-    /*
-		if(this.doWhileEndStates !== undefined){
-			return Object.keys(this.doWhileEndStates).includes(this.state);
-		}
-		*/
-
-    return false;
-
-
-  }
 
 }
 
@@ -159,8 +134,6 @@ class SimpleStruct extends Struct {
 		
     this.traverser.currentState = transitions[0];
     this.history.push(this.state);
-
-
 
     return { nodes , result : this.getResultFromEvaluator() };
 
@@ -181,25 +154,44 @@ class IfThenStruct extends Struct {
     const transitions = this.getStateTransitions();
     const meta = this.getStateMeta();
     const convergedState = meta["ifThenConvergedState"];
-
-    const previousSeen = this.previousSeenInHistory(transitions);
     
-    this.traverser.currentState = convergedState == transitions[0] ? transitions[1] : transitions[0];
     this.history.push(this.state);
+    this.traverser.currentState = convergedState == transitions[0] ? transitions[1] : transitions[0];
 
-    if(previousSeen){
-      const isFirstTransition = previousSeen[0] == transitions[0] ? true : false;
-      const testExpression = isFirstTransition ?  testNode : t.unaryExpression("!",testNode);
-      ifThenNode = t.ifStatement(testExpression, t.blockStatement(t.continueStatement()));
+    const testExpression = convergedState == transitions[1] ? testNode : t.unaryExpression("!", testNode);
+    const nodes = this.traverseUntilStates([convergedState]);
+    ifThenNode = t.ifStatement(testExpression, t.blockStatement(nodes));
 
-    }else{
+    this.traverser.currentState = convergedState;
 
-      const testExpression = convergedState == transition[1] ? testNode : t.unaryExpression("!", testNode)
-      const nodes = this.traverseUntilState(convergedState);
-      ifThenNode = t.ifStatement(testExpression, t.blockStatement(nodes));
+    return { nodes : [ifThenNode], result : this.getResultFromEvaluator()};
 
-    }
-    this.traverser.currentState = convergedState == transitions[0] ? transitions[0] : transitions[1];
+  }
+
+}
+
+class IfThenInsideLoopStruct extends Struct {
+
+  constructor(opts){
+    super(opts);
+  }
+	
+  simplify(){
+    
+    let ifThenNode = null;
+    const testNode = this.getTestExpression();
+    const transitions = this.getStateTransitions();
+    const meta = this.getStateMeta();
+    const convergedState = meta["ifThenConvergedState"];
+    
+    this.history.push(this.state);
+    this.traverser.currentState = convergedState == transitions[0] ? transitions[1] : transitions[0];
+
+    const testExpression = convergedState == transitions[1] ? testNode : t.unaryExpression("!", testNode);
+    const nodes = this.traverseUntilStates([convergedState]);
+    ifThenNode = t.ifStatement(testExpression, t.blockStatement(nodes));
+
+    this.traverser.currentState = convergedState;
 
     return { nodes : [ifThenNode], result : this.getResultFromEvaluator()};
 
@@ -221,9 +213,38 @@ class IfThenElseStruct extends Struct {
     this.history.push(this.state);
 
     this.traverser.currentState = transitions[0];
-    const transitionANodes = this.traverseUntilState(convergedState);
+    const transitionANodes = this.traverseUntilStates([convergedState]);
     this.traverser.currentState = transitions[1];
-    const transitionBNodes = this.traverseUntilState(convergedState);
+    const transitionBNodes = this.traverseUntilStates([convergedState]);
+    
+    const ifThenElseNode = t.ifStatement(
+      this.getTestExpression(),
+      t.blockStatement(transitionANodes),
+      t.blockStatement(transitionBNodes)
+    );
+
+    return { nodes : [ifThenElseNode], result : this.getResultFromEvaluator() };
+  }
+
+}
+
+class IfThenElseInsideLoopStruct extends Struct {
+
+  constructor(opts){
+    super(opts);
+  }
+	
+  simplify(){
+
+    const transitions = this.getStateTransitions();
+    const meta = this.getStateMeta();
+    const convergedState = meta["ifThenElseConvergedState"];
+    this.history.push(this.state);
+
+    this.traverser.currentState = transitions[0];
+    const transitionANodes = this.traverseUntilStates([convergedState]);
+    this.traverser.currentState = transitions[1];
+    const transitionBNodes = this.traverseUntilStates([convergedState]);
     
     const ifThenElseNode = t.ifStatement(
       this.getTestExpression(),
@@ -244,55 +265,44 @@ class WhileStruct extends Struct {
 	
   simplify(){
 
-    let whileNode = null;
+		let whileNode = null;
     const testNode = this.getTestExpression();
     const transitions = this.getStateTransitions();
     const meta = this.getStateMeta();
-    const convergedState = meta["ifThenConvergedState"];
+
     const whileNonLoopState = meta["whileNonLoopState"];
     const whileLoopState = meta["whileLoopState"];
-
-    const previousSeen = this.previousSeenInHistory(transitions);
-    let isLoop = false;
-    let isEndOfDoWhile = false;
-    let isBreak = false;
-
-    if(convergedState !== undefined){
-      if(convergedState == whileLoopState){
-        isEndOfDoWhile = true;
-      }else{
-        if(previousSeen){
-          isBreak = true;
-        }else{
-          isLoop = true;
-        }
-      }
-    }else{
-      isLoop = true;
-    }
+    const endStates = this.getEndStates();
 
     this.history.push(this.state);
 
-    if(isEndOfDoWhile){
+		if(this.isWhileLoop()){
+			return { nodes : [whileNode], result : this.getResultFromEvaluator() };
 
-    }
+		}
 
-    if(isBreak){
+		const opts = {
+			state : this.state,
+			states : this.states,
+			statistics : this.statistics,
+			history : this.history,
+			traverser : this.traverser
+		};
 
-    }
+		return this.getResultFromEvaluator() & structs.IF_THEN ? IfThenInsideLoopStruct(...opts) : IfThenElseInsideLoopStruc(...opts);
+  }
 
-    if(isLoop){
-      this.traverser.currentState = whileLoopState;
-      const nodes = this.traverseUntilResult(structs.DOES_NOT_CONVERGE);
-      const testExpression = convergedState == transition[1] ? testNode : t.unaryExpression("!", testNode)
+}
 
-      whileNode = t.whileStatement(testExpression, t.blockStatement(nodes));
+class EndOfDoWhileStruct extends Struct {
 
+  constructor(opts){
+    super(opts);
+  }
 
-    }
+  simplify(){
 
-    //return { nodes : [], result : this.getResultFromEvaluator() }; 
-    return { nodes : [whileNode], result : structs.END_STATE };
+    return { nodes : [], result : this.getResultFromEvaluator() };
   }
 }
 
@@ -322,13 +332,10 @@ class DoesNotConvergeStruct extends Struct {
 		
     this.history.push(this.state);
 
-
     return { nodes : [], result : this.getResultFromEvaluator() };
   }
 
-
 }
-
 
 class EndStateStruct extends Struct {
 
@@ -343,14 +350,29 @@ class EndStateStruct extends Struct {
 		
     this.history.push(this.state);
 
-
     return { nodes : [], result : this.getResultFromEvaluator() };
   }
-
 
 }
 
 
+class SameTransitionStruct extends Struct {
+
+  constructor(opts){
+    super(opts);
+  }
+	
+  simplify(){
+		
+    const nodes = this.states[this.state]["nodes"];
+    const transitions = this.getStateTransitions();
+		
+    this.history.push(this.state);
+
+    return { nodes : [], result : this.getResultFromEvaluator() };
+  }
+
+}
 
 
 module.exports = {
@@ -358,8 +380,12 @@ module.exports = {
   SimpleStruct,
   EndStateStruct,
   IfThenStruct,
+  IfThenInsideLoopStruct,
   IfThenElseStruct,
+  IfThenElseInsideLoopStruct,
   WhileStruct,
   DoWhileStruct,
+  EndOfDoWhileStruct,
+  SameTransitionStruct,
   structs
 };
