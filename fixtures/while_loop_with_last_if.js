@@ -1,7 +1,6 @@
 /*
 var x = 5;
 while( x == 5){
-
     if(x == 3){
         d = 1;
         d();
@@ -30,10 +29,12 @@ function while_loop_with_last_if(){
   var state = 1;
   for (; state !== 99; ) {
     switch (state) {
+
       case 1:
         var x = 5;
         state = 2;
         break;
+
       case 2:
         state = x == 5 ? 3 : 11;
         break;
@@ -60,11 +61,12 @@ function while_loop_with_last_if(){
         state = 2;
         //state = 66;
         break;
-    /*
+      /* 
       case 66:
         return;
         break;
-    */
+      */
+    
 
       case 7:
         okay.l = 'a';
@@ -73,13 +75,15 @@ function while_loop_with_last_if(){
 
       case 8:
         state = y == 3 ? 9 : 10;
+        //state = y == 3 ? 9 : 2;
         break;
 
       case 9:
         x = 3;
+        //state = 11;
         state = 10;
+        //state = 2;
         break;
-
       case 10:
         p = 3;
         state = 2;

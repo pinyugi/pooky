@@ -15,27 +15,8 @@ const {
 
 
 const tree = {
-  'if_then' : fromFile("flowcharts/if_then.js"),
-  'if_then_else' : fromFile("flowcharts/if_then_else.js"),
-  'if_then_in_a_loop' : fromFile("flowcharts/if_then_in_a_loop.js"),
-  'do_while_loop' : fromFile("flowcharts/do_while_loop.js"),
-  'do_and_while_loop' : fromFile("flowcharts/do_and_while_loop.js"),
-  'do_and_while_loop_inside_loop' : fromFile("flowcharts/do_and_while_loop_inside_loop.js"),
-  'do_and_while_loop_inside_loop_B' : fromFile("flowcharts/do_and_while_loop_inside_loop_B.js"),
-  'while_loop' : fromFile("flowcharts/while_loop.js"),
-  'while_loop_no_ancestors' : fromFile("flowcharts/while_loop_no_ancestors.js"),
-  'while_loop_inside_loop' : fromFile("flowcharts/while_loop_inside_loop.js"),
-  'infinite_loop' : fromFile("flowcharts/infinite_loop.js"),
-  'pooky' : fromFile("fixtures/pooky.min.b7a5e4c22669c5887624.js"),
-  'pooky-i89C' : fromFile("fixtures/pookyparts/i89C.js"),
-  'pooky-X1mC' : fromFile("fixtures/pookyparts/X1mC.js"),
-  'pooky-H9VC' : fromFile("fixtures/pookyparts/H9VC.js"),
-  'pooky-k7qC' : fromFile("fixtures/pookyparts/k7qC.js"),
-  'pooky-s1Z' : fromFile("fixtures/pookyparts/s1Z.js"),
-  'pooky-Z2Z' : fromFile("fixtures/pookyparts/Z2Z.js"),
-  'pooky-q9qC' : fromFile("fixtures/pookyparts/q8qC.js"),
   'pooky-H9qC' : fromFile("fixtures/pookyparts/H9qC.js"),
-  'pooky-M7w' : fromFile("fixtures/pookyparts/M7w.js"),
+  'pooky-R7qC' : fromFile("fixtures/R7qC.js")
 };
 
 //const states = {};
@@ -51,13 +32,13 @@ SWITCH_TRANSITION_VISITOR = {
 
     if (utils.isForAGoToSwitch(path)) {
       const stateHolderName = utils.getStateHolderName(path);
+      console.log("stateHolderName:", stateHolderName);
 
       const initialState = utils.getInitialState(path);
       const manager = StateManager.fromPath(path);
-      const nodes = manager.simplify();
+      manager.simplify(path);
 
-      path.getPrevSibling().remove();
-      path.replaceWithMultiple(nodes);
+
 
       //console.log("nodes:", nodes);
 
@@ -68,7 +49,8 @@ SWITCH_TRANSITION_VISITOR = {
 }
 
 let currentTree;
-currentTree = tree['pooky-H9qC'];
+//currentTree = tree['pooky-H9qC'];
+currentTree = tree['pooky-R7qC'];
 //currentTree = tree['do_and_while_loop_inside_loop_B'];
 //currentTree = tree['do_while_loop'];
 //currentTree = tree['while_loop'];

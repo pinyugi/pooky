@@ -6,12 +6,18 @@ class State{
 
   constructor(name){
 
-    this.name = name;
+    this._name = name;
     this.nodes = [];
     this.transition = null;
   }
 
+	get name() {
+		return parseInt(this._name, 10);
+	}
 
+	set name(value) {
+		this._name = value;
+	}
 
   setTransition(transition, update=1){
     if(transition !== null && transition instanceof Transition){

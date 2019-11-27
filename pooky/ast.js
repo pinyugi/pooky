@@ -2,11 +2,15 @@ const fs = require("fs");
 const parser = require('@babel/parser').parse; 
 
 const fromFile = (file) => {
-  return parser(fs.readFileSync(file, {encoding: "UTF-8"}).toString().replace(/^\uFEFF/, ''), {sourceType: 'script'});
+  const ast = parser(fs.readFileSync(file, {encoding: "UTF-8"}).toString().replace(/^\uFEFF/, ''));
+	delete ast.comments;
+	return ast;
 
 };
 const fromString = (string) => {
-  return parser(string, {sourceType: 'script'} );
+  const ast = parser(string);
+	delete ast.comments;
+	return ast;
 };
 
 module.exports ={

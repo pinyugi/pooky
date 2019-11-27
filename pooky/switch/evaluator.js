@@ -21,6 +21,19 @@ class Evaluator{
 
     return modez;
   }
+
+	cleanMeta(meta){
+		Object.keys(meta).forEach((key) => {
+			if(_.isString(meta[key])){
+				meta[key] = parseInt(meta[key], 10);
+			}
+    });
+
+		return meta
+
+
+	}
+
 	
   interpret(state, mode=DEFAULT_MODE){
 
@@ -38,7 +51,7 @@ class Evaluator{
 
         if(found){
           result += parseInt(modez);
-          Object.assign(meta, newMeta);
+          Object.assign(meta, this.cleanMeta(newMeta));
         }
       }
     }
@@ -73,6 +86,7 @@ class Evaluator{
   }
 
   isNotConverging(state){
+
     const defaultResult = {
       found : false,
       meta : {}
@@ -89,9 +103,16 @@ class Evaluator{
     const isTransitionANeeded = isMaybeNeeded(transitionASources, state, this.graph);
     const isTransitionBNeeded = isMaybeNeeded(transitionBSources, state, this.graph);
     const areBothNotNeeded = (!isTransitionANeeded && !isTransitionBNeeded);
+
     if(areBothNotNeeded){
-      defaultResult["found"] = true;
-      defaultResult["meta"]["doesNotConverge"] = true;
+
+			const { found : isIfThenElse } = this.isIfThenElse(state);
+
+			if(!isIfThenElse){
+				defaultResult["found"] = true;
+				defaultResult["meta"]["doesNotConverge"] = true;
+			}
+
     }
 
     return defaultResult;
@@ -174,8 +195,8 @@ class Evaluator{
       if(lastEdgeA[0] == lastEdgeB[0] && lastEdgeA[0] !== state){
         defaultResult["found"] = true;
         defaultResult["meta"]["ifThenElseConvergedState"] = lastEdgeA[0];
-      }
-    }
+			}
+		}
 
     cutTransitionA.restore();
     cutTransitionB.restore();
@@ -204,6 +225,10 @@ class Evaluator{
     }
 
     const sourcesToState =  getSourcesToState(state, this.graph);
+
+		if(sourcesToState.length < 2){
+			return defaultResult;
+		}
 
     const transitionASources = Array.from(getSourcesToState(transitions[0], this.graph), s => toEdgeId(s, transitions[0]));
     const transitionBSources = Array.from(getSourcesToState(transitions[1], this.graph), s => toEdgeId(s, transitions[1]));
@@ -358,6 +383,7 @@ class Evaluator{
 }
 
 
+const _ = require("lodash");
 const { structs } = require("./structs.js");
 
 const {

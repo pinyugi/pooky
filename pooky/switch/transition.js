@@ -12,19 +12,28 @@ class Transition {
 
   constructor(config){
 
-    this.states = [];
+    this._states = [];
     this.setStates(config.states || this.states);
     this.setTest(config.test || null);
     this.setType(config.type);
 
   }
 
+	get states(){
+		return this._states.map((s) => parseInt(s, 10));
+	}
+
+	set states(newStates){
+		this._states = newStates;
+
+	}
+
   isConditional(){
     return this.type === transitions.DUAL_PATH;
   }
 
   hash(){
-	  return [this.states.join(","), this.type, this.test].join("|");
+	  return [this._states.join(","), this.type, this.test].join("|");
 
   }
 
@@ -38,7 +47,7 @@ class Transition {
     for(let state of states){
       try{
         t.assertNode(state);
-        this.states.push(state.node.value);
+        this._states.push(state.node.value);
 
       }catch(e){
         if(!state || !(state instanceof String)){
@@ -46,7 +55,7 @@ class Transition {
 					"the state name in the value, or a state name as a string value");
         }
 
-        this.states.push(state);
+        this._states.push(state);
       }
     }	
 

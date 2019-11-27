@@ -116,7 +116,6 @@ class StateManager {
 
   }
 
-	
   simplify(path){
 
     const { states, statistics } = this.traverser.visitAll();

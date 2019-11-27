@@ -1,6 +1,6 @@
 
 const G = {
-	
+
   isMaybeNeeded(edges, state, graph){
 
     let isNeeded = false;
@@ -11,7 +11,6 @@ const G = {
     for(edgeId of edges){
       removedStates.push(graph.$(`[id = "${edgeId}"]`).remove());
     }
-
 
     const maybeNeeded = graph.$(G.toId(state)).successors().edges();
     const getTarget = (n) => `${n.target().map(G.getEleId)[0]}`;
@@ -63,7 +62,7 @@ const G = {
   getStateSuccessors(state, graph, element="edges"){
 			
     return element == "nodes"
-      ? graph.$(G.toId(state)).successors().nodes() 
+      ? graph.$(G.toId(state)).successors().nodes()
       : graph.$(G.toId(state)).successors().edges();
 
   },
@@ -71,7 +70,6 @@ const G = {
   getStateTransitions(state, graph){
 
     const stateId = G.toId(state);
-    const data = G.getNodeData(state, graph);
 
     let hasTransitions = false;
     let transitions = [];
@@ -88,7 +86,6 @@ const G = {
   },
 
   getSourcesToState(state, graph){
-    const query = `[target = "${state}"]`;
     return graph.$(`[target = "${state}"]`).sources().map(G.getEleId);
   },
 
@@ -133,12 +130,11 @@ const G = {
       return false;
     }
 
-    const targetsToA = graph.$(`[target = "${transitions[0]}"]`).map((n) => n.source().map(G.getEleId)[0]);
-    const targetsToB = graph.$(`[target = "${transitions[1]}"]`).map((n) => n.source().map(G.getEleId)[0]);
+    const targetsToA = graph.$(`[target = "${transitions[0]}"]`).map((n) => n.source().map(G.getEleId)[0]).filter((n) => n !== state);
+    const targetsToB = graph.$(`[target = "${transitions[1]}"]`).map((n) => n.source().map(G.getEleId)[0]).filter((n) => n !== state);
 
-
-    if(targetsToA.length > 1 || targetsToB.length > 1){
-      return targetsToA.length == 2 ? transitions[0] : transitions[1];
+    if(targetsToA.length > 0 || targetsToB.length > 0){
+      return targetsToA.length > targetsToB.length ? transitions[0] : transitions[1];
     }
 
     return false;
