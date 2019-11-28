@@ -5,15 +5,12 @@ const t = require("@babel/types");
 const structs = {
   UNKNOWN : 0,
   INFINITE_LOOP : 1,
-  DOES_NOT_CONVERGE : 2,
-  SIMPLE : 4,
-  IF_THEN : 8,
-  IF_THEN_ELSE : 16,
-  WHILE_LOOP : 32,
-  DO_WHILE_LOOP : 64, 
-  END_STATE : 128,
-  SAME_TRANSITION : 256,
-  END_OF_DO_WHILE_LOOP : 512
+  SIMPLE : 2,
+  IF_THEN_ELSE : 4,
+  WHILE_LOOP : 8,
+  DO_WHILE_LOOP : 16, 
+  END_STATE : 32,
+  SAME_TRANSITION : 64,
 };
 
 
@@ -172,7 +169,6 @@ class Struct {
   
 }
 
-
 class SimpleStruct extends Struct {
 
   constructor(opts){
@@ -208,86 +204,6 @@ class SimpleStruct extends Struct {
 
 }
 
-class IfThenStruct extends Struct {
-
-  constructor(opts){
-    super(opts);
-  }
-	
-  simplify(){
-    
-    let ifThenNode = [];
-
-    const { meta, transitions, result, nodes, endStates } = this.getStructData();
-
-    const testNode = this.getTestExpression();
-    const convergedState = meta["ifThenConvergedState"];
-    
-    this.history.push(this.state);
-    //this.traverser.currentState = convergedState;
-
-    if(transitions.includes(convergedState)){
-			if(this.state == 43){
-				console.log("transitions includes converged state at 43");
-			}
-      const nodez = [];
-
-      const notConvergingState = convergedState == transitions[0] ? transitions[1] : transitions[0];
-      this.traverser.currentState = notConvergingState;
-      nodez.push(...this.traverseUntilStates([convergedState]));
-
-      const testExpression = convergedState == transitions[1] ? testNode : t.unaryExpression("!", testNode);
-
-      ifThenNode.push(
-				...nodes,
-        t.ifStatement(testExpression, t.blockStatement(nodez))
-      );
-
-			//if(this.state == 43){
-		//		console.log("state 43 is after ifthennodepush");
-			//}
-			if(endStates.includes(convergedState)){
-				
-				return { state : this.state, nodes : ifThenNode, result : structs.END_STATE}
-			}
-		
-			if(this.state == 43){
-				var recast = require("recast");
-				for(let n of ifThenNode){
-					console.log("Node:", recast.print(n).code);
-				}
-			}
-      this.traverser.currentState = convergedState;
-
-    }else{
-			if(this.state == 43){
-				console.log("transitions DOES NOT includes converged state at 43");
-			}
-
-      const consequentNodes = [];
-      const alternateNodes = [];
-
-      this.traverser.currentState = transitions[0];
-      consequentNodes.push(...this.traverseUntilStates([convergedState]));
-      this.traverser.currentState = transitions[1];
-      alternateNodes.push(...this.traverseUntilStates([convergedState]));
-
-      ifThenNode.push(
-				...nodes,
-        t.ifStatement(testNode, t.blockStatement(consequentNodes), t.blockStatement(alternateNodes))
-      );
-
-
-
-      this.traverser.currentState = convergedState;
-    }
-
-    return { state : this.state, nodes : ifThenNode,  result };
-
-  }
-
-}
-
 class IfThenElseStruct extends Struct {
 
   constructor(opts){
@@ -303,23 +219,23 @@ class IfThenElseStruct extends Struct {
     this.history.push(this.state);
 
 		
-		this.traverser.currentState = transitions[0];
-		const transitionANodes = this.traverseUntilStates([convergedState]);
-		this.traverser.currentState = transitions[1];
-		const transitionBNodes = this.traverseUntilStates([convergedState]);
+    this.traverser.currentState = transitions[0];
+    const transitionANodes = this.traverseUntilStates([convergedState]);
+    this.traverser.currentState = transitions[1];
+    const transitionBNodes = this.traverseUntilStates([convergedState]);
 
 
-		ifThenElseNode.push(
-			...nodes,
-			t.ifStatement(
-				this.getTestExpression(),
-				t.blockStatement(transitionANodes),
-				t.blockStatement(transitionBNodes)
-			)
-		);
+    ifThenElseNode.push(
+      ...nodes,
+      t.ifStatement(
+        this.getTestExpression(),
+        t.blockStatement(transitionANodes),
+        t.blockStatement(transitionBNodes)
+      )
+    );
 
 
-		this.traverser.currentState = convergedState;
+    this.traverser.currentState = convergedState;
 
 
     return { state : this.state, nodes : ifThenElseNode, result };
@@ -351,12 +267,12 @@ class WhileStruct extends Struct {
 
     while(this.traverser.currentState != whileStart){
       const { nodes : nodez} = this.getNextStruct();
-			whileBodyNodes.push(...nodez);
+      whileBodyNodes.push(...nodez);
 			
     }
 
     whileNode.push(
-			...nodes,
+      ...nodes,
       t.whileStatement(
         testNode, 
         t.blockStatement(whileBodyNodes)
@@ -389,117 +305,6 @@ class DoWhileStruct extends Struct {
 
 }
 
-class EndOfDoWhileStruct extends Struct {
-
-  constructor(opts){
-    super(opts);
-  }
-
-  simplify(){
-
-    const { meta, transitions, result, nodes, endStates } = this.getStructData();
-
-    return { state : this.state, nodes, result };
-  }
-}
-
-class DoesNotConvergeStruct extends Struct {
-  constructor(opts){
-    super(opts);
-  }
-	
-  simplify(){
-
-    const ifThenElseNode = [];
-
-    const { meta, transitions, result, nodes, endStates } = this.getStructData();
-		
-    this.history.push(this.state);
-    this.traverser.currentState = transitions[0];
-
-    const bodyNodes = {
-      [transitions[0]] : [],
-      [transitions[1]] : [],
-    };
-
-    let convergedStates = new Set();
-    for(let i=0; i < 2;i++){
-
-      this.traverser.currentState = transitions[i];
-
-      let keepLooping = true;
-      while(keepLooping){
-
-        const { nodes : nodez, state : currentState, result : loopResult } = this.getNextStruct();
-        //convergedStates = new Set([...convergedStates, ...this.getAllPrevConvergedStates()]);
-
-        //if(!convergedStates.has(currentState)){
-
-        bodyNodes[transitions[i]].push(...nodez);
-        //}
-
-        if(loopResult == structs.END_STATE){
-          keepLooping = false;
-        }
-
-      }
-
-    }
-
-    ifThenElseNode.push(
-			...nodes,
-      t.ifStatement(
-        this.getTestExpression(), 
-        t.blockStatement(bodyNodes[transitions[0]]),
-        t.blockStatement(bodyNodes[transitions[1]])
-      )
-    );
-
-
-    return { state : this.state, nodes : ifThenElseNode,  result : structs.END_STATE };
-  }
-
-
-  getAllPrevConvergedStates(){
-    const convergedStates = new Set();
-
-    this.getPreviousSeenStructs( 
-      (prevState, meta) => meta["ifThenConvergedState"], 
-      structs.IF_THEN
-    ).forEach( (s) => convergedStates.add(s));
-		
-    this.getPreviousSeenStructs( 
-      (prevState, meta) => meta["ifThenElseConvergedState"], 
-      structs.IF_THEN_ELSE
-    ).forEach( (s) => convergedStates.add(s));
-
-    return convergedStates;
-
-
-	
-  }
-
-}
-
-class EndStateStruct extends Struct {
-
-  constructor(opts){
-    super(opts);
-  }
-	
-  simplify(){
-		
-		
-    const { meta, transitions, result, nodes, endStates } = this.getStructData();
-    this.history.push(this.state);
-    console.log("Should be ending here:", result, "state:", this.state);
-
-    return { state : this.state, nodes, result };
-  }
-
-}
-
-
 class SameTransitionStruct extends Struct {
 
   constructor(opts){
@@ -518,16 +323,31 @@ class SameTransitionStruct extends Struct {
 
 }
 
+class EndStateStruct extends Struct {
+
+  constructor(opts){
+    super(opts);
+  }
+
+  simplify(){
+
+
+    const { meta, transitions, result, nodes, endStates } = this.getStructData();
+    this.history.push(this.state);
+    console.log("Should be ending here:", result, "state:", this.state);
+
+    return { state : this.state, nodes, result };
+  }
+
+}
+
 
 module.exports = {
-  DoesNotConvergeStruct,
   SimpleStruct,
   EndStateStruct,
-  IfThenStruct,
   IfThenElseStruct,
   WhileStruct,
   DoWhileStruct,
-  EndOfDoWhileStruct,
   SameTransitionStruct,
   structs
 };

@@ -9,9 +9,7 @@ class Evaluator{
   getModes(filter){
     const modez = {
       [structs.INFINITE_LOOP] : this.isInfiniteLoop.bind(this),
-      [structs.DOES_NOT_CONVERGE] : this.isNotConverging.bind(this),
       [structs.SIMPLE] : this.isSimple.bind(this),
-      [structs.IF_THEN] : this.isIfThen.bind(this),
       [structs.IF_THEN_ELSE] : this.isIfThenElse.bind(this),
       [structs.DO_WHILE_LOOP] : this.isDoWhileLoop.bind(this),
       [structs.WHILE_LOOP] : this.isWhileLoop.bind(this),
@@ -38,10 +36,7 @@ class Evaluator{
   interpret(state, mode=DEFAULT_MODE){
 
     let result = 0;
-    const meta = {
-      "doesNotConverge" : false
-    };
-
+    const meta = {};
 
     const useModez = this.getModes();
 
@@ -85,41 +80,6 @@ class Evaluator{
 
   }
 
-  isNotConverging(state){
-
-    const defaultResult = {
-      found : false,
-      meta : {}
-    };
-
-    const { hasTransitions, transitions } = getStateTransitions(state, this.graph);
-
-    if(!hasTransitions && transitions.length == 1){
-      return defaultResult;
-    }
-    const transitionASources = Array.from(getSourcesToState(transitions[0], this.graph), s => toEdgeId(s, transitions[0]));
-    const transitionBSources = Array.from(getSourcesToState(transitions[1], this.graph), s => toEdgeId(s, transitions[1]));
-
-    const isTransitionANeeded = isMaybeNeeded(transitionASources, state, this.graph);
-    const isTransitionBNeeded = isMaybeNeeded(transitionBSources, state, this.graph);
-    const areBothNotNeeded = (!isTransitionANeeded && !isTransitionBNeeded);
-
-    if(areBothNotNeeded){
-
-      const { found : isIfThenElse } = this.isIfThenElse(state);
-
-      if(!isIfThenElse){
-        defaultResult["found"] = true;
-        defaultResult["meta"]["doesNotConverge"] = true;
-      }
-
-    }
-
-    return defaultResult;
-
-
-  }
-
   isSimple(state){
     
     const defaultResult = {
@@ -138,68 +98,31 @@ class Evaluator{
 
   }
 
-  isIfThen(state){
-
-    const defaultResult = { 
-      found : false, 
-      meta : {
-        ifThenConvergedState: null 
-      }
-    };
-    
-    const { hasTransitions, transitions } = getStateTransitions(state, this.graph);
-
-    if(!hasTransitions || transitions.length != 2){
-      return defaultResult;
-    }
-		
-    const convergedState = findConvergence(state, this.graph, this);
-
-    if(convergedState){
-      defaultResult["found"] = true;
-      defaultResult["meta"]["ifThenConvergedState"] = convergedState;
-    }
-
-    return defaultResult;
-
-  }
-
   isIfThenElse(state){
 
     const defaultResult = { 
       found : false, 
-      meta : {
-        ifThenElseConvergedState: null 
-      }
+      meta : {}
     };
   
     const { hasTransitions, transitions } = getStateTransitions(state, this.graph);
+    const { found : hasDoWhileLoop } = this.isDoWhileLoop(state);
+    const { found : hasWhileLoop } = this.isWhileLoop(state);
+    const { found : hasSameTransition } = this.isSameTransition(state);
 
-    if(!hasTransitions || transitions.length != 2){
-      return defaultResult;
+    if(
+      !hasTransitions || 
+			transitions.length != 2 || 
+			hasDoWhileLoop || 
+			hasWhileLoop || 
+			hasSameTransition){
+
+      defaultResult["found"] = false;
+
+    }else{
+
+      defaultResult["found"] = true;
     }
-
-    const edgeId = (st, t) => `[id = "${st}->${t}"]`;
-    const cutTransitionA = this.graph.$(edgeId(state, transitions[0])).remove();
-    const cutTransitionB = this.graph.$(edgeId(state, transitions[1])).remove();
-    const successorsA = this.graph.$(toId(transitions[0])).successors().edges();
-    const successorsB = this.graph.$(toId(transitions[1])).successors().edges();
-
-    const diff = successorsA.diff(successorsB);
-		
-    if(diff.left.size() && diff.right.size()){
-      const lastEdgeA = diff.left.slice(-1).map((n) => n.target().map(getEleId)[0]);
-      const lastEdgeB = diff.right.slice(-1).map((n) => n.target().map(getEleId)[0]);
-
-      //Make sure our converged state is not our own state because that will mean it is actually a while loop
-      if(lastEdgeA[0] == lastEdgeB[0] && lastEdgeA[0] !== state){
-        defaultResult["found"] = true;
-        defaultResult["meta"]["ifThenElseConvergedState"] = lastEdgeA[0];
-      }
-    }
-
-    cutTransitionA.restore();
-    cutTransitionB.restore();
   
     return defaultResult;
 
@@ -402,7 +325,6 @@ const {
   getStateTransitions,
   getSourcesToState,
   getShortestPath,
-  findConvergence,
   isInsideLoop
 } = require("./graph.js");
 

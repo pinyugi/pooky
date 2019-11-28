@@ -19,26 +19,15 @@ class StructTraverser{
 
     switch(structType){
 
-      case (structs.DOES_NOT_CONVERGE): //2
-      case (structs.DOES_NOT_CONVERGE | structs.INFINITE_LOOP): //3
-        return new DoesNotConvergeStruct({state : currentState, traverser : this, ...opts}).simplify();
-
       case (structs.SIMPLE): //4
         return new SimpleStruct({state : currentState, traverser : this, ...opts}).simplify();
-
-      case (structs.IF_THEN): //8
-      case (structs.IF_THEN | structs.DOES_NOT_CONVERGE): //10
-        return new IfThenStruct({state : currentState, traverser : this, ...opts}).simplify();
 
       case (structs.IF_THEN_ELSE)://16
         return new IfThenElseStruct({state : currentState, traverser : this, ...opts}).simplify();
 
       case (structs.WHILE_LOOP): //32 there are no breaks or end states in a while loop
-      case (structs.WHILE_LOOP | structs.DOES_NOT_CONVERGE): //34 there is at least 1 endstate in a while loop
-      case (structs.WHILE_LOOP | structs.IF_THEN):// 40 there is at least 1 break in a while loop// 
         return new WhileStruct({state : currentState, traverser : this, ...opts}).simplify();
 			
-
       case (structs.DO_WHILE_LOOP): //64
         return new DoWhileStruct({state : currentState, traverser : this, ...opts}).simplify();
 
@@ -126,14 +115,11 @@ module.exports = {
 const { Evaluator  } = require("./evaluator.js");
 const { getEleId, toId } = require("./graph.js");
 const {
-  DoesNotConvergeStruct,
   SimpleStruct,
   EndStateStruct,
-  IfThenStruct,
   IfThenElseStruct,
   WhileStruct,
   DoWhileStruct,
-  EndOfDoWhileStruct,
   SameTransitionStruct,
   structs
 } = require("./structs.js");
