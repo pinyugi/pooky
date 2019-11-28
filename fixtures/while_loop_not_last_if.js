@@ -64,7 +64,7 @@ function while_loop_with_last_if(){
         oh.x();
         yee.a();
         //state = 99;
-        state = 2;
+        state = 11;
         //state = 11;
         //state = 100;
         //state = 66;

@@ -122,7 +122,7 @@ const G = {
     };
   },
 
-  findConvergence(state, graph){
+  findConvergence(state, graph, evaluator){
 
     const { hasTransitions, transitions } = G.getStateTransitions(state, graph);
 
@@ -133,8 +133,42 @@ const G = {
     const targetsToA = graph.$(`[target = "${transitions[0]}"]`).map((n) => n.source().map(G.getEleId)[0]).filter((n) => n !== state);
     const targetsToB = graph.$(`[target = "${transitions[1]}"]`).map((n) => n.source().map(G.getEleId)[0]).filter((n) => n !== state);
 
+		//const targetsToA = graph.$(`[target = "${transitions[0]}"]`).map((n) => n.source().map(G.getEleId)[0]);
+    //const targetsToB = graph.$(`[target = "${transitions[1]}"]`).map((n) => n.source().map(G.getEleId)[0]);
+
+
+		//console.log("state:", state);
+		//console.log("targetsToA:", targetsToA);
+		//console.log("targetsToB:", targetsToB);
+
     if(targetsToA.length > 0 || targetsToB.length > 0){
-      return targetsToA.length > targetsToB.length ? transitions[0] : transitions[1];
+    //if(targetsToA.length > 1 || targetsToB.length > 1){
+
+			const statesToConverge = targetsToA.length > targetsToB.length ? targetsToA : targetsToB;
+      const convergedState = targetsToA.length > targetsToB.length ? transitions[0] : transitions[1];
+      const nonConvergedState = convergedState == transitions[0] ?  transitions[1] : transitions[0];
+			
+			//console.log("statesToConverge:", statesToConverge);
+			//console.log("nonConvergedState:", nonConvergedState);
+			//console.log("convergedState:", convergedState);
+			//console.log("state:", state);
+			//const shortestPath = G.getShortestPath(state, statesToConverge[0], graph);
+			return convergedState;
+			//console.log("shortestPath", shortestPath.map(G.getEleId));
+
+			const { found : foundWhileLoop} = evaluator.isWhileLoop(convergedState);
+
+			if(foundWhileLoop){
+				return convergedState;
+			}
+
+			if(shortestPath.size()){// && statesToConverge[0] == nonConvergedState){
+
+				return convergedState;
+			}
+
+
+
     }
 
     return false;

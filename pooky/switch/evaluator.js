@@ -22,17 +22,17 @@ class Evaluator{
     return modez;
   }
 
-	cleanMeta(meta){
-		Object.keys(meta).forEach((key) => {
-			if(_.isString(meta[key])){
-				meta[key] = parseInt(meta[key], 10);
-			}
+  cleanMeta(meta){
+    Object.keys(meta).forEach((key) => {
+      if(_.isString(meta[key])){
+        meta[key] = parseInt(meta[key], 10);
+      }
     });
 
-		return meta
+    return meta;
 
 
-	}
+  }
 
 	
   interpret(state, mode=DEFAULT_MODE){
@@ -106,12 +106,12 @@ class Evaluator{
 
     if(areBothNotNeeded){
 
-			const { found : isIfThenElse } = this.isIfThenElse(state);
+      const { found : isIfThenElse } = this.isIfThenElse(state);
 
-			if(!isIfThenElse){
-				defaultResult["found"] = true;
-				defaultResult["meta"]["doesNotConverge"] = true;
-			}
+      if(!isIfThenElse){
+        defaultResult["found"] = true;
+        defaultResult["meta"]["doesNotConverge"] = true;
+      }
 
     }
 
@@ -153,11 +153,11 @@ class Evaluator{
       return defaultResult;
     }
 		
-    const convergedState = findConvergence(state, this.graph);
+    const convergedState = findConvergence(state, this.graph, this);
 
     if(convergedState){
       defaultResult["found"] = true;
-      defaultResult["meta"]["ifThenConvergedState"] = convergedState == transitions[0] ? transitions[0] : transitions[1];
+      defaultResult["meta"]["ifThenConvergedState"] = convergedState;
     }
 
     return defaultResult;
@@ -195,8 +195,8 @@ class Evaluator{
       if(lastEdgeA[0] == lastEdgeB[0] && lastEdgeA[0] !== state){
         defaultResult["found"] = true;
         defaultResult["meta"]["ifThenElseConvergedState"] = lastEdgeA[0];
-			}
-		}
+      }
+    }
 
     cutTransitionA.restore();
     cutTransitionB.restore();
@@ -226,9 +226,9 @@ class Evaluator{
 
     const sourcesToState =  getSourcesToState(state, this.graph);
 
-		if(sourcesToState.length < 2){
-			return defaultResult;
-		}
+    if(sourcesToState.length < 2){
+      return defaultResult;
+    }
 
     const transitionASources = Array.from(getSourcesToState(transitions[0], this.graph), s => toEdgeId(s, transitions[0]));
     const transitionBSources = Array.from(getSourcesToState(transitions[1], this.graph), s => toEdgeId(s, transitions[1]));
@@ -314,6 +314,7 @@ class Evaluator{
     if(sourcesToState.length == 1){
       return defaultResult;
     }
+
     for(let st of sourcesToState){
       const sources = this.graph.$(`[source = "${st}"]`).edges();
 
@@ -329,9 +330,13 @@ class Evaluator{
           const sourceTransitionB = getTargetFromEdgeId(edgesId[1]);
 
           const loopState = sourceTransitionA == state ? sourceTransitionA : sourceTransitionB;
-          const nonLoopState = loopState == state ? sourceTransitionA : sourceTransitionB;
+          const nonLoopState = loopState == state ? sourceTransitionB : sourceTransitionA;
 
-          defaultResult["meta"]["doWhileEndStates"][st] = { loopState, nonLoopState };
+          defaultResult["meta"]["doWhileEndStates"][st] = { 
+            loopState : parseInt(loopState, 10), 
+            nonLoopState : parseInt(nonLoopState, 10) 
+          };
+
           defaultResult["meta"]["doWhileStart"] = state;
 
         }

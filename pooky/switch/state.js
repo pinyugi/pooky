@@ -11,13 +11,13 @@ class State{
     this.transition = null;
   }
 
-	get name() {
-		return parseInt(this._name, 10);
-	}
+  get name() {
+    return parseInt(this._name, 10);
+  }
 
-	set name(value) {
-		this._name = value;
-	}
+  set name(value) {
+    this._name = value;
+  }
 
   setTransition(transition, update=1){
     if(transition !== null && transition instanceof Transition){

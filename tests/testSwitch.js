@@ -16,7 +16,9 @@ const {
 
 const tree = {
   'pooky-H9qC' : fromFile("fixtures/pookyparts/H9qC.js"),
-  'pooky-R7qC' : fromFile("fixtures/R7qC.js")
+  'pooky-R7qC' : fromFile("fixtures/R7qC.js"),
+  'pooky' : fromFile("fixtures/pooky.min.b7a5e4c22669c5887624.js"),
+  'pooky-do-while-part' : fromFile("fixtures/pooky-do-while-part.js")
 };
 
 //const states = {};
@@ -32,15 +34,16 @@ SWITCH_TRANSITION_VISITOR = {
 
     if (utils.isForAGoToSwitch(path)) {
       const stateHolderName = utils.getStateHolderName(path);
+
       console.log("stateHolderName:", stateHolderName);
+			if(['e1Z', 'a12C', 'r5'].includes(stateHolderName)){
+				console.log("skipping:", stateHolderName);
+				return;
+			}
 
       const initialState = utils.getInitialState(path);
       const manager = StateManager.fromPath(path);
       manager.simplify(path);
-
-
-
-      //console.log("nodes:", nodes);
 
 
 
@@ -51,6 +54,8 @@ SWITCH_TRANSITION_VISITOR = {
 let currentTree;
 //currentTree = tree['pooky-H9qC'];
 currentTree = tree['pooky-R7qC'];
+currentTree = tree['pooky'];
+//currentTree = tree['pooky-do-while-part'];
 //currentTree = tree['do_and_while_loop_inside_loop_B'];
 //currentTree = tree['do_while_loop'];
 //currentTree = tree['while_loop'];

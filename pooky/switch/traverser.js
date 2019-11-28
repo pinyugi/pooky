@@ -14,9 +14,8 @@ class StructTraverser{
     const { states } = opts;
     const currentState = this.getCurrentState();
     const structType = states[currentState]["result"];
-		//console.log("*******************************************");
-		//console.log("currentState:", currentState, "\nstructType:", structType);
-		//console.log("*******************************************");
+    //console.log("currentState:", currentState, "history:", opts.history);
+    console.log("currentState:", currentState, "result:", structType);
 
     switch(structType){
 
@@ -31,7 +30,7 @@ class StructTraverser{
       case (structs.IF_THEN | structs.DOES_NOT_CONVERGE): //10
         return new IfThenStruct({state : currentState, traverser : this, ...opts}).simplify();
 
-			case (structs.IF_THEN_ELSE)://16
+      case (structs.IF_THEN_ELSE)://16
         return new IfThenElseStruct({state : currentState, traverser : this, ...opts}).simplify();
 
       case (structs.WHILE_LOOP): //32 there are no breaks or end states in a while loop
@@ -50,8 +49,8 @@ class StructTraverser{
         return new SameTransitionStruct({state : currentState, traverser : this, ...opts}).simplify();
 
       default:
-        console.log("Could not evaluate:", evaluated.result);
-        return [];
+        console.log("Could not evaluate:", structType);
+        return { state : currentState, nodes : [] , result : 0 } ;
         
     }
 
@@ -98,9 +97,20 @@ class StructTraverser{
 
     if(this.currentState === null){
       this.currentState = this.graph.$().roots().map(getEleId)[0];
+			
     }
+    this.verifyValidStartState();
     
     return this.currentState;
+  }
+
+  verifyValidStartState(){
+    const currentNodeEdges = this.graph.$(toId(this.currentState)).successors();
+    if(!currentNodeEdges.size()){
+      const currentState = this.currentState;
+      const excludeCurrentNode = this.graph.$().nodes().map(getEleId).filter((n) => n !== currentState);
+      this.currentState = excludeCurrentNode[0];
+    }
   }
                     
 }
@@ -114,7 +124,7 @@ module.exports = {
 
 
 const { Evaluator  } = require("./evaluator.js");
-const { getEndStates, getEleId } = require("./graph.js");
+const { getEleId, toId } = require("./graph.js");
 const {
   DoesNotConvergeStruct,
   SimpleStruct,

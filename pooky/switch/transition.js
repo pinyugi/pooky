@@ -19,14 +19,14 @@ class Transition {
 
   }
 
-	get states(){
-		return this._states.map((s) => parseInt(s, 10));
-	}
+  get states(){
+    return this._states.map((s) => parseInt(s, 10));
+  }
 
-	set states(newStates){
-		this._states = newStates;
+  set states(newStates){
+    this._states = newStates;
 
-	}
+  }
 
   isConditional(){
     return this.type === transitions.DUAL_PATH;

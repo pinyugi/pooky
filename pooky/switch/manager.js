@@ -122,17 +122,17 @@ class StateManager {
     const history = [];
     const nodez = [];
 
-
     Object.keys(this.states).forEach((stateName) => {
       states[stateName]["nodes"] = this.states[stateName]["nodes"];
       states[stateName]["transition"] = this.states[stateName]["transition"];
     });
 
     let getNextStruct = true;
-
     do{
 
-      const { nodes, result } = this.traverser.getNextStruct({states, statistics, history});
+      const { state, nodes, result } = this.traverser.getNextStruct({states, statistics, history});
+      //console.log("state:", state, "result:", result);
+			
 
       if(nodes){
         nodez.push(...nodes);
@@ -168,17 +168,26 @@ class StateManager {
       manager.addState(new State(stateName));
 
       _case.get("consequent").forEach(function (_block) {
-        if (!(isTransition(_block, stateHolderName))) {
+        if (isTransition(_block, stateHolderName)) {
 
-          if (_block.type == "ReturnStatement") manager.markTerminalState(stateName);
-          if (_block.type != "BreakStatement") manager.getState(stateName).addNode(_block.node);
-
-        } else {
-        
+         
           const transition = isConditionalTransition(_block, stateHolderName) ? 
             createConditionalTransition(_block) : createTransition(_block);
       
           manager.getState(stateName).setTransition(transition);
+
+
+        } else {
+					
+          if (_block.type == "ReturnStatement") {
+            manager.markTerminalState(stateName);
+          }
+
+          if (_block.type != "BreakStatement"){
+            manager.getState(stateName).addNode(_block.node);
+          }
+					       
+
         }
       });
     });

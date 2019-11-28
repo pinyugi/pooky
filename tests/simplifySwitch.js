@@ -25,7 +25,6 @@ SWITCH_TRANSITION_VISITOR = {
 			if(stateHolderName !== part){
 				return;
 			}
-			console.log("stateHolderName:", stateHolderName);
 			manager.simplify(path);
 
 		}
