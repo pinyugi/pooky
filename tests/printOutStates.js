@@ -61,10 +61,3 @@ traverse(currentTree, SWITCH_TRANSITION_VISITOR);
 const uniqueCount = Array.from(uniqueStates).map(function(e, i) {
   return `Count:${count[e]} ${e}`;
 });
-
-/*
-fs.writeFile(`reports/${currentPooky}-uniqueStates.txt`, uniqueCount.join("\n"), (err) =>{
-  console.log("uniqueStates saved!");
-});
-
-*/

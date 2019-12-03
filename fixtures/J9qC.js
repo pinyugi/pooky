@@ -1,6 +1,6 @@
 function z7qC(a8qC, t8qC, M8qC) {
     var J9qC = 2;
-    for (; J9qC !== 45;) {
+    for (; J9qC !== 45; ) {
         switch (J9qC) {
             case 43:
                 W8qC ^= y8qC;
@@ -54,7 +54,7 @@ function z7qC(a8qC, t8qC, M8qC) {
             case 32:
                 y8qC |= a8qC[m9qC[143]](g8qC) & 0xff;
                 y8qC = S7qC(y8qC, d8qC);
-                y8qC = (y8qC & 0x1ffff) << 15 | y8qC >>> 17;
+                y8qC = ((y8qC & 0x1ffff) << 15) | (y8qC >>> 17);
                 J9qC = 29;
                 break;
             case 39:
@@ -63,7 +63,7 @@ function z7qC(a8qC, t8qC, M8qC) {
                 J9qC = 37;
                 break;
             case 24:
-                W8qC = W8qC * 5 + 0xe6546b64 | 0;
+                W8qC = (W8qC * 5 + 0xe6546b64) | 0;
                 J9qC = 23;
                 break;
             case 52:
@@ -78,9 +78,13 @@ function z7qC(a8qC, t8qC, M8qC) {
                 J9qC = 7;
                 break;
             case 20:
-                y8qC = a8qC[m9qC[136]](Q8qC) & 0xff | (a8qC[m9qC[137]](Q8qC + 1) & 0xff) << 8 | (a8qC[m9qC[138]](Q8qC + 2) & 0xff) << 16 | (a8qC[m9qC[139]](Q8qC + 3) & 0xff) << 24;
+                y8qC =
+                    (a8qC[m9qC[136]](Q8qC) & 0xff) |
+                    ((a8qC[m9qC[137]](Q8qC + 1) & 0xff) << 8) |
+                    ((a8qC[m9qC[138]](Q8qC + 2) & 0xff) << 16) |
+                    ((a8qC[m9qC[139]](Q8qC + 3) & 0xff) << 24);
                 y8qC = S7qC(y8qC, d8qC);
-                y8qC = (y8qC & 0x1ffff) << 15 | y8qC >>> 17;
+                y8qC = ((y8qC & 0x1ffff) << 15) | (y8qC >>> 17);
                 J9qC = 17;
                 break;
             case 53:
@@ -116,14 +120,15 @@ function z7qC(a8qC, t8qC, M8qC) {
                 J9qC = 10;
                 break;
             case 25:
-                W8qC = (W8qC & 0x7ffff) << 13 | W8qC >>> 19;
+                W8qC = ((W8qC & 0x7ffff) << 13) | (W8qC >>> 19);
                 J9qC = 24;
                 break;
             case 26:
                 J9qC = P8qC ? 25 : 22;
                 break;
             case 7:
-                var P8qC = o8qC || typeof W7wC === m9qC[131] && !new d7qC[m9qC[132]](m9qC[133])[m9qC[134]](W7wC);
+                var P8qC =
+                    o8qC || (typeof W7wC === m9qC[131] && !new d7qC[m9qC[132]](m9qC[133])[m9qC[134]](W7wC));
                 var W8qC = M8qC;
                 J9qC = 14;
                 break;

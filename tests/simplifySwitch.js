@@ -23,6 +23,7 @@ SWITCH_TRANSITION_VISITOR = {
 			const manager = StateManager.fromPath(path);
 
 			if(stateHolderName !== part){
+				
 				return;
 			}
 			manager.simplify(path);

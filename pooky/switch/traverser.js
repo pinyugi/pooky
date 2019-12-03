@@ -1,118 +1,132 @@
-
-class StructTraverser{
-
-  constructor(graph){
-
+class StructTraverser {
+  constructor(graph, initialState) {
+    this.started = false;
     this.graph = graph || cytoscape();
+		this.initialState = initialState;
     this.currentState = null;
     this.evaluator = new Evaluator(this.graph);
   }
 
-
-  getNextStruct(opts){
-
+  getNextStruct(opts) {
     const { states } = opts;
-    const currentState = this.getCurrentState();
+    const currentState = this.getCurrentState(states);
+
+    this.started = this.started ? true : true;
+    states["ElseStates"] = "ElseStates" in states ? states["ElseStates"] : [];
+    states["WhileStates"] = "WhileStates" in states ? states["WhileStates"] : [];
+
     const structType = states[currentState]["result"];
-    //console.log("currentState:", currentState, "history:", opts.history);
-    console.log("currentState:", currentState, "result:", structType);
+    //console.log("currentState:", currentState, "result:", structType);
 
-    switch(structType){
+    switch (structType) {
+      case structs.SIMPLE:
+        return new SimpleStruct({
+          state: currentState,
+          traverser: this,
+          ...opts,
+        }).simplify();
 
-      case (structs.SIMPLE): //4
-        return new SimpleStruct({state : currentState, traverser : this, ...opts}).simplify();
+      case structs.IF_THEN_ELSE:
+        return new IfThenElseStruct({
+          state: currentState,
+          traverser: this,
+          ...opts,
+        }).simplify();
 
-      case (structs.IF_THEN_ELSE)://16
-        return new IfThenElseStruct({state : currentState, traverser : this, ...opts}).simplify();
+      case structs.WHILE_LOOP:
+        return new WhileStruct({
+          state: currentState,
+          traverser: this,
+          ...opts,
+        }).simplify();
 
-      case (structs.WHILE_LOOP): //32 there are no breaks or end states in a while loop
-        return new WhileStruct({state : currentState, traverser : this, ...opts}).simplify();
-			
-      case (structs.DO_WHILE_LOOP): //64
-        return new DoWhileStruct({state : currentState, traverser : this, ...opts}).simplify();
+      case structs.DO_WHILE_LOOP:
+        return new DoWhileStruct({
+          state: currentState,
+          traverser: this,
+          ...opts,
+        }).simplify();
 
-      case (structs.END_STATE): //128
-        return new EndStateStruct({state : currentState, traverser : this, ...opts}).simplify();
+      case structs.END_STATE:
+        return new EndStateStruct({
+          state: currentState,
+          traverser: this,
+          ...opts,
+        }).simplify();
 
-      case (structs.SAME_TRANSITION | structs.DO_WHILE_LOOP | structs.WHILE_LOOP | structs.IF_THEN):// 360
-        return new SameTransitionStruct({state : currentState, traverser : this, ...opts}).simplify();
+      case structs.SAME_TRANSITION | structs.DO_WHILE_LOOP | structs.WHILE_LOOP | structs.IF_THEN: // 88
+        return new SameTransitionStruct({
+          state: currentState,
+          traverser: this,
+          ...opts,
+        }).simplify();
 
       default:
-        console.log("Could not evaluate:", structType);
-        return { state : currentState, nodes : [] , result : 0 } ;
-        
+        //console.log("Could not evaluate:", structType);
+        return {
+          states,
+          state: currentState,
+          nodes: [],
+          result: 0,
+        };
     }
-
-
   }
 
-  visitAll(){
-
+  visitAll() {
     const statistics = {};
     const states = {
-      'endStates' : []
+      endStates: [],
     };
 
-    this.graph.$().nodes().forEach((n) =>{
-      const stateId = n.id();
-      const { result } = states[parseInt(stateId, 10)] = this.evaluator.interpret(stateId);
-      statistics[result] = result in statistics ? statistics[result] + 1 : 1;
+    this.graph
+      .$()
+      .nodes()
+      .forEach((n) => {
+        const stateId = n.id();
+        const { result } = (states[parseInt(stateId, 10)] = this.evaluator.interpret(stateId));
+        statistics[result] = result in statistics ? statistics[result] + 1 : 1;
 
-      if(result == structs.END_STATE){
-        states['endStates'].push(parseInt(stateId, 10));
-      }
+        if (result == structs.END_STATE) {
+          states["endStates"].push(parseInt(stateId, 10));
+        }
+      });
 
-    });
-
-    return { states, statistics };
+    return {
+      states,
+      statistics,
+    };
   }
 
-  getStatistics(){
-
+  getStatistics() {
     const statistics = {};
 
-    this.graph.$().nodes().forEach((n) =>{
-      const stateId = n.id();
-      const evaluated = this.evaluator.interpret(stateId);
-      statistics[evaluated.result] = evaluated.result in statistics ? statistics[evaluated.result] + 1 : 1;
-
-    });
+    this.graph
+      .$()
+      .nodes()
+      .forEach((n) => {
+        const stateId = n.id();
+        const evaluated = this.evaluator.interpret(stateId);
+        statistics[evaluated.result] = evaluated.result in statistics ? statistics[evaluated.result] + 1 : 1;
+      });
 
     return statistics;
-
   }
 
-  getCurrentState(){
-
-    if(this.currentState === null){
-      this.currentState = this.graph.$().roots().map(getEleId)[0];
-			
+  getCurrentState(states) {
+    if (this.currentState === null) {
+      this.currentState = this.initialState;
     }
-    this.verifyValidStartState();
-    
+
     return this.currentState;
   }
 
-  verifyValidStartState(){
-    const currentNodeEdges = this.graph.$(toId(this.currentState)).successors();
-    if(!currentNodeEdges.size()){
-      const currentState = this.currentState;
-      const excludeCurrentNode = this.graph.$().nodes().map(getEleId).filter((n) => n !== currentState);
-      this.currentState = excludeCurrentNode[0];
-    }
-  }
-                    
 }
 
- 
-
 module.exports = {
-  StructTraverser
+  StructTraverser,
 };
 
-
-
-const { Evaluator  } = require("./evaluator.js");
+const { Evaluator } = require("./evaluator.js");
 const { getEleId, toId } = require("./graph.js");
 const {
   SimpleStruct,
@@ -121,10 +135,7 @@ const {
   WhileStruct,
   DoWhileStruct,
   SameTransitionStruct,
-  structs
+  structs,
 } = require("./structs.js");
-
-
-
 
 const cytoscape = require("cytoscape");

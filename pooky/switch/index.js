@@ -1,12 +1,12 @@
 const { StateManager, createEmptyStateManager } = require("./manager.js");
 const { State } = require("./state.js");
-const { 
+const {
   Transition,
   isTransition,
   isConditionalTransition,
   createTransition,
-  createConditionalTransition
-}  = require("./transition.js");
+  createConditionalTransition,
+} = require("./transition.js");
 const { Evaluator } = require("./evaluator.js");
 const { StructTraverser } = require("./traverser.js");
 const utils = require("./utils.js");
@@ -17,9 +17,9 @@ module.exports = {
   createEmptyStateManager,
   State,
   Transition,
-  isTransition, 
+  isTransition,
   isConditionalTransition,
-  createTransition, 
+  createTransition,
   createConditionalTransition,
   Evaluator,
   StructTraverser,

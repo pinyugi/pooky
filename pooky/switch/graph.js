@@ -1,148 +1,148 @@
-
 const G = {
-
-  isMaybeNeeded(edges, state, graph){
-
+  isMaybeNeeded(edges, state, graph) {
     let isNeeded = false;
     const removedStates = [];
 
     const endStates = G.getEndStates(graph);
 
-    for(edgeId of edges){
+    for (edgeId of edges) {
       removedStates.push(graph.$(`[id = "${edgeId}"]`).remove());
     }
 
-    const maybeNeeded = graph.$(G.toId(state)).successors().edges();
+    const maybeNeeded = graph
+      .$(G.toId(state))
+      .successors()
+      .edges();
     const getTarget = (n) => `${n.target().map(G.getEleId)[0]}`;
 
     isNeeded = !maybeNeeded.some((n) => endStates.map(G.getEleId).includes(getTarget(n)));
 
-
-    for(removedState of removedStates){
+    for (removedState of removedStates) {
       removedState.restore();
     }
-		
+
     return isNeeded;
-
-
   },
-	
-  getEleId(node){
+
+  getEleId(node) {
     return node.id();
-	
   },
-	
-  getNodeData(state, graph){
+
+  getNodeData(state, graph) {
     const stateId = G.toId(state);
-    const data = graph.$(stateId).map((n) => { return n.data();});
+    const data = graph.$(stateId).map((n) => {
+      return n.data();
+    });
 
     return data.length ? data[0] : false;
   },
-	
-  toId(state){
+
+  toId(state) {
     return `#${state}`;
   },
 
-  toEdgeId(state, transition){
+  toEdgeId(state, transition) {
     return `${state}->${transition}`;
   },
 
-  getSourceFromEdgeId(edgeId){
+  getSourceFromEdgeId(edgeId) {
     return edgeId.split("->")[0];
   },
 
-  getTargetFromEdgeId(edgeId){
+  getTargetFromEdgeId(edgeId) {
     return edgeId.split("->")[1];
   },
 
-  getEndStates(graph){
+  getEndStates(graph) {
     return graph.$().leaves();
   },
 
-  getStateSuccessors(state, graph, element="edges"){
-			
+  getStateSuccessors(state, graph, element = "edges") {
     return element == "nodes"
-      ? graph.$(G.toId(state)).successors().nodes()
-      : graph.$(G.toId(state)).successors().edges();
-
+      ? graph
+          .$(G.toId(state))
+          .successors()
+          .nodes()
+      : graph
+          .$(G.toId(state))
+          .successors()
+          .edges();
   },
 
-  getStateTransitions(state, graph){
-
+  getStateTransitions(state, graph) {
     const stateId = G.toId(state);
 
     let hasTransitions = false;
     let transitions = [];
 
-    transitions = graph.$(stateId).outgoers().nodes().map(G.getEleId);
+    transitions = graph
+      .$(stateId)
+      .outgoers()
+      .nodes()
+      .map(G.getEleId);
     hasTransitions = transitions.length != 0 ? true : false;
 
-
     return {
-      'hasTransitions' : hasTransitions,
-      'transitions' : transitions
+      hasTransitions: hasTransitions,
+      transitions: transitions,
     };
-
   },
 
-  getSourcesToState(state, graph){
-    return graph.$(`[target = "${state}"]`).sources().map(G.getEleId);
+  getSourcesToState(state, graph) {
+    return graph
+      .$(`[target = "${state}"]`)
+      .sources()
+      .map(G.getEleId);
   },
 
-  getShortestPath(fromState, toState, graph){
-
-    const dijkstra = graph.elements().dijkstra({ root : G.toId(fromState), directed : true});
+  getShortestPath(fromState, toState, graph) {
+    const dijkstra = graph.elements().dijkstra({
+      root: G.toId(fromState),
+      directed: true,
+    });
     return dijkstra.pathTo(graph.$(G.toId(toState))).edges();
   },
 
-  getDiffOnSuccessorsAndPredecessors(state, graph, mode="edges"){
-			
+  getDiffOnSuccessorsAndPredecessors(state, graph, mode = "edges") {
     const predecessors = graph.$(G.toId(state)).predecessors();
     const successors = graph.$(G.toId(state)).successors();
     let diff = {
-      both  : [],
-      left  : [],
-      right : []
+      both: [],
+      left: [],
+      right: [],
     };
 
-    if(mode == "edges"){
+    if (mode == "edges") {
       diff = predecessors.edges().diff(successors.edges());
-    }else if(mode == "nodes"){
+    } else if (mode == "nodes") {
       diff = predecessors.nodes().diff(successors.nodes());
-    }else if(mode == "all"){
+    } else if (mode == "all") {
       diff = predecessors.diff(successors);
     }
 
     return {
-      predecessors : predecessors,
-      successors : successors,
-      both : diff.both,
-      left : diff.left,
-      right : diff.right
+      predecessors: predecessors,
+      successors: successors,
+      both: diff.both,
+      left: diff.left,
+      right: diff.right,
     };
   },
 
-  isInsideLoop(state, graph){
-
-    const sourcesToState =  G.getSourcesToState(state, graph);
+  isInsideLoop(state, graph) {
+    const sourcesToState = G.getSourcesToState(state, graph);
     let insideLoop = false;
 
-    for(let i = 0; i<sourcesToState.length; i++){
+    for (let i = 0; i < sourcesToState.length; i++) {
+      const { both } = G.getDiffOnSuccessorsAndPredecessors(sourcesToState[i], graph, (mode = "edges"));
 
-      const { both } = G.getDiffOnSuccessorsAndPredecessors(sourcesToState[i], graph,mode="edges");
-
-      if(both.size() != 0){
+      if (both.size() != 0) {
         insideLoop = true;
         break;
       }
-			
     }
     return insideLoop;
-
-  }
-
+  },
 };
 
 module.exports = G;
-
-

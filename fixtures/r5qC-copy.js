@@ -12,15 +12,16 @@ function w4qC(S4qC, M4qC, O4qC) {
                 break;
             case 49:
                 d4qC ^= d4qC >>> 16;
-                //return d4qC;
-                console.log("fuck");
-                r5qC = 99;
+                return d4qC;
+                //console.log("fuck");
+                //r5qC = 99;
                 break;
-
+            /*
             case 99:
                 console.log("yes");
                 return d4qC;
                 break;
+            */
 
             case 51:
                 E1gg(U5qC[146]);

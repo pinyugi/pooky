@@ -1,11 +1,8 @@
-
 const t = require("@babel/types");
 const { Transition } = require("./transition.js");
 
-class State{
-
-  constructor(name){
-
+class State {
+  constructor(name) {
     this._name = name;
     this.nodes = [];
     this.transition = null;
@@ -19,33 +16,28 @@ class State{
     this._name = value;
   }
 
-  setTransition(transition, update=1){
-    if(transition !== null && transition instanceof Transition){
-
-      if(this.transition === null){
+  setTransition(transition, update = 1) {
+    if (transition !== null && transition instanceof Transition) {
+      if (this.transition === null) {
         this.transition = transition;
-      }else{
-        if(this.transition.hash() == transition.hash()){
-			    if(update) this.transition = transition ;
+      } else {
+        if (this.transition.hash() == transition.hash()) {
+          if (update) this.transition = transition;
         }
       }
     }
-
   }
 
-  hasConditionalTransition(){
+  hasConditionalTransition() {
     return this.transition === null ? false : this.transition.isConditional();
   }
 
-  addNode(node){
-	  t.assertNode(node);
-	  this.nodes.push(node);
-
-  } 
-
-	
+  addNode(node) {
+    t.assertNode(node);
+    this.nodes.push(node);
+  }
 }
 
 module.exports = {
-  State
+  State,
 };

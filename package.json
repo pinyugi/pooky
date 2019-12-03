@@ -11,5 +11,8 @@
     "recast": "^0.18.1",
     "cytoscape": "^3.11.0",
     "lodash": "^4.17.15"
+  },
+  "scripts" : {
+	 "prettier" : "prettier --write \"./pooky/**/*.{js,jsx,json}\""
   }
 }

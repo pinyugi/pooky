@@ -1,17 +1,16 @@
-
 S0SS(T0SS());
 V022(P022());
 J0tt.m0JJ = m0JJ;
 j5LL(L5LL());
-J0tt.F3 = function() {
+J0tt.F3 = (function() {
     var D5 = 2;
-    for (; D5 !== 1;) {
+    for (; D5 !== 1; ) {
         switch (D5) {
             case 2:
                 return {
-                    f8: function(Y9) {
+                    f8: (function(Y9) {
                         var M5 = 2;
-                        for (; M5 !== 10;) {
+                        for (; M5 !== 10; ) {
                             switch (M5) {
                                 case 9:
                                     z9 = 0;
@@ -20,7 +19,7 @@ J0tt.F3 = function() {
                                 case 2:
                                     var N9 = function(K4) {
                                         var k5 = 2;
-                                        for (; k5 !== 13;) {
+                                        for (; k5 !== 13; ) {
                                             switch (k5) {
                                                 case 2:
                                                     var R9 = [];
@@ -48,14 +47,14 @@ J0tt.F3 = function() {
                                                 case 8:
                                                     c4 = R9.o0LL(function() {
                                                         var G5 = 2;
-                                                        for (; G5 !== 1;) {
+                                                        for (; G5 !== 1; ) {
                                                             switch (G5) {
                                                                 case 2:
                                                                     return 0.5 - S0LL.J0LL();
                                                                     break;
                                                             }
                                                         }
-                                                    }).V0LL('');
+                                                    }).V0LL("");
                                                     k5 = 7;
                                                     break;
                                                 case 6:
@@ -71,7 +70,7 @@ J0tt.F3 = function() {
                                             }
                                         }
                                     };
-                                    var q9 = '',
+                                    var q9 = "",
                                         U9 = O0LL(N9([54, 19, 19, -7])());
                                     M5 = 5;
                                     break;
@@ -79,11 +78,11 @@ J0tt.F3 = function() {
                                     M5 = L9 < U9.length ? 3 : 6;
                                     break;
                                 case 6:
-                                    q9 = q9.e0LL('?');
+                                    q9 = q9.e0LL("?");
                                     var H9 = 0;
                                     var m9 = function(q4) {
                                         var l5 = 2;
-                                        for (; l5 !== 16;) {
+                                        for (; l5 !== 16; ) {
                                             switch (l5) {
                                                 case 5:
                                                     return H9++, q9[q4];
@@ -153,7 +152,7 @@ J0tt.F3 = function() {
                                     };
                                     var Z9 = function(B4) {
                                         var t5 = 2;
-                                        for (; t5 !== 1;) {
+                                        for (; t5 !== 1; ) {
                                             switch (t5) {
                                                 case 2:
                                                     return q9[B4];
@@ -184,23 +183,23 @@ J0tt.F3 = function() {
                                     break;
                             }
                         }
-                    }('UPKJ%T')
+                    })("UPKJ%T"),
                 };
                 break;
         }
     }
-}();
+})();
 J0tt.h3 = function() {
-    return typeof J0tt.F3.f8 === 'function' ? J0tt.F3.f8.apply(J0tt.F3, arguments) : J0tt.F3.f8;
+    return typeof J0tt.F3.f8 === "function" ? J0tt.F3.f8.apply(J0tt.F3, arguments) : J0tt.F3.f8;
 };
 J0tt.c3 = function() {
-    return typeof J0tt.F3.f8 === 'function' ? J0tt.F3.f8.apply(J0tt.F3, arguments) : J0tt.F3.f8;
+    return typeof J0tt.F3.f8 === "function" ? J0tt.F3.f8.apply(J0tt.F3, arguments) : J0tt.F3.f8;
 };
 
 function V022() {
     function E1() {
         var V7 = 2;
-        for (; V7 !== 5;) {
+        for (; V7 !== 5; ) {
             switch (V7) {
                 case 2:
                     var v7 = [arguments];
@@ -212,7 +211,7 @@ function V022() {
 
     function b1() {
         var D7 = 2;
-        for (; D7 !== 3;) {
+        for (; D7 !== 3; ) {
             switch (D7) {
                 case 2:
                     var c7 = [arguments];
@@ -220,7 +219,7 @@ function V022() {
                     c7[1] = 7;
                     try {
                         var Z7 = 2;
-                        for (; Z7 !== 9;) {
+                        for (; Z7 !== 9; ) {
                             switch (Z7) {
                                 case 2:
                                     c7[8] = {};
@@ -246,7 +245,7 @@ function V022() {
         }
     }
     var j7 = 2;
-    for (; j7 !== 22;) {
+    for (; j7 !== 22; ) {
         switch (j7) {
             case 3:
                 u7[1] = "0";
@@ -284,7 +283,7 @@ function V022() {
             case 26:
                 var H1 = function() {
                     var R7 = 2;
-                    for (; R7 !== 5;) {
+                    for (; R7 !== 5; ) {
                         switch (R7) {
                             case 2:
                                 var s7 = [arguments];
@@ -313,7 +312,7 @@ function V022() {
 
     function J1() {
         var z7 = 2;
-        for (; z7 !== 5;) {
+        for (; z7 !== 5; ) {
             switch (z7) {
                 case 2:
                     var Y7 = [arguments];
@@ -323,9 +322,9 @@ function V022() {
         }
     }
 }
-J0tt.P9 = function() {
+J0tt.P9 = (function() {
     var y9 = 2;
-    for (; y9 !== 9;) {
+    for (; y9 !== 9; ) {
         switch (y9) {
             case 2:
                 var t9 = [arguments];
@@ -333,14 +332,14 @@ J0tt.P9 = function() {
                 t9[8] = {};
                 t9[8].q = function() {
                     var K9 = 2;
-                    for (; K9 !== 90;) {
+                    for (; K9 !== 90; ) {
                         switch (K9) {
                             case 34:
                                 J9[79] = {};
-                                J9[79].b = ['a'];
+                                J9[79].b = ["a"];
                                 J9[79].S = function() {
                                     var a0 = function() {
-                                        return unescape('%3D');
+                                        return unescape("%3D");
                                     };
                                     var R0 = /\u003d/.c0SS(a0 + []);
                                     return R0;
@@ -353,11 +352,11 @@ J0tt.P9 = function() {
                                 K9 = 71;
                                 break;
                             case 63:
-                                J9[24] = 'u';
-                                J9[27] = 'b';
-                                J9[25] = 'T';
-                                J9[85] = 'S';
-                                J9[77] = 't';
+                                J9[24] = "u";
+                                J9[27] = "b";
+                                J9[25] = "T";
+                                J9[85] = "S";
+                                J9[77] = "t";
                                 K9 = 58;
                                 break;
                             case 57:
@@ -366,7 +365,7 @@ J0tt.P9 = function() {
                             case 40:
                                 J9[56] = J9[71];
                                 J9[26] = {};
-                                J9[26].b = ['Q'];
+                                J9[26].b = ["Q"];
                                 J9[26].S = function() {
                                     var f0 = false;
                                     var h0 = [];
@@ -380,12 +379,12 @@ J0tt.P9 = function() {
                                 K9 = 36;
                                 break;
                             case 69:
-                                K9 = function() {
+                                K9 = (function() {
                                     var r9 = 2;
-                                    for (; r9 !== 22;) {
+                                    for (; r9 !== 22; ) {
                                         switch (r9) {
                                             case 19:
-                                                l9[6] ++;
+                                                l9[6]++;
                                                 r9 = 7;
                                                 break;
                                             case 26:
@@ -408,7 +407,7 @@ J0tt.P9 = function() {
                                             case 13:
                                                 l9[4][l9[9][J9[77]]] = function() {
                                                     var X9 = 2;
-                                                    for (; X9 !== 9;) {
+                                                    for (; X9 !== 9; ) {
                                                         switch (X9) {
                                                             case 3:
                                                                 return B9[4];
@@ -437,7 +436,7 @@ J0tt.P9 = function() {
                                                 r9 = 16;
                                                 break;
                                             case 24:
-                                                l9[6] ++;
+                                                l9[6]++;
                                                 r9 = 16;
                                                 break;
                                             case 15:
@@ -459,7 +458,7 @@ J0tt.P9 = function() {
                                                 r9 = 11;
                                                 break;
                                             case 14:
-                                                r9 = typeof l9[4][l9[9][J9[77]]] === 'undefined' ? 13 : 11;
+                                                r9 = typeof l9[4][l9[9][J9[77]]] === "undefined" ? 13 : 11;
                                                 break;
                                             case 20:
                                                 l9[4][l9[9][J9[77]]].h += true;
@@ -485,7 +484,9 @@ J0tt.P9 = function() {
                                                 break;
                                         }
                                     }
-                                }(J9[58]) ? 68 : 67;
+                                })(J9[58])
+                                    ? 68
+                                    : 67;
                                 break;
                             case 76:
                                 K9 = J9[20] < J9[37][J9[27]].length ? 75 : 70;
@@ -496,17 +497,17 @@ J0tt.P9 = function() {
                             case 20:
                                 J9[4].S = function() {
                                     var B0 = function() {
-                                        return '\u0041\u030A'.normalize('NFC') === '\u212B'.normalize('NFC');
+                                        return "\u0041\u030A".normalize("NFC") === "\u212B".normalize("NFC");
                                     };
                                     var w0 = /\x74\x72\x75\x65/.c0SS(B0 + []);
                                     return w0;
                                 };
                                 J9[1] = J9[4];
                                 J9[6] = {};
-                                J9[6].b = ['a'];
+                                J9[6].b = ["a"];
                                 J9[6].S = function() {
                                     var J0 = function() {
-                                        return 'x'.repeat(2);
+                                        return "x".repeat(2);
                                     };
                                     var y0 = /\x78\u0078/.c0SS(J0 + []);
                                     return y0;
@@ -516,16 +517,16 @@ J0tt.P9 = function() {
                                 K9 = 26;
                                 break;
                             case 26:
-                                J9[75].b = ['Q'];
+                                J9[75].b = ["Q"];
                                 J9[75].S = function() {
-                                    var x0 = typeof o0SS === 'function';
+                                    var x0 = typeof o0SS === "function";
                                     return x0;
                                 };
                                 J9[96] = J9[75];
                                 J9[22] = {};
-                                J9[22].b = ['Q'];
+                                J9[22].b = ["Q"];
                                 J9[22].S = function() {
-                                    var e0 = typeof j0SS === 'function';
+                                    var e0 = typeof j0SS === "function";
                                     return e0;
                                 };
                                 J9[38] = J9[22];
@@ -534,16 +535,16 @@ J0tt.P9 = function() {
                             case 7:
                                 J9[5] = J9[8];
                                 J9[9] = {};
-                                J9[9].b = ['a'];
+                                J9[9].b = ["a"];
                                 K9 = 13;
                                 break;
                             case 4:
                                 J9[3] = [];
                                 J9[8] = {};
-                                J9[8].b = ['a'];
+                                J9[8].b = ["a"];
                                 J9[8].S = function() {
                                     var O0 = function() {
-                                        return 'x'.toUpperCase();
+                                        return "x".toUpperCase();
                                     };
                                     var K0 = /\x58/.c0SS(O0 + []);
                                     return K0;
@@ -559,7 +560,7 @@ J0tt.P9 = function() {
                             case 45:
                                 J9[3].u0SS(J9[96]);
                                 J9[58] = [];
-                                J9[82] = 'J';
+                                J9[82] = "J";
                                 K9 = 63;
                                 break;
                             case 2:
@@ -582,10 +583,10 @@ J0tt.P9 = function() {
                             case 44:
                                 J9[74] = J9[21];
                                 J9[71] = {};
-                                J9[71].b = ['a'];
+                                J9[71].b = ["a"];
                                 J9[71].S = function() {
                                     var E0 = function() {
-                                        return 'aa'.charCodeAt(1);
+                                        return "aa".charCodeAt(1);
                                     };
                                     var H0 = /\u0039\u0037/.c0SS(E0 + []);
                                     return H0;
@@ -593,14 +594,14 @@ J0tt.P9 = function() {
                                 K9 = 40;
                                 break;
                             case 70:
-                                J9[38] ++;
+                                J9[38]++;
                                 K9 = 57;
                                 break;
                             case 30:
                                 J9[21] = {};
-                                J9[21].b = ['Q'];
+                                J9[21].b = ["Q"];
                                 J9[21].S = function() {
-                                    var z0 = typeof U0SS === 'function';
+                                    var z0 = typeof U0SS === "function";
                                     return z0;
                                 };
                                 K9 = 44;
@@ -608,14 +609,14 @@ J0tt.P9 = function() {
                             case 13:
                                 J9[9].S = function() {
                                     var S0 = function() {
-                                        return 'x'.toLocaleUpperCase();
+                                        return "x".toLocaleUpperCase();
                                     };
                                     var T0 = /\u0058/.c0SS(S0 + []);
                                     return T0;
                                 };
                                 J9[2] = J9[9];
                                 J9[4] = {};
-                                J9[4].b = ['a'];
+                                J9[4].b = ["a"];
                                 K9 = 20;
                                 break;
                             case 58:
@@ -623,7 +624,7 @@ J0tt.P9 = function() {
                                 K9 = 57;
                                 break;
                             case 71:
-                                J9[20] ++;
+                                J9[20]++;
                                 K9 = 76;
                                 break;
                             case 52:
@@ -662,10 +663,10 @@ J0tt.P9 = function() {
                 break;
         }
     }
-}();
-J0tt.n7 = function(W7, e7) {
+})();
+J0tt.n7 = (function(W7, e7) {
     var H7 = 2;
-    for (; H7 !== 10;) {
+    for (; H7 !== 10; ) {
         switch (H7) {
             case 4:
                 H7 = !q7-- ? 3 : 9;
@@ -675,7 +676,7 @@ J0tt.n7 = function(W7, e7) {
                 H7 = 4;
                 break;
             case 7:
-                l7 = f7.y022(new B7[O7]("^['-|]"), 'S');
+                l7 = f7.y022(new B7[O7]("^['-|]"), "S");
                 H7 = 6;
                 break;
             case 8:
@@ -692,8 +693,8 @@ J0tt.n7 = function(W7, e7) {
                 H7 = !q7-- ? 5 : 4;
                 break;
             case 9:
-                var N7 = 'fromCharCode',
-                    O7 = 'RegExp';
+                var N7 = "fromCharCode",
+                    O7 = "RegExp";
                 H7 = 8;
                 break;
             case 3:
@@ -706,7 +707,7 @@ J0tt.n7 = function(W7, e7) {
             case 14:
                 e7 = e7.J022(function(C8) {
                     var w7 = 2;
-                    for (; w7 !== 13;) {
+                    for (; w7 !== 13; ) {
                         switch (w7) {
                             case 2:
                                 var H8;
@@ -722,7 +723,7 @@ J0tt.n7 = function(W7, e7) {
                                 return H8;
                                 break;
                             case 5:
-                                H8 = '';
+                                H8 = "";
                                 w7 = 4;
                                 break;
                             case 4:
@@ -752,18 +753,21 @@ J0tt.n7 = function(W7, e7) {
                 return {
                     I7: function(t8) {
                         var b7 = 2;
-                        for (; b7 !== 5;) {
+                        for (; b7 !== 5; ) {
                             switch (b7) {
                                 case 2:
-                                    var p8 = function(n8, S8) {
+                                    var p8 = (function(n8, S8) {
                                         var E7 = 2;
-                                        for (; E7 !== 10;) {
+                                        for (; E7 !== 10; ) {
                                             switch (E7) {
                                                 case 11:
                                                     return Q8;
                                                     break;
                                                 case 5:
-                                                    E7 = typeof S8 === 'undefined' && typeof e7 !== 'undefined' ? 4 : 3;
+                                                    E7 =
+                                                        typeof S8 === "undefined" && typeof e7 !== "undefined"
+                                                            ? 4
+                                                            : 3;
                                                     break;
                                                 case 4:
                                                     S8 = e7;
@@ -773,7 +777,8 @@ J0tt.n7 = function(W7, e7) {
                                                     E7 = L8 < n8[S8[5]] ? 8 : 11;
                                                     break;
                                                 case 3:
-                                                    var Q8, L8 = 0;
+                                                    var Q8,
+                                                        L8 = 0;
                                                     E7 = 9;
                                                     break;
                                                 case 13:
@@ -784,7 +789,10 @@ J0tt.n7 = function(W7, e7) {
                                                     E7 = L8 === 0 ? 14 : 12;
                                                     break;
                                                 case 2:
-                                                    E7 = typeof n8 === 'undefined' && typeof t8 !== 'undefined' ? 1 : 5;
+                                                    E7 =
+                                                        typeof n8 === "undefined" && typeof t8 !== "undefined"
+                                                            ? 1
+                                                            : 5;
                                                     break;
                                                 case 7:
                                                     var X8 = Y8[S8[2]](Y8[S8[5]] - 1);
@@ -808,7 +816,7 @@ J0tt.n7 = function(W7, e7) {
                                                     break;
                                             }
                                         }
-                                    }(undefined, undefined);
+                                    })(undefined, undefined);
                                     b7 = 1;
                                     break;
                                 case 1:
@@ -816,7 +824,7 @@ J0tt.n7 = function(W7, e7) {
                                     break;
                             }
                         }
-                    }
+                    },
                 };
                 break;
             case 12:
@@ -828,7 +836,7 @@ J0tt.n7 = function(W7, e7) {
 
     function d7(c8) {
         var J7 = 2;
-        for (; J7 !== 15;) {
+        for (; J7 !== 15; ) {
             switch (J7) {
                 case 14:
                     J7 = !q7-- ? 13 : 12;
@@ -900,7 +908,7 @@ J0tt.n7 = function(W7, e7) {
             }
         }
     }
-}('return this', [
+})("return this", [
     [-42, -13, 6, -9],
     [-7, -9, 6, -26, -5, -1, -9],
     [-11, -6, -13, 4, -45, 6],
@@ -908,18 +916,18 @@ J0tt.n7 = function(W7, e7) {
     [2, -13, 4, 5, -9, -37, 0, 6],
     [-2, -9, 0, -7, 6, -6],
     [-61, -10, 3, -13, 1, 6, 2, -62, -62],
-    []
+    [],
 ]);
 
 function J0tt() {}
 J0tt.b0v = function() {
-    return typeof J0tt.z0v.y0v === 'function' ? J0tt.z0v.y0v.apply(J0tt.z0v, arguments) : J0tt.z0v.y0v;
+    return typeof J0tt.z0v.y0v === "function" ? J0tt.z0v.y0v.apply(J0tt.z0v, arguments) : J0tt.z0v.y0v;
 };
 
 function j5LL() {
     function J2() {
         var P5 = 2;
-        for (; P5 !== 5;) {
+        for (; P5 !== 5; ) {
             switch (P5) {
                 case 2:
                     var g5 = [arguments];
@@ -931,7 +939,7 @@ function j5LL() {
 
     function V2() {
         var C5 = 2;
-        for (; C5 !== 5;) {
+        for (; C5 !== 5; ) {
             switch (C5) {
                 case 2:
                     var u5 = [arguments];
@@ -943,7 +951,7 @@ function j5LL() {
 
     function n2() {
         var s5 = 2;
-        for (; s5 !== 5;) {
+        for (; s5 !== 5; ) {
             switch (s5) {
                 case 2:
                     var y5 = [arguments];
@@ -953,7 +961,7 @@ function j5LL() {
         }
     }
     var W5 = 2;
-    for (; W5 !== 83;) {
+    for (; W5 !== 83; ) {
         switch (W5) {
             case 85:
                 p2(q2, "apply", w5[69], w5[55]);
@@ -1051,7 +1059,7 @@ function j5LL() {
             case 72:
                 var p2 = function() {
                     var I5 = 2;
-                    for (; I5 !== 5;) {
+                    for (; I5 !== 5; ) {
                         switch (I5) {
                             case 2:
                                 var T5 = [arguments];
@@ -1148,13 +1156,13 @@ function j5LL() {
 
     function S2() {
         var H5 = 2;
-        for (; H5 !== 5;) {
+        for (; H5 !== 5; ) {
             switch (H5) {
                 case 2:
                     var i5 = [arguments];
                     try {
                         var e5 = 2;
-                        for (; e5 !== 9;) {
+                        for (; e5 !== 9; ) {
                             switch (e5) {
                                 case 4:
                                     i5[6].value = i5[8][i5[0][2]];
@@ -1182,7 +1190,7 @@ function j5LL() {
 
     function A2() {
         var Y5 = 2;
-        for (; Y5 !== 5;) {
+        for (; Y5 !== 5; ) {
             switch (Y5) {
                 case 2:
                     var j5 = [arguments];
@@ -1194,7 +1202,7 @@ function j5LL() {
 
     function B2() {
         var L5 = 2;
-        for (; L5 !== 5;) {
+        for (; L5 !== 5; ) {
             switch (L5) {
                 case 2:
                     var z5 = [arguments];
@@ -1206,7 +1214,7 @@ function j5LL() {
 
     function q2() {
         var Q5 = 2;
-        for (; Q5 !== 5;) {
+        for (; Q5 !== 5; ) {
             switch (Q5) {
                 case 2:
                     var E5 = [arguments];
@@ -1217,12 +1225,12 @@ function j5LL() {
     }
 }
 J0tt.a7 = function() {
-    return typeof J0tt.n7.I7 === 'function' ? J0tt.n7.I7.apply(J0tt.n7, arguments) : J0tt.n7.I7;
+    return typeof J0tt.n7.I7 === "function" ? J0tt.n7.I7.apply(J0tt.n7, arguments) : J0tt.n7.I7;
 };
 
 function P022() {
     var F7 = 2;
-    for (; F7 !== 3;) {
+    for (; F7 !== 3; ) {
         switch (F7) {
             case 1:
                 return globalThis;
@@ -1230,7 +1238,7 @@ function P022() {
             case 5:
                 try {
                     var p7 = 2;
-                    for (; p7 !== 9;) {
+                    for (; p7 !== 9; ) {
                         switch (p7) {
                             case 1:
                                 stn9B.globalThis = stn9B;
@@ -1241,16 +1249,16 @@ function P022() {
                                 p7 = 3;
                                 break;
                             case 2:
-                                Object.defineProperty(Object.prototype, 'stn9B', {
+                                Object.defineProperty(Object.prototype, "stn9B", {
                                     get: function() {
                                         return this;
                                     },
-                                    configurable: true
+                                    configurable: true,
                                 });
                                 p7 = 1;
                                 break;
                             case 5:
-                                p7 = typeof globalThis === 'undefined' ? 4 : 3;
+                                p7 = typeof globalThis === "undefined" ? 4 : 3;
                                 break;
                             case 3:
                                 delete Object.prototype.stn9B;
@@ -1264,22 +1272,22 @@ function P022() {
                 return globalThis;
                 break;
             case 2:
-                F7 = typeof globalThis === 'object' ? 1 : 5;
+                F7 = typeof globalThis === "object" ? 1 : 5;
                 break;
         }
     }
 }
 J0tt.N0v = function() {
-    return typeof J0tt.z0v.y0v === 'function' ? J0tt.z0v.y0v.apply(J0tt.z0v, arguments) : J0tt.z0v.y0v;
+    return typeof J0tt.z0v.y0v === "function" ? J0tt.z0v.y0v.apply(J0tt.z0v, arguments) : J0tt.z0v.y0v;
 };
 J0tt.p9 = function() {
-    return typeof J0tt.P9.q === 'function' ? J0tt.P9.q.apply(J0tt.P9, arguments) : J0tt.P9.q;
+    return typeof J0tt.P9.q === "function" ? J0tt.P9.q.apply(J0tt.P9, arguments) : J0tt.P9.q;
 };
 
 function S0SS() {
     function s6() {
         var a9 = 2;
-        for (; a9 !== 5;) {
+        for (; a9 !== 5; ) {
             switch (a9) {
                 case 2:
                     var A9 = [arguments];
@@ -1291,7 +1299,7 @@ function S0SS() {
 
     function e6() {
         var x9 = 2;
-        for (; x9 !== 5;) {
+        for (; x9 !== 5; ) {
             switch (x9) {
                 case 2:
                     var C9 = [arguments];
@@ -1303,7 +1311,7 @@ function S0SS() {
 
     function W6() {
         var F9 = 2;
-        for (; F9 !== 5;) {
+        for (; F9 !== 5; ) {
             switch (F9) {
                 case 2:
                     var e9 = [arguments];
@@ -1316,7 +1324,7 @@ function S0SS() {
         }
     }
     var h9 = 2;
-    for (; h9 !== 74;) {
+    for (; h9 !== 74; ) {
         switch (h9) {
             case 60:
                 v9[66] += v9[58];
@@ -1367,7 +1375,7 @@ function S0SS() {
             case 58:
                 var k6 = function() {
                     var D9 = 2;
-                    for (; D9 !== 5;) {
+                    for (; D9 !== 5; ) {
                         switch (D9) {
                             case 2:
                                 var W9 = [arguments];
@@ -1462,7 +1470,7 @@ function S0SS() {
 
     function C6() {
         var w9 = 2;
-        for (; w9 !== 5;) {
+        for (; w9 !== 5; ) {
             switch (w9) {
                 case 2:
                     var j9 = [arguments];
@@ -1474,13 +1482,13 @@ function S0SS() {
 
     function j6() {
         var M9 = 2;
-        for (; M9 !== 5;) {
+        for (; M9 !== 5; ) {
             switch (M9) {
                 case 2:
                     var I9 = [arguments];
                     try {
                         var E9 = 2;
-                        for (; E9 !== 9;) {
+                        for (; E9 !== 9; ) {
                             switch (E9) {
                                 case 2:
                                     I9[2] = {};
@@ -1509,13 +1517,13 @@ function S0SS() {
 
 function L5LL() {
     var m5 = 2;
-    for (; m5 !== 3;) {
+    for (; m5 !== 3; ) {
         switch (m5) {
             case 1:
                 return globalThis;
                 break;
             case 2:
-                m5 = typeof globalThis === 'object' ? 1 : 5;
+                m5 = typeof globalThis === "object" ? 1 : 5;
                 break;
             case 4:
                 return globalThis;
@@ -1523,25 +1531,25 @@ function L5LL() {
             case 5:
                 try {
                     var f5 = 2;
-                    for (; f5 !== 9;) {
+                    for (; f5 !== 9; ) {
                         switch (f5) {
                             case 4:
                                 window.globalThis = window;
                                 f5 = 3;
                                 break;
                             case 5:
-                                f5 = typeof globalThis === 'undefined' ? 4 : 3;
+                                f5 = typeof globalThis === "undefined" ? 4 : 3;
                                 break;
                             case 3:
                                 delete Object.prototype.pBodD;
                                 f5 = 9;
                                 break;
                             case 2:
-                                Object.defineProperty(Object.prototype, 'pBodD', {
+                                Object.defineProperty(Object.prototype, "pBodD", {
                                     get: function() {
                                         return this;
                                     },
-                                    configurable: true
+                                    configurable: true,
                                 });
                                 pBodD.globalThis = pBodD;
                                 f5 = 5;
@@ -1556,15 +1564,15 @@ function L5LL() {
         }
     }
 }
-J0tt.z0v = function(T0v, x0v, F0v) {
+J0tt.z0v = (function(T0v, x0v, F0v) {
     var Q0v = 2;
-    for (; Q0v !== 1;) {
+    for (; Q0v !== 1; ) {
         switch (Q0v) {
             case 2:
                 return {
-                    y0v: function D0v(K0v, r0v, j0v) {
+                    y0v: (function D0v(K0v, r0v, j0v) {
                         var I0v = 2;
-                        for (; I0v !== 32;) {
+                        for (; I0v !== 32; ) {
                             switch (I0v) {
                                 case 35:
                                     u0v -= 1;
@@ -1578,7 +1586,7 @@ J0tt.z0v = function(T0v, x0v, F0v) {
                                     I0v = u0v >= 0 ? 17 : 34;
                                     break;
                                 case 22:
-                                    h0v = U0v + (u0v - U0v + r0v * W0v) % d0v;
+                                    h0v = U0v + ((u0v - U0v + r0v * W0v) % d0v);
                                     p0v[W0v][h0v] = p0v[u0v];
                                     I0v = 35;
                                     break;
@@ -1650,25 +1658,25 @@ J0tt.z0v = function(T0v, x0v, F0v) {
                                     break;
                             }
                         }
-                    }(T0v, x0v, F0v)
+                    })(T0v, x0v, F0v),
                 };
                 break;
         }
     }
-}(14, 6, [14]);
+})(14, 6, [14]);
 J0tt.y7 = function() {
-    return typeof J0tt.n7.I7 === 'function' ? J0tt.n7.I7.apply(J0tt.n7, arguments) : J0tt.n7.I7;
+    return typeof J0tt.n7.I7 === "function" ? J0tt.n7.I7.apply(J0tt.n7, arguments) : J0tt.n7.I7;
 };
 J0tt.D0x = function() {
-    return typeof J0tt.x0x.s0x === 'function' ? J0tt.x0x.s0x.apply(J0tt.x0x, arguments) : J0tt.x0x.s0x;
+    return typeof J0tt.x0x.s0x === "function" ? J0tt.x0x.s0x.apply(J0tt.x0x, arguments) : J0tt.x0x.s0x;
 };
 
 function T0SS() {
     var o9 = 2;
-    for (; o9 !== 3;) {
+    for (; o9 !== 3; ) {
         switch (o9) {
             case 2:
-                o9 = typeof globalThis === 'object' ? 1 : 5;
+                o9 = typeof globalThis === "object" ? 1 : 5;
                 break;
             case 1:
                 return globalThis;
@@ -1676,21 +1684,21 @@ function T0SS() {
             case 5:
                 try {
                     var G9 = 2;
-                    for (; G9 !== 9;) {
+                    for (; G9 !== 9; ) {
                         switch (G9) {
                             case 5:
-                                G9 = typeof globalThis === 'undefined' ? 4 : 3;
+                                G9 = typeof globalThis === "undefined" ? 4 : 3;
                                 break;
                             case 3:
                                 delete Object.prototype._n9Bo;
                                 G9 = 9;
                                 break;
                             case 2:
-                                Object.defineProperty(Object.prototype, '_n9Bo', {
+                                Object.defineProperty(Object.prototype, "_n9Bo", {
                                     get: function() {
                                         return this;
                                     },
-                                    configurable: true
+                                    configurable: true,
                                 });
                                 _n9Bo.globalThis = _n9Bo;
                                 G9 = 5;
@@ -1709,17 +1717,17 @@ function T0SS() {
         }
     }
 }
-J0tt.x0x = function() {
+J0tt.x0x = (function() {
     var z0x = [arguments];
     z0x[4] = 2;
-    for (; z0x[4] !== 1;) {
+    for (; z0x[4] !== 1; ) {
         switch (z0x[4]) {
             case 2:
                 return {
-                    s0x: function() {
+                    s0x: (function() {
                         var e0x = [arguments];
                         e0x[7] = 2;
-                        for (; e0x[7] !== 18;) {
+                        for (; e0x[7] !== 18; ) {
                             switch (e0x[7]) {
                                 case 3:
                                     e0x[7] = J0tt.h3(2) > 0 ? 9 : 8;
@@ -1779,31 +1787,31 @@ J0tt.x0x = function() {
                                     break;
                             }
                         }
-                    }()
+                    })(),
                 };
                 break;
         }
     }
-}();
+})();
 J0tt.Q0x = function() {
-    return typeof J0tt.x0x.s0x === 'function' ? J0tt.x0x.s0x.apply(J0tt.x0x, arguments) : J0tt.x0x.s0x;
+    return typeof J0tt.x0x.s0x === "function" ? J0tt.x0x.s0x.apply(J0tt.x0x, arguments) : J0tt.x0x.s0x;
 };
 J0tt.u9 = function() {
-    return typeof J0tt.P9.q === 'function' ? J0tt.P9.q.apply(J0tt.P9, arguments) : J0tt.P9.q;
+    return typeof J0tt.P9.q === "function" ? J0tt.P9.q.apply(J0tt.P9, arguments) : J0tt.P9.q;
 };
 var s0xxxx = J0tt.N0v()[7][5][13];
 
 function m0JJ() {
     return ";?tyD17o%25%25%1Ag45)uG745trFl0o/%7C@5jc*/Gk9?,uUmjo..%12gj4%7D/Dk%25it3@'jcr%7DFk,58u%1A2%606(uG745t&J3j5/%7D%16k1f.+";
 }
-for (; s0xxxx !== J0tt.N0v()[3][7][7];) {
+for (; s0xxxx !== J0tt.N0v()[3][7][7]; ) {
     switch (s0xxxx) {
         case J0tt.b0v()[6][10]:
             J0tt.h7 = function() {
                 var m4v = J0tt;
                 var f0v = [arguments];
                 f0v[6] = m4v.b0v()[7][7][11];
-                for (; f0v[6] !== m4v.N0v()[6][5][0];) {
+                for (; f0v[6] !== m4v.N0v()[6][5][0]; ) {
                     switch (f0v[6]) {
                         case m4v.b0v()[12][2][11]:
                             f0v[6] = m4v && f0v[0][0] ? m4v.b0v()[11][12] : m4v.b0v()[5][3][10];
@@ -1818,7 +1826,7 @@ for (; s0xxxx !== J0tt.N0v()[3][7][7];) {
                 var l4v = J0tt;
                 var n0v = [arguments];
                 n0v[9] = l4v.b0v()[2][9][7];
-                for (; n0v[9] !== l4v.b0v()[12][2][4];) {
+                for (; n0v[9] !== l4v.b0v()[12][2][4]; ) {
                     switch (n0v[9]) {
                         case l4v.b0v()[12][9][11]:
                             n0v[9] = l4v ? l4v.N0v()[8][8] : l4v.b0v()[13][5][10][4];
@@ -1836,7 +1844,7 @@ for (; s0xxxx !== J0tt.N0v()[3][7][7];) {
                 var X4v = J0tt;
                 var S0v = [arguments];
                 S0v[6] = X4v.N0v()[13][9][3];
-                for (; S0v[6] !== X4v.N0v()[4][11][10];) {
+                for (; S0v[6] !== X4v.N0v()[4][11][10]; ) {
                     switch (S0v[6]) {
                         case X4v.N0v()[10][6]:
                             return X4v.y7(S0v[0][0]);
@@ -1854,7 +1862,7 @@ for (; s0xxxx !== J0tt.N0v()[3][7][7];) {
                 var G4v = J0tt;
                 var A0v = [arguments];
                 A0v[7] = G4v.b0v()[13][9][3];
-                for (; A0v[7] !== G4v.b0v()[10][13][2];) {
+                for (; A0v[7] !== G4v.b0v()[10][13][2]; ) {
                     switch (A0v[7]) {
                         case G4v.b0v()[4][6][1]:
                             A0v[7] = G4v ? G4v.b0v()[9][0] : G4v.N0v()[4][7][0];
@@ -1869,7 +1877,7 @@ for (; s0xxxx !== J0tt.N0v()[3][7][7];) {
                 var J4v = J0tt;
                 var O0v = [arguments];
                 O0v[5] = J4v.b0v()[7][7][11];
-                for (; O0v[5] !== J4v.N0v()[12][5][6][2];) {
+                for (; O0v[5] !== J4v.N0v()[12][5][6][2]; ) {
                     switch (O0v[5]) {
                         case J4v.b0v()[8][2][1]:
                             O0v[5] = J4v ? J4v.b0v()[12][4] : J4v.b0v()[4][4][12][12];
@@ -1884,7 +1892,7 @@ for (; s0xxxx !== J0tt.N0v()[3][7][7];) {
                 var o4v = J0tt;
                 var L0v = [arguments];
                 L0v[6] = o4v.N0v()[3][10][5];
-                for (; L0v[6] !== o4v.b0v()[6][2][10];) {
+                for (; L0v[6] !== o4v.b0v()[6][2][10]; ) {
                     switch (L0v[6]) {
                         case o4v.b0v()[2][3][4]:
                             return o4v.a7(L0v[0][0]);
@@ -1896,7 +1904,9 @@ for (; s0xxxx !== J0tt.N0v()[3][7][7];) {
                 }
             };
             J0tt[J0tt.k7(J0tt.c3(0)) ? J0tt.h3(8) : J0tt.c3(9)]();
-            console[J0tt.h7(J0tt.c3(2)) ? J0tt.c3(7) : J0tt.h3(9)](test(J0tt.C7(J0tt.h3(10)) ? J0tt.c3(9) : J0tt.h3(9)));
+            console[J0tt.h7(J0tt.c3(2)) ? J0tt.c3(7) : J0tt.h3(9)](
+                test(J0tt.C7(J0tt.h3(10)) ? J0tt.c3(9) : J0tt.h3(9))
+            );
             s0xxxx = J0tt.N0v()[7][5][5];
             break;
     }
@@ -1906,13 +1916,13 @@ function test() {
     var c4v = J0tt;
     var H4v = [arguments];
     H4v[7] = c4v.N0v()[12][0][13];
-    for (; H4v[7] !== c4v.b0v()[6][3][3];) {
+    for (; H4v[7] !== c4v.b0v()[6][3][3]; ) {
         switch (H4v[7]) {
             case c4v.N0v()[10][1][7]:
                 c4v.i7 = function() {
                     var V4v = [arguments];
                     V4v[3] = c4v.N0v()[9][9][7];
-                    for (; V4v[3] !== c4v.N0v()[8][7][10];) {
+                    for (; V4v[3] !== c4v.N0v()[8][7][10]; ) {
                         switch (V4v[3]) {
                             case c4v.b0v()[1][8]:
                                 return c4v.a7(V4v[0][0]);
@@ -1929,7 +1939,10 @@ function test() {
                 return c4v.Q7(c4v.c3(6)) ? c4v.c3(4) : c4v.h3(9);
                 break;
             case c4v.b0v()[0][2]:
-                H4v[7] = H4v[0][0] === (c4v.i7(c4v.c3(5)) ? c4v.h3(9) : c4v.c3(9)) ? c4v.b0v()[5][4][2] : c4v.N0v()[6][4][0];
+                H4v[7] =
+                    H4v[0][0] === (c4v.i7(c4v.c3(5)) ? c4v.h3(9) : c4v.c3(9))
+                        ? c4v.b0v()[5][4][2]
+                        : c4v.N0v()[6][4][0];
                 break;
             case c4v.b0v()[5][6][6]:
                 c4v[c4v.U7(c4v.c3(3)) ? c4v.h3(9) : c4v.h3(8)]();

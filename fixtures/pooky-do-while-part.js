@@ -1,12 +1,12 @@
-J1gg.I2Z = function() {
+J1gg.I2Z = (function() {
     var W1Z = 2;
-    for (; W1Z !== 1;) {
+    for (; W1Z !== 1; ) {
         switch (W1Z) {
             case 2:
                 return {
-                    o1f: function(f1f) {
+                    o1f: (function(f1f) {
                         var z1Z = 2;
-                        for (; z1Z !== 10;) {
+                        for (; z1Z !== 10; ) {
                             switch (z1Z) {
                                 case 5:
                                     var p1f = 0,
@@ -16,7 +16,7 @@ J1gg.I2Z = function() {
                                 case 2:
                                     var k1f = function(P1f) {
                                         var e1Z = 2;
-                                        for (; e1Z !== 13;) {
+                                        for (; e1Z !== 13; ) {
                                             switch (e1Z) {
                                                 case 5:
                                                     e1Z = n1f < P1f.length ? 4 : 9;
@@ -47,14 +47,14 @@ J1gg.I2Z = function() {
                                                 case 8:
                                                     e1f = T1f.Z1BB(function() {
                                                         var L2Z = 2;
-                                                        for (; L2Z !== 1;) {
+                                                        for (; L2Z !== 1; ) {
                                                             switch (L2Z) {
                                                                 case 2:
                                                                     return 0.5 - F1BB.Y1BB();
                                                                     break;
                                                             }
                                                         }
-                                                    }).Q1BB('');
+                                                    }).Q1BB("");
                                                     E1f = J1gg[e1f];
                                                     e1Z = 6;
                                                     break;
@@ -64,7 +64,7 @@ J1gg.I2Z = function() {
                                             }
                                         }
                                     };
-                                    var c1f = '',
+                                    var c1f = "",
                                         D1f = j1BB(k1f([-10, -11, -31, -11])());
                                     z1Z = 5;
                                     break;
@@ -83,11 +83,11 @@ J1gg.I2Z = function() {
                                     z1Z = 4;
                                     break;
                                 case 6:
-                                    c1f = c1f.q1BB(',<');
+                                    c1f = c1f.q1BB(",<");
                                     var K1f = 0;
                                     var m1f = function(i1f) {
                                         var Z2Z = 2;
-                                        for (; Z2Z !== 20;) {
+                                        for (; Z2Z !== 20; ) {
                                             switch (Z2Z) {
                                                 case 3:
                                                     c1f.C1BB.h1BB(c1f, c1f.a1BB(-5, 5).a1BB(0, 3));
@@ -143,7 +143,7 @@ J1gg.I2Z = function() {
                                     };
                                     var A1f = function(B1f) {
                                         var c2Z = 2;
-                                        for (; c2Z !== 1;) {
+                                        for (; c2Z !== 1; ) {
                                             switch (c2Z) {
                                                 case 2:
                                                     return c1f[B1f];
@@ -159,9 +159,9 @@ J1gg.I2Z = function() {
                                     break;
                             }
                         }
-                    }('JRSWK2')
+                    })("JRSWK2"),
                 };
                 break;
         }
     }
-}();
+})();

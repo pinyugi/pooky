@@ -9,22 +9,26 @@ while( x == 5){
         if(!x){
             oh.x();
             yee.a();
-            return;
+            continue;
         }else{
   
           console.log("66");
           console.log("done");
+          console.log("okay")
         }
 
     }else{
         okay.l = 'a';
         if(y==3){
-            x= 3;
+          x= 3;
+          console.log("okay")
+        }else{
+  
+          p = 3;
+          console.log("okay")
         }
-        p = 3;
 
     }
-    console.log("okay")
 
 }
 x = 7;
@@ -64,8 +68,8 @@ function while_loop_with_last_if(){
         oh.x();
         yee.a();
         //state = 99;
-        state = 11;
-        //state = 11;
+        state = 2;
+        //state = 1337;
         //state = 100;
         //state = 66;
         break;

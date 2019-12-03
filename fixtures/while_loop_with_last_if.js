@@ -9,7 +9,7 @@ while( x == 5){
         if(!x){
             oh.x();
             yee.a();
-            return;
+            continue;
         }
 
     }else{
