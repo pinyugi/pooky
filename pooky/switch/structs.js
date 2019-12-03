@@ -125,22 +125,32 @@ class Struct {
     return results;
   }
 
+	getWhileStates(callback){
+		const results = [];
+		
+		this.states["whileStates"].forEach((meta) => {
+			results.push(callback(meta));
+		})
+
+		return results;
+
+	}
+
   isContinueLoop(state) {
-    return this.getPreviousSeenStructs((prevState, meta) => prevState == state, structs.WHILE_LOOP).some((x) => x);
+    return this.getWhileStates((meta) => meta["whileStart"] == state).some((x) => x);
   }
 
   isBreakLoop(state) {
-    return this.getPreviousSeenStructs(
-      (prevState, meta) => meta["whileNonLoopState"] == state,
-      structs.WHILE_LOOP
-    ).some((x) => x);
+    return this.getWhileStates((meta) => meta["whileNonLoopState"] == state).some((x) => x);
   }
 
   isEndOfDoWhile(state) {
+		/*
     const doWhileEndStates = this.getPreviousSeenStructs(
       (prevState, meta) => meta["doWhileEndStates"],
       structs.WHILE_LOOP
     ).filter((x) => x !== undefined);
+		*/
   }
 }
 
@@ -159,12 +169,10 @@ class SimpleStruct extends Struct {
     if (this.isContinueLoop(transitions[0])) {
       //console.log("Continue the loop:", this.state);
 
-      nodes.push(t.expressionStatement(t.stringLiteral("simple continueLoop")));
       nodes.push(t.continueStatement());
       finalResult = structs.END_OF_IF_BODY;
     } else if (this.isBreakLoop(transitions[0])) {
       //console.log("Breaking out of the loop:", this.state);
-      nodes.push(t.expressionStatement(t.stringLiteral("simple breakLoop")));
       nodes.push(t.breakStatement());
       finalResult = structs.END_OF_IF_BODY;
     } else if (endStates.includes(transitions[0])) {
@@ -204,15 +212,21 @@ class IfThenElseStruct extends Struct {
     //console.log("IfThen :", this.state);
     for (let i = 0; i < 2; i++) {
       if (this.isContinueLoop(transitions[i])) {
+				/*
         transitionNodes[i].push(t.expressionStatement(t.stringLiteral("if then else continueLoop")));
+				*/
         transitionNodes[i].push(t.continueStatement());
+
       } else if (this.isBreakLoop(transitions[i])) {
+
         transitionNodes[i].push(t.expressionStatement(t.stringLiteral(`history:${this.history}`)));
+				/*
         transitionNodes[i].push(
           t.expressionStatement(
             t.stringLiteral(`if then else breakLoop transition ${transitions[i]} current state: ${this.state}`)
           )
         );
+				*/
         transitionNodes[i].push(t.breakStatement());
       } else {
         this.traverser.currentState = transitions[i];
@@ -255,7 +269,7 @@ class WhileStruct extends Struct {
     const whileNonLoopState = states[this.state]["meta"]["whileNonLoopState"];
     const whileLoopState = states[this.state]["meta"]["whileLoopState"];
 
-    //console.log("While:", this.state, "history:", this.history);
+		states["whileStates"].push(states[this.state]["meta"]);
     this.history.push(this.state);
     this.traverser.currentState = whileLoopState;
 
@@ -280,6 +294,8 @@ class WhileStruct extends Struct {
     whileNode.push(...nodes, t.whileStatement(testNode, t.blockStatement(whileBodyNodes)));
 
     this.traverser.currentState = whileNonLoopState;
+
+		states["whileStates"].pop();
 
     return {
       states,
@@ -335,7 +351,6 @@ class EndStateStruct extends Struct {
   simplify() {
     const { states, transitions, result, nodes, endStates } = this.getStructData();
     this.history.push(this.state);
-    //console.log("Should be ending here:", result, "state:", this.state);
 
     return {
       states,

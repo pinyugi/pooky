@@ -12,8 +12,7 @@ class StructTraverser {
     const currentState = this.getCurrentState(states);
 
     this.started = this.started ? true : true;
-    states["ElseStates"] = "ElseStates" in states ? states["ElseStates"] : [];
-    states["WhileStates"] = "WhileStates" in states ? states["WhileStates"] : [];
+    states["whileStates"] = "whileStates" in states ? states["whileStates"] : [];
 
     const structType = states[currentState]["result"];
     //console.log("currentState:", currentState, "result:", structType);
@@ -27,6 +26,7 @@ class StructTraverser {
         }).simplify();
 
       case structs.IF_THEN_ELSE:
+      case structs.IF_THEN_ELSE | structs.INFINITE_LOOP:
         return new IfThenElseStruct({
           state: currentState,
           traverser: this,
