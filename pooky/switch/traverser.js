@@ -13,6 +13,7 @@ class StructTraverser {
 
     this.started = this.started ? true : true;
     states["whileStates"] = "whileStates" in states ? states["whileStates"] : [];
+    states["doWhileStates"] = "doWhileStates" in states ? states["doWhileStates"] : [];
 
     const structType = states[currentState]["result"];
     //console.log("currentState:", currentState, "result:", structType);

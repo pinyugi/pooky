@@ -10,6 +10,7 @@ const structs = {
   END_STATE: 32,
   SAME_TRANSITION: 64,
   END_OF_IF_BODY: 128,
+  END_OF_DO_WHILE: 256,
 };
 
 class Struct {
@@ -86,12 +87,13 @@ class Struct {
     };
   }
 
+
   traverseStates() {
     const nodez = [];
     let getNextStruct = true;
 
     do {
-      const { states, state, nodes, result } = this.getNextStruct();
+      const { nodes, result } = this.getNextStruct();
 
       if (nodes) {
         nodez.push(...nodes);
@@ -111,46 +113,44 @@ class Struct {
     return nodez;
   }
 
-  getPreviousSeenStructs(callback, structType) {
-    const results = [];
-    for (let prevState of this.history) {
-      const result = this.states[prevState]["result"];
-      const meta = this.states[prevState]["meta"];
+  
 
-      if (result & structType) {
-        results.push(callback(prevState, meta));
-      }
+  getLoopStates(callback, loopType){
+
+    const results = [];
+    let states = null;
+
+    switch(loopType){
+      case structs.WHILE_LOOP:
+        states = this.states["whileStates"];
+        break;
+      case structs.DO_WHILE_LOOP:
+        states = this.states["doWhileStates"];
+        break;
+      default:
+        throw Error("Wrong loop type:", loopType);
+
     }
+    states.forEach((meta) => results.push(callback(meta)));
 
     return results;
+
   }
 
-	getWhileStates(callback){
-		const results = [];
-		
-		this.states["whileStates"].forEach((meta) => {
-			results.push(callback(meta));
-		})
-
-		return results;
-
-	}
+  getEndOfDoWhile(state){
+    return this.getLoopStates((meta) => meta["doWhileEndStates"][state]["nonLoopState"], structs.DO_WHILE_LOOP).filter((x) => x !== undefined);
+  }
 
   isContinueLoop(state) {
-    return this.getWhileStates((meta) => meta["whileStart"] == state).some((x) => x);
+    return this.getLoopStates((meta) => meta["whileStart"] == state, structs.WHILE_LOOP).some((x) => x);
   }
 
   isBreakLoop(state) {
-    return this.getWhileStates((meta) => meta["whileNonLoopState"] == state).some((x) => x);
+    return this.getLoopStates((meta) => meta["whileNonLoopState"] == state, structs.WHILE_LOOP).some((x) => x);
   }
 
   isEndOfDoWhile(state) {
-		/*
-    const doWhileEndStates = this.getPreviousSeenStructs(
-      (prevState, meta) => meta["doWhileEndStates"],
-      structs.WHILE_LOOP
-    ).filter((x) => x !== undefined);
-		*/
+    return this.getLoopStates((meta) => meta["doWhileEndStates"], structs.DO_WHILE_LOOP).filter((x) => x !== undefined).length;
   }
 }
 
@@ -189,7 +189,6 @@ class SimpleStruct extends Struct {
       nodes,
       result: finalResult,
     };
-    //return { states, state: this.state, nodes, result: result};
   }
 }
 
@@ -199,9 +198,9 @@ class IfThenElseStruct extends Struct {
   }
 
   simplify() {
-    let ifThenElseNode = [];
+    const ifThenElseNode = [];
 
-    const { states, transitions, result, nodes, endStates } = this.getStructData();
+    const { states, transitions, result, nodes } = this.getStructData();
     this.history.push(this.state);
 
     const transitionNodes = {
@@ -209,18 +208,36 @@ class IfThenElseStruct extends Struct {
       [1]: [],
     };
 
+    if(this.isEndOfDoWhile(this.state)){
+      
+      ifThenElseNode.push(
+        ...nodes,
+        this.getTestExpression()
+      );
+
+      this.traverser.currentState = this.getEndOfDoWhile(this.state);
+
+      return {
+        states,
+        state: this.state,
+        nodes: ifThenElseNode,
+        result: structs.END_OF_DO_WHILE,
+      };
+
+
+    }
+
     //console.log("IfThen :", this.state);
     for (let i = 0; i < 2; i++) {
       if (this.isContinueLoop(transitions[i])) {
-				/*
+        /*
         transitionNodes[i].push(t.expressionStatement(t.stringLiteral("if then else continueLoop")));
 				*/
         transitionNodes[i].push(t.continueStatement());
 
       } else if (this.isBreakLoop(transitions[i])) {
 
-        transitionNodes[i].push(t.expressionStatement(t.stringLiteral(`history:${this.history}`)));
-				/*
+        /*
         transitionNodes[i].push(
           t.expressionStatement(
             t.stringLiteral(`if then else breakLoop transition ${transitions[i]} current state: ${this.state}`)
@@ -260,16 +277,16 @@ class WhileStruct extends Struct {
   }
 
   simplify() {
-    let whileNode = [];
+    const whileNode = [];
     const whileBodyNodes = [];
-    const { states, transitions, result, nodes, endStates } = this.getStructData();
+    const { states, result, nodes } = this.getStructData();
 
     const testNode = this.getTestExpression();
     const whileStart = states[this.state]["meta"]["whileStart"];
     const whileNonLoopState = states[this.state]["meta"]["whileNonLoopState"];
     const whileLoopState = states[this.state]["meta"]["whileLoopState"];
 
-		states["whileStates"].push(states[this.state]["meta"]);
+    states["whileStates"].push(states[this.state]["meta"]);
     this.history.push(this.state);
     this.traverser.currentState = whileLoopState;
 
@@ -278,15 +295,10 @@ class WhileStruct extends Struct {
       const { nodes: nodez, result: loopResult } = this.getNextStruct();
       whileBodyNodes.push(...nodez);
 
-      if (loopResult == structs.END_OF_IF_BODY) {
-        keepLooping = false;
-      }
+      if (loopResult == structs.END_OF_IF_BODY ||
+        this.traverser.currentState == 0 ||
+        this.traverser.currentState != whileStart){
 
-      if (this.traverser.currentState == 0) {
-        keepLooping = false;
-      }
-
-      if (this.traverser.currentState != whileStart) {
         keepLooping = false;
       }
     }
@@ -295,7 +307,7 @@ class WhileStruct extends Struct {
 
     this.traverser.currentState = whileNonLoopState;
 
-		states["whileStates"].pop();
+    states["whileStates"].pop();
 
     return {
       states,
@@ -312,8 +324,36 @@ class DoWhileStruct extends Struct {
   }
 
   simplify() {
-    let doWhileNode = [];
+    const doWhileNode = [];
+    const doWhileBodyNodes = [];
+    let doWhileTestNode = null;
     const { states, transitions, result, nodes, endStates } = this.getStructData();
+
+    this.history.push(this.state);
+    states["doWhileStates"].push(states[this.state]["meta"]);
+
+    this.traverser.currentState = transitions[0];
+    doWhileBodyNodes.push(...nodes);
+
+    let keepLooping = true;
+    while (keepLooping) {
+      const { nodes: nodez, result: loopResult } = this.getNextStruct();
+
+      if(loopResult == structs.END_OF_DO_WHILE){
+        keepLooping = false;
+        doWhileTestNode = nodez.pop();
+        doWhileBodyNodes.push(...nodez);
+      }else{
+
+        doWhileBodyNodes.push(...nodez);
+        
+      }
+
+
+    }
+
+    doWhileNode.push(t.doWhileStatement(doWhileTestNode, t.blockStatement(doWhileBodyNodes)));
+    states["doWhileStates"].pop();
 
     return {
       states,
@@ -333,6 +373,7 @@ class SameTransitionStruct extends Struct {
     const { states, transitions, result, nodes, endStates } = this.getStructData();
 
     this.history.push(this.state);
+    this.traverser.currentState = transitions[1] == this.state ? transitions[0] : transitions[1];
 
     return {
       states,

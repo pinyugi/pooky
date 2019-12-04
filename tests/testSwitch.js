@@ -36,12 +36,7 @@ SWITCH_TRANSITION_VISITOR = {
     if (utils.isForAGoToSwitch(path)) {
       const stateHolderName = utils.getStateHolderName(path);
 
-      console.log("stateHolderName:", stateHolderName);
-			if(['V1j', 'g0qX', 'w4'].includes(stateHolderName)){
-				//console.log("skipping:", stateHolderName);
-				return;
-			}
-
+      //console.log("stateHolderName:", stateHolderName);
       const manager = StateManager.fromPath(path);
       manager.simplify(path);
 
