@@ -2,7 +2,7 @@ class StructTraverser {
   constructor(graph, initialState) {
     this.started = false;
     this.graph = graph || cytoscape();
-		this.initialState = initialState;
+    this.initialState = initialState;
     this.currentState = null;
     this.evaluator = new Evaluator(this.graph);
   }
@@ -14,6 +14,7 @@ class StructTraverser {
     this.started = this.started ? true : true;
     states["whileStates"] = "whileStates" in states ? states["whileStates"] : [];
     states["doWhileStates"] = "doWhileStates" in states ? states["doWhileStates"] : [];
+    states["isFirstNode"] = "isFirstNode" in states ? states["isFirstLoop"] : false;
 
     const structType = states[currentState]["result"];
     //console.log("currentState:", currentState, "result:", structType);

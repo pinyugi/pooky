@@ -3,6 +3,7 @@ class StateManager {
     this.states = {};
     this.graph = cytoscape();
     this.traverser = null;
+    this.optimizer = new Optimizer();
     this.terminal = new Set();
     this.initial = null;
 
@@ -125,6 +126,8 @@ class StateManager {
         getNextStruct = false;
       }
     } while (getNextStruct);
+
+    this.optimizer.cleanNodes(nodez);
     path.getPrevSibling().remove();
     path.replaceWithMultiple(nodez);
   }
@@ -216,5 +219,6 @@ const t = require("@babel/types");
 const cytoscape = require("cytoscape");
 const { State } = require("./state.js");
 const { StructTraverser } = require("./traverser.js");
+const { Optimizer } = require("./optimizer.js");
 const { structs } = require("./structs.js");
 const utils = require("./utils.js");

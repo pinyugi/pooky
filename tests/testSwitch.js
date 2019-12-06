@@ -20,7 +20,8 @@ const tree = {
   'pooky-R7qC' : fromFile("fixtures/R7qC.js"),
   'pooky' : fromFile("fixtures/pooky.min.b7a5e4c22669c5887624.js"),
   'pooky.min.819f5538a88171e5a695' : fromFile("fixtures/pooky.min.819f5538a88171e5a695.js"),
-  'pooky-do-while-part' : fromFile("fixtures/pooky-do-while-part.js")
+  'pooky-do-while-part' : fromFile("fixtures/pooky-do-while-part.js"),
+  'nas' : fromFile("fixtures/nasj.js")
 };
 
 //const states = {};
@@ -51,6 +52,7 @@ let currentTree;
 currentTree = tree['pooky-R7qC'];
 //currentTree = tree['pooky'];
 currentTree = tree['pooky.min.819f5538a88171e5a695'];
+currentTree = tree['nas'];
 //currentTree = tree['pooky-h7wC'];
 //currentTree = tree['pooky-do-while-part'];
 //currentTree = tree['do_and_while_loop_inside_loop_B'];

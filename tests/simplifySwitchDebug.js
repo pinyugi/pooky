@@ -22,8 +22,12 @@ SWITCH_TRANSITION_VISITOR = {
 			const initialState = utils.getInitialState(path);
 			const manager = StateManager.fromPath(path, debug=true);
 
-			if(stateHolderName !== part){
-				return;
+			if(part != "--all"){
+
+				if(stateHolderName !== part){
+					
+					return;
+				}
 			}
 			manager.simplify(path);
 

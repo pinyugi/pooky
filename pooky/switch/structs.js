@@ -100,7 +100,6 @@ class Struct {
       }
 
       if (result == structs.END_OF_IF_BODY) {
-        //console.log("loopResult CONTINUE THE LOOP:", state, "this.traverser.currentState:", this.traverser.currentState);
         getNextStruct = false;
         this.traverser.currentState = 0;
       }
@@ -167,16 +166,15 @@ class SimpleStruct extends Struct {
     //this.traverser.currentState = transitions[0];
 
     if (this.isContinueLoop(transitions[0])) {
-      //console.log("Continue the loop:", this.state);
 
       nodes.push(t.continueStatement());
       finalResult = structs.END_OF_IF_BODY;
     } else if (this.isBreakLoop(transitions[0])) {
-      //console.log("Breaking out of the loop:", this.state);
+
       nodes.push(t.breakStatement());
       finalResult = structs.END_OF_IF_BODY;
+
     } else if (endStates.includes(transitions[0])) {
-      //finalResult = structs.END_STATE;
 
       this.traverser.currentState = transitions[0];
     } else {
@@ -227,28 +225,16 @@ class IfThenElseStruct extends Struct {
 
     }
 
-    //console.log("IfThen :", this.state);
     for (let i = 0; i < 2; i++) {
       if (this.isContinueLoop(transitions[i])) {
-        /*
-        transitionNodes[i].push(t.expressionStatement(t.stringLiteral("if then else continueLoop")));
-				*/
         transitionNodes[i].push(t.continueStatement());
 
       } else if (this.isBreakLoop(transitions[i])) {
 
-        /*
-        transitionNodes[i].push(
-          t.expressionStatement(
-            t.stringLiteral(`if then else breakLoop transition ${transitions[i]} current state: ${this.state}`)
-          )
-        );
-				*/
         transitionNodes[i].push(t.breakStatement());
       } else {
         this.traverser.currentState = transitions[i];
         const nodez = this.traverseStates();
-        //console.log("DONE TRAVERSING:", transitions[i]); q
         transitionNodes[i].push(...nodez);
       }
     }
@@ -261,6 +247,18 @@ class IfThenElseStruct extends Struct {
         t.blockStatement(transitionNodes[1])
       )
     );
+
+		const lastStateVisited = this.history.slice(-1);
+		if(lastStateVisited == this.traverser.currentState){
+			return {
+				states,
+				state: this.state,
+				nodes: ifThenElseNode,
+				result:  structs.END_OF_IF_BODY
+			}
+
+		}
+
 
     return {
       states,
