@@ -17,7 +17,6 @@ class StructTraverser {
     states["isFirstNode"] = "isFirstNode" in states ? states["isFirstLoop"] : false;
 
     const structType = states[currentState]["result"];
-    //console.log("currentState:", currentState, "result:", structType);
 
     switch (structType) {
       case structs.SIMPLE:
@@ -64,7 +63,6 @@ class StructTraverser {
         }).simplify();
 
       default:
-        //console.log("Could not evaluate:", structType);
         return {
           states,
           state: currentState,
@@ -121,7 +119,6 @@ class StructTraverser {
 
     return this.currentState;
   }
-
 }
 
 module.exports = {

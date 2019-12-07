@@ -1,50 +1,45 @@
 const t = require("@babel/types");
 
+function optimizeWhileLoop() {}
 class Optimizer {
-
-  constructor(opts={}){
+  constructor(opts = {}) {
     this.whileLoops = opts.whileLoop || true;
     this.ifThenElses = opts.ifThenElses || true;
   }
 
-  cleanNodes(nodes){
+  cleanNodes(nodes) {
+    const cleanedNodes = [];
+    let optimizedNodes = [];
 
-    this.removeLastNodeIfCloned(nodes);
-    
     nodes.forEach((node) => {
-      switch(node.type){
+      switch (node.type) {
         case "WhileStatement":
-          this.optimizeWhileLoop(node);  
+          optimizedNodes = this.optimizeWhileLoop(node);
+          cleanedNodes.push(...optimizedNodes);
+
           break;
-         
+
         case "IfStatement":
-          this.optimizeIfThenElse(node);  
+          optimizedNodes = this.optimizeIfThenElse(node);
+          cleanedNodes.push(...optimizedNodes);
           break;
+
+        default:
+          cleanedNodes.push(node);
       }
-
     });
-    return nodes;
-
+    return cleanedNodes;
   }
 
-  removeLastNodeIfCloned(nodes){
-
+  optimizeWhileLoop(whileNode) {
+    return [whileNode];
   }
 
-  optimizeWhileLoop(whileNode){
-
-
+  optimizeIfThenElse(ifThenElseNode) {
+    return [ifThenElseNode];
   }
-
-  optimizeIfThenElse(ifThenElseNode){
-
-	 
-
-  }
-	
 }
 
 module.exports = {
-  Optimizer
-
+  Optimizer,
 };

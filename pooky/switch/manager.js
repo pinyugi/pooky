@@ -133,8 +133,8 @@ class StateManager {
   }
 
   setupTraverser() {
-		const initialState = this.getInitialState().name;
-    this.traverser = new StructTraverser(this.graph,initialState);
+    const initialState = this.getInitialState().name;
+    this.traverser = new StructTraverser(this.graph, initialState);
   }
 
   static fromSwitch(path, debug = false) {
@@ -166,14 +166,22 @@ class StateManager {
       });
 
       if (debug) {
-        manager.getState(stateName).addNode(t.expressionStatement(t.stringLiteral(`State ${stateName}`)));
+        manager
+          .getState(stateName)
+          .addNode(
+            t.expressionStatement(
+              t.callExpression(t.memberExpression(t.identifier("console"), t.identifier("log"), false), [
+                t.stringLiteral(`State ${stateName}`),
+              ])
+            )
+          );
       }
     });
 
     return manager;
   }
 
-  static fromPath(path, debug=false) {
+  static fromPath(path, debug = false) {
     const manager = StateManager.fromSwitch(path, debug);
     const explicitTerminalState = path.get("test.right.value").node;
     manager.setInitialState(utils.getInitialState(path));
