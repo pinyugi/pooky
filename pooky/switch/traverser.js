@@ -5,11 +5,16 @@ class StructTraverser {
     this.initialState = initialState;
     this.currentState = null;
     this.evaluator = new Evaluator(this.graph);
+    this.structsCounter = {
+      [structs.IF_THEN_ELSE]: 0,
+      [structs.WHILE_LOOP]: 0,
+      [structs.DO_WHILE_LOOP]: 0,
+    };
   }
 
   getNextStruct(opts) {
     const { states } = opts;
-    const currentState = this.getCurrentState(states);
+    const currentState = this.getCurrentState();
 
     this.started = this.started ? true : true;
     states["whileStates"] = "whileStates" in states ? states["whileStates"] : [];
@@ -112,7 +117,7 @@ class StructTraverser {
     return statistics;
   }
 
-  getCurrentState(states) {
+  getCurrentState() {
     if (this.currentState === null) {
       this.currentState = this.initialState;
     }
@@ -126,7 +131,6 @@ module.exports = {
 };
 
 const { Evaluator } = require("./evaluator.js");
-const { getEleId, toId } = require("./graph.js");
 const {
   SimpleStruct,
   EndStateStruct,

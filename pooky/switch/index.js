@@ -3,7 +3,7 @@ const { State } = require("./state.js");
 const { Transition } = require("./transition.js");
 const { Evaluator } = require("./evaluator.js");
 const { StructTraverser } = require("./traverser.js");
-const { Optimizer } = require("./optimizer.js");
+const { optimizeNodes } = require("./optimize.js");
 const utils = require("./utils.js");
 
 module.exports = {
@@ -13,5 +13,5 @@ module.exports = {
   Transition,
   Evaluator,
   StructTraverser,
-  Optimizer,
+  optimizeNodes,
 };

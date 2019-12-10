@@ -1,6 +1,6 @@
 (function() {
     var H9qC = 2;
-    for (; H9qC !== 44;) {
+    for (; H9qC !== 44; ) {
         switch (H9qC) {
             case 2:
                 var l8qC = 2;
@@ -68,7 +68,7 @@
             case 4:
                 try {
                     var G9qC = 2;
-                    for (; G9qC !== 9;) {
+                    for (; G9qC !== 9; ) {
                         switch (G9qC) {
                             case 4:
                                 AtCB();
@@ -108,4 +108,4 @@
                 break;
         }
     }
-}());
+})();

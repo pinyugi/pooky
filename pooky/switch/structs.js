@@ -225,15 +225,8 @@ class IfThenElseStruct extends Struct {
       }
     }
 
-    ifThenElseNode.push(
-      ...nodes,
-      t.ifStatement(
-        this.getTestExpression(),
-        t.blockStatement(transitionNodes[0]),
-        t.blockStatement(transitionNodes[1])
-      )
-    );
 
+    ifThenElseNode.push(...nodes, t.ifStatement(this.getTestExpression(),t.blockStatement(transitionNodes[0]),t.blockStatement(transitionNodes[1])));
     const lastStateVisited = this.history.slice(-1);
 
     if (lastStateVisited == this.traverser.currentState) {
@@ -284,7 +277,6 @@ class WhileStruct extends Struct {
     }
 
     whileNode.push(...nodes, t.whileStatement(testNode, t.blockStatement(whileBodyNodes)));
-
     this.traverser.currentState = whileNonLoopState;
 
     states["whileStates"].pop();
@@ -307,7 +299,7 @@ class DoWhileStruct extends Struct {
     const doWhileNode = [];
     const doWhileBodyNodes = [];
     let doWhileTestNode = null;
-    const { states, transitions, result, nodes, endStates } = this.getStructData();
+    const { states, transitions, result, nodes } = this.getStructData();
 
     this.history.push(this.state);
     states["doWhileStates"].push(states[this.state]["meta"]);
@@ -346,7 +338,7 @@ class SameTransitionStruct extends Struct {
   }
 
   simplify() {
-    const { states, transitions, result, nodes, endStates } = this.getStructData();
+    const { states, transitions, result, nodes } = this.getStructData();
 
     this.history.push(this.state);
     this.traverser.currentState = transitions[1] == this.state ? transitions[0] : transitions[1];
@@ -366,7 +358,7 @@ class EndStateStruct extends Struct {
   }
 
   simplify() {
-    const { states, transitions, result, nodes, endStates } = this.getStructData();
+    const { states, result, nodes } = this.getStructData();
     this.history.push(this.state);
 
     return {
