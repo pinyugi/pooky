@@ -125,7 +125,8 @@ class StateManager {
         getNextStruct = false;
       }
     } while (getNextStruct);
-    nodez = optimizeNodes(nodez);
+    //nodez = optimizeNodes(nodez);
+    //nodez = optimizeNodes(nodez);
     path.getPrevSibling().remove();
     path.replaceWithMultiple(nodez);
   }
@@ -133,6 +134,10 @@ class StateManager {
   setupTraverser() {
     const initialState = this.getInitialState().name;
     this.traverser = new StructTraverser(this.graph, initialState);
+  }
+
+  static fromWhile(path, debug = false){
+
   }
 
   static fromSwitch(path, debug = false) {
@@ -180,8 +185,17 @@ class StateManager {
   }
 
   static fromPath(path, debug = false) {
-    const manager = StateManager.fromSwitch(path, debug);
-    const explicitTerminalState = path.get("test.right.value").node;
+    let manager = null;
+    let explicitTerminalState = null;
+    if(path.type == "ForStatement"){
+      manager = StateManager.fromSwitch(path, debug);
+      explicitTerminalState = path.get("test.right.value").node;
+    }else if(path.type == "WhileStatement"){
+      //manager = StateManager.fromWhile(path, debug);
+      //explicitTerminalState = path.get("test.right.value").node;
+
+
+    }
     manager.setInitialState(utils.getInitialState(path));
 
     manager.addState(new State(explicitTerminalState));

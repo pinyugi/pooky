@@ -6,7 +6,7 @@ const traverse = require("@babel/traverse").default;
 const { StateManager, utils } = require("../pooky/switch");
 
 SWITCH_TRANSITION_VISITOR = {
-  "ForStatement|WhileStatement"(path) {
+  "ForStatement"(path) {
     if (utils.isForAGoToSwitch(path)) {
       const stateHolderName = utils.getStateHolderName(path);
       const manager = StateManager.fromPath(path);
