@@ -2,7 +2,7 @@ const fromFile = require("../pooky/ast.js").fromFile;
 const traverse = require("@babel/traverse").default;
 
 
-const { StateManager, utils } = require("../pooky/switch");
+const { StateManager, utils } = require("../pooky/flow");
 
 const tree = {
   "pooky": fromFile("fixtures/pooky.min.b7a5e4c22669c5887624.js"),
@@ -12,7 +12,7 @@ const tree = {
 
 SWITCH_TRANSITION_VISITOR = {
   "ForStatement|WhileStatement"(path) {
-    if (utils.isForAGoToSwitch(path)) {
+    if (utils.isForAControlFlow(path)) {
       const stateHolderName = utils.getStateHolderName(path);
       if (stateHolderName == process.argv.slice(-1)[0]) {
         const manager = StateManager.fromPath(path);

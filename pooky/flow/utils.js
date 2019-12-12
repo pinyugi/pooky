@@ -39,11 +39,20 @@ const utils = {
     );
   },
 
-  isForAGoToSwitch(path) {
+  isForAControlFlow(path) {
     return (
       path.type == "ForStatement" &&
       path.get("init").node === null &&
       path.get("update").node == null &&
+      path.get("test").type == "BinaryExpression" &&
+      path.get("test.operator").node == "!==" &&
+      utils.hasGoToSibling(path)
+    );
+  },
+
+  isWhileAControlFlow(path) {
+    return (
+      path.type == "WhileStatement" &&
       path.get("test").type == "BinaryExpression" &&
       path.get("test.operator").node == "!==" &&
       utils.hasGoToSibling(path)

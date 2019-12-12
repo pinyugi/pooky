@@ -3,7 +3,7 @@ const fromFile = require("../pooky/ast.js").fromFile;
 const traverse = require("@babel/traverse").default;
 
 
-const { StateManager, utils } = require("../pooky/switch");
+const { StateManager, utils } = require("../pooky/flow");
 
 let currentPooky = process.argv.slice(-1)[0];
 
@@ -16,7 +16,7 @@ const uniqueStates = new Set();
 SWITCH_TRANSITION_VISITOR = {
   "ForStatement|WhileStatement"(path) {
     const states = {};
-    if (utils.isForAGoToSwitch(path)) {
+    if (utils.isForAControlFlow(path)) {
       const stateHolderName = utils.getStateHolderName(path);
 
       const manager = StateManager.fromPath(path);

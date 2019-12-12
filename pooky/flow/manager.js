@@ -22,7 +22,6 @@ class StateManager {
   }
 
   getStateNodes(state) {
-    let stateNodes = [];
     const _state = this.getState(state);
     return _state ? _state.getNodes() : 0;
   }
@@ -111,7 +110,7 @@ class StateManager {
 
     let getNextStruct = true;
     do {
-      const { state, nodes, result } = this.traverser.getNextStruct({
+      const { nodes, result } = this.traverser.getNextStruct({
         states,
         statistics,
         history,
@@ -125,8 +124,10 @@ class StateManager {
         getNextStruct = false;
       }
     } while (getNextStruct);
-    //nodez = optimizeNodes(nodez);
-    //nodez = optimizeNodes(nodez);
+
+    //TODO: NEED TO MAKE IT SO ONE PASS IS ENOUGH. CURRENTLY TWO DOES THE JOB.
+    nodez = optimizeNodes(nodez);
+    nodez = optimizeNodes(nodez);
     path.getPrevSibling().remove();
     path.replaceWithMultiple(nodez);
   }
@@ -136,13 +137,54 @@ class StateManager {
     this.traverser = new StructTraverser(this.graph, initialState);
   }
 
-  static fromWhile(path, debug = false){
+  static setupFlowNodes(_block, manager, stateName, stateHolderName, debug) {
+    if (isTransition(_block, stateHolderName)) {
+      const transition = isConditionalTransition(_block, stateHolderName)
+        ? createConditionalTransition(_block)
+        : createTransition(_block);
 
+      manager.getState(stateName).setTransition(transition);
+    } else {
+      if (_block.type == "ReturnStatement") {
+        manager.markTerminalState(stateName);
+      }
+
+      if (_block.type != "BreakStatement" && _block.type != "ContinueStatement" && !debug) {
+        manager.getState(stateName).addNode(_block.node);
+      }
+    }
+  }
+
+  static fromWhile(path, debug = false) {
+    const manager = new StateManager();
+    const stateHolderName = utils.getStateHolderName(path);
+
+    const recast = require("recast");
+    let query = "body";
+    let keepLooping = true;
+
+    do {
+      query += ".body";
+      const stateNameQuery = `${query}.0.test.right.value`;
+      const stateName = path.get(stateNameQuery).node;
+      manager.addState(new State(stateName));
+
+      path.get(`${query}.0.consequent.body`).forEach((_block) => {
+        StateManager.setupFlowNodes(_block, manager, stateName, stateHolderName, debug);
+      });
+
+      const alternateFirstNode = path.get(`${query}.0.alternate.body.0`);
+      if (alternateFirstNode.type == "ContinueStatement") {
+        keepLooping = false;
+      } else {
+        query += ".0.alternate";
+      }
+    } while (keepLooping);
+
+    return manager;
   }
 
   static fromSwitch(path, debug = false) {
-    t.assertNode(path);
-
     const manager = new StateManager();
     const stateHolderName = utils.getStateHolderName(path);
 
@@ -150,22 +192,8 @@ class StateManager {
       const stateName = _case.get("test.value").node;
       manager.addState(new State(stateName));
 
-      _case.get("consequent").forEach(function(_block) {
-        if (isTransition(_block, stateHolderName)) {
-          const transition = isConditionalTransition(_block, stateHolderName)
-            ? createConditionalTransition(_block)
-            : createTransition(_block);
-
-          manager.getState(stateName).setTransition(transition);
-        } else {
-          if (_block.type == "ReturnStatement") {
-            manager.markTerminalState(stateName);
-          }
-
-          if (_block.type != "BreakStatement" && !debug) {
-            manager.getState(stateName).addNode(_block.node);
-          }
-        }
+      _case.get("consequent").forEach((_block) => {
+        StateManager.setupFlowNodes(_block, manager, stateName, stateHolderName, debug);
       });
 
       if (debug) {
@@ -187,14 +215,12 @@ class StateManager {
   static fromPath(path, debug = false) {
     let manager = null;
     let explicitTerminalState = null;
-    if(path.type == "ForStatement"){
+    if (path.type == "ForStatement") {
       manager = StateManager.fromSwitch(path, debug);
       explicitTerminalState = path.get("test.right.value").node;
-    }else if(path.type == "WhileStatement"){
-      //manager = StateManager.fromWhile(path, debug);
-      //explicitTerminalState = path.get("test.right.value").node;
-
-
+    } else if (path.type == "WhileStatement") {
+      manager = StateManager.fromWhile(path, debug);
+      explicitTerminalState = path.get("test.right.value").node;
     }
     manager.setInitialState(utils.getInitialState(path));
 

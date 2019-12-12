@@ -4,9 +4,9 @@ const recast = require("recast");
 const traverse = require("@babel/traverse").default;
 const t = require("@babel/types");
 
-const { structs } = require("../pooky/switch/structs.js");
+const { structs } = require("../pooky/flow/structs.js");
 
-const { StateManager, Evaluator, utils } = require("../pooky/switch");
+const { StateManager, Evaluator, utils } = require("../pooky/flow");
 
 const tree = {
   "pooky-h7wC": fromFile("fixtures/h7wC.js"),
@@ -27,7 +27,7 @@ const statelines = [];
 
 SWITCH_TRANSITION_VISITOR = {
   "ForStatement|WhileStatement"(path) {
-    if (utils.isForAGoToSwitch(path)) {
+    if (utils.isForAControlFlow(path)) {
       const stateHolderName = utils.getStateHolderName(path);
 
       //console.log("stateHolderName:", stateHolderName);

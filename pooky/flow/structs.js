@@ -225,8 +225,14 @@ class IfThenElseStruct extends Struct {
       }
     }
 
-
-    ifThenElseNode.push(...nodes, t.ifStatement(this.getTestExpression(),t.blockStatement(transitionNodes[0]),t.blockStatement(transitionNodes[1])));
+    ifThenElseNode.push(
+      ...nodes,
+      t.ifStatement(
+        this.getTestExpression(),
+        t.blockStatement(transitionNodes[0]),
+        t.blockStatement(transitionNodes[1])
+      )
+    );
     const lastStateVisited = this.history.slice(-1);
 
     if (lastStateVisited == this.traverser.currentState) {

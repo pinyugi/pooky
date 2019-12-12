@@ -1,7 +1,7 @@
 const fromFile = require("../pooky/ast.js").fromFile;
 const recast = require("recast");
 
-const { optimizeNodes } = require("../pooky/switch");
+const { optimizeNodes } = require("../pooky/flow");
 
 function cleanAllNodes(ast) {
   let nodes = [];

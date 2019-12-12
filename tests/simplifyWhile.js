@@ -5,9 +5,11 @@ const traverse = require("@babel/traverse").default;
 
 const { StateManager, utils } = require("../pooky/flow");
 
+let i = 0;
+
 SWITCH_TRANSITION_VISITOR = {
-  "ForStatement"(path) {
-    if (utils.isForAControlFlow(path)) {
+  "WhileStatement"(path) {
+    if (utils.isWhileAControlFlow(path)) {
       const stateHolderName = utils.getStateHolderName(path);
       const manager = StateManager.fromPath(path);
 
@@ -15,8 +17,7 @@ SWITCH_TRANSITION_VISITOR = {
         if (stateHolderName !== part) {
           return;
         }
-      }
-
+			}
       manager.simplify(path);
     }
   },

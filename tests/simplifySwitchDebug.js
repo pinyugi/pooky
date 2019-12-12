@@ -3,11 +3,11 @@ const recast = require("recast");
 const traverse = require("@babel/traverse").default;
 
 
-const { StateManager, utils } = require("../pooky/switch");
+const { StateManager, utils } = require("../pooky/flow");
 
 SWITCH_TRANSITION_VISITOR = {
   "ForStatement|WhileStatement"(path) {
-    if (utils.isForAGoToSwitch(path)) {
+    if (utils.isForAControlFlow(path)) {
       const stateHolderName = utils.getStateHolderName(path);
       const manager = StateManager.fromPath(path, (debug = true));
 
