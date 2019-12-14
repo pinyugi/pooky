@@ -13,7 +13,7 @@ const statelines = [];
 let count = 0;
 const uniqueStates = new Set();
 
-SWITCH_TRANSITION_VISITOR = {
+CONTROL_FLOW_VISITOR = {
   "ForStatement|WhileStatement"(path) {
     const states = {};
     if (utils.isForAControlFlow(path)) {
@@ -44,7 +44,7 @@ SWITCH_TRANSITION_VISITOR = {
 let currentTree;
 //currentTree = fromFile(`fixtures/pooky.min.${currentPooky}.js`);
 currentTree = fromFile(`${currentPooky}`);
-traverse(currentTree, SWITCH_TRANSITION_VISITOR);
+traverse(currentTree, CONTROL_FLOW_VISITOR);
 
 const totalStatesLog = `Total States : ${JSON.stringify(allStates)}`;
 const totalSwitchesLog = `Total Switches:${count}`;

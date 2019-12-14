@@ -5,7 +5,7 @@ const traverse = require("@babel/traverse").default;
 
 const { StateManager, utils } = require("../pooky/flow");
 
-SWITCH_TRANSITION_VISITOR = {
+CONTROL_FLOW_VISITOR = {
   "ForStatement"(path) {
     if (utils.isForAControlFlow(path)) {
       const stateHolderName = utils.getStateHolderName(path);
@@ -26,5 +26,5 @@ let currentPooky = process.argv.slice(-2)[0];
 let part = process.argv.slice(-1)[0];
 
 let currentTree = fromFile(`${currentPooky}`);
-traverse(currentTree, SWITCH_TRANSITION_VISITOR);
+traverse(currentTree, CONTROL_FLOW_VISITOR);
 console.log(recast.print(currentTree).code);

@@ -13,7 +13,7 @@ class StructTraverser {
   }
 
   getNextStruct(opts) {
-    const { states } = opts;
+    const { state, states } = opts;
     const currentState = this.getCurrentState();
 
     this.started = this.started ? true : true;

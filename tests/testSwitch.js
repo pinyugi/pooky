@@ -25,7 +25,7 @@ const allStates = {};
 const zeroes = [];
 const statelines = [];
 
-SWITCH_TRANSITION_VISITOR = {
+CONTROL_FLOW_VISITOR = {
   "ForStatement|WhileStatement"(path) {
     if (utils.isForAControlFlow(path)) {
       const stateHolderName = utils.getStateHolderName(path);
@@ -48,5 +48,5 @@ currentTree = tree["nas"];
 //currentTree = tree['do_and_while_loop_inside_loop_B'];
 //currentTree = tree['do_while_loop'];
 //currentTree = tree['while_loop'];
-traverse(currentTree, SWITCH_TRANSITION_VISITOR);
+traverse(currentTree, CONTROL_FLOW_VISITOR);
 console.log(recast.print(currentTree).code);

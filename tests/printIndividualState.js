@@ -10,7 +10,7 @@ const tree = {
   "pooky-q9qC": fromFile("fixtures/pookyparts/q9qC.js"),
 };
 
-SWITCH_TRANSITION_VISITOR = {
+CONTROL_FLOW_VISITOR = {
   "ForStatement|WhileStatement"(path) {
     if (utils.isForAControlFlow(path)) {
       const stateHolderName = utils.getStateHolderName(path);
@@ -30,5 +30,5 @@ SWITCH_TRANSITION_VISITOR = {
 
 let currentTree = fromFile(`${process.argv.slice(-1)[0]}`);
 
-traverse(currentTree, SWITCH_TRANSITION_VISITOR);
+traverse(currentTree, CONTROL_FLOW_VISITOR);
 //console.log(recast.print(currentTree).code);
