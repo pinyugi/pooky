@@ -60,13 +60,11 @@ function replaceXORedIdentifiers(ast){
 
 				const name = path.get("object.name").node;
 				const index = path.get("property.value").node;
-				//console.log("found:", xoredIdentifiers[name][index]);
 				path.replaceWith(t.stringLiteral(xoredIdentifiers[name][index]));
 			}
 		}
 
 	});
-	//console.log(xoredIdentifiers);
 }
 
 module.exports = {
