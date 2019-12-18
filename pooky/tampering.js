@@ -1,5 +1,4 @@
 const t = require("@babel/types");
-const recast = require("recast");
 const traverse = require("@babel/traverse").default;
 const fromFile = require("../pooky/ast.js").fromFile;
 const fs = require("fs");
@@ -10,6 +9,19 @@ function getEvalFuncName(ast){
 	const node = body.slice(-1)[0].type == "FunctionDeclaration" ? body.slice(-2)[0] : body.slice(-1)[0];
 	return node.expression.callee.callee.id.name;
 
+}
+
+function getEvalFuncArguments(ast){
+	const body = ast.program.body;
+	const node = body.slice(-1)[0].type == "FunctionDeclaration" ? body.slice(-2)[0] : body.slice(-1)[0];
+
+	const rawArguments = [node.expression.callee.arguments[0].value];
+
+	const elements = node.expression.arguments[0].elements;
+	for(let i=0;i<elements.length;i++){
+		rawArguments.push(elements[i].arguments[0].value);
+	}
+	return rawArguments;
 }
 
 function cutEvalFunctionSourceCode(data, funcName){
@@ -107,5 +119,7 @@ function removeTamperingChecks(fileName, newFileName, addLocalStorage=false){
 
 module.exports = {
 	getEvalFuncName,
+	getEvalFuncArguments,
+	cutEvalFunctionSourceCode,
 	removeTamperingChecks
 };
