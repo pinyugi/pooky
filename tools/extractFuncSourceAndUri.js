@@ -14,4 +14,4 @@ fs.readFile(currentPooky, "utf8", (err, data) => {
 	const zipUp = zip(sourceCodes, rawArguments).flat(Infinity);
 
 	fs.writeFile(saveLocation, zipUp.join("\r\n"), (err) => {})
-})
+});
