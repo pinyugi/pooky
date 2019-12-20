@@ -1,7 +1,6 @@
 const fromFile = require("../pooky/ast.js").fromFile;
 const traverse = require("@babel/traverse").default;
 
-
 const { StateManager, utils } = require("../pooky/flow");
 
 const uniqueStates = new Set();

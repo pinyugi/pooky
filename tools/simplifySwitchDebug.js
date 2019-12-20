@@ -2,7 +2,6 @@ const fromFile = require("../pooky/ast.js").fromFile;
 const recast = require("recast");
 const traverse = require("@babel/traverse").default;
 
-
 const { StateManager, utils } = require("../pooky/flow");
 
 CONTROL_FLOW_VISITOR = {

@@ -2,7 +2,6 @@ const fs = require("fs");
 const fromFile = require("../pooky/ast.js").fromFile;
 const traverse = require("@babel/traverse").default;
 
-
 const { StateManager, utils } = require("../pooky/flow");
 
 let currentPooky = process.argv.slice(-1)[0];
