@@ -1,7 +1,7 @@
 const fromFile = require("../pooky/ast.js").fromFile;
 const traverse = require("@babel/traverse").default;
 
-const { StateManager, utils } = require("../pooky/flow");
+const { ControlFlow, utils } = require("../pooky/flow");
 
 const uniqueStates = new Set();
 const count = {};
@@ -9,15 +9,15 @@ CONTROL_FLOW_VISITOR = {
   "ForStatement|WhileStatement"(path) {
     if (utils.isForAControlFlow(path)) {
       const stateHolderName = utils.getStateHolderName(path);
-      const manager = StateManager.fromPath(path);
+      const flow = ControlFlow.fromPath(path);
 
       if (stateHolderName !== part) {
         return;
       }
       console.log("stateHolderName:", stateHolderName);
 
-      for (let state in manager.states) {
-        const { result, meta } = manager.traverser.evaluator.interpret(state);
+      for (let state in flow.states) {
+        const { result, meta } = flow.traverser.evaluator.interpret(state);
         console.log("state:", state, " result:", result, " meta:", meta);
         const key = `state: ${state}  result: ${result}  meta: ${JSON.stringify(meta)}`;
         uniqueStates.add(key);

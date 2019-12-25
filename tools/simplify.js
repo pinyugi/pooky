@@ -2,13 +2,13 @@ const fromFile = require("../pooky/ast.js").fromFile;
 const traverse = require("@babel/traverse").default;
 const generate = require("@babel/generator").default;
 
-const { StateManager, utils } = require("../pooky/flow");
+const { ControlFlow, utils } = require("../pooky/flow");
 
 CONTROL_FLOW_VISITOR = {
   ForStatement(path) {
     if (utils.isForAControlFlow(path)) {
-      const manager = StateManager.fromPath(path);
-      manager.simplify(path);
+      const flow = ControlFlow.fromPath(path);
+      flow.simplify(path);
     }
   },
 };
@@ -16,8 +16,8 @@ CONTROL_FLOW_VISITOR = {
 CONTROL_FLOW_VISITOR_WHILE = {
   WhileStatement(path) {
     if (utils.isWhileAControlFlow(path)) {
-      const manager = StateManager.fromPath(path);
-      manager.simplify(path);
+      const flow = ControlFlow.fromPath(path);
+      flow.simplify(path);
     }
   },
 };

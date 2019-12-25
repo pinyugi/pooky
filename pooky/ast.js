@@ -8,7 +8,6 @@ const fromFile = (file) => {
         encoding: "UTF-8",
       })
       .toString()
-      .replace(/^\uFEFF/, "")
   );
   delete ast.comments;
   return ast;

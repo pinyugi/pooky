@@ -55,9 +55,8 @@ function isEvalSourceCode(path, funcName) {
   );
 }
 
-function removeTamperingChecks(fileName, addLocalStorage = false) {
+function removeTamperingChecks(ast, fileName, addLocalStorage = false) {
   const data = fs.readFileSync(fileName, "utf8");
-  const ast = fromFile(fileName);
   const funcName = getEvalFuncName(ast);
   const sourceCodes = cutEvalFunctionSourceCode(data, funcName);
   traverse(ast, {

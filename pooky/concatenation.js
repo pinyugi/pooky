@@ -30,7 +30,7 @@ function maybeAssignment(path, name) {
 }
 
 function concatenateArguments(ast) {
-  //const xor = getXorForDecodeFunction(ast);
+  const { xorParam, xorFuncName } = getXorForDecodeFunction(ast);
   //const uri = getUriDataForDecodeFunction(ast);
   //const decoder = createDecodeFunction(xor, uri);
   //const funcNames = getFunctionMaskNames(ast);
@@ -75,15 +75,6 @@ function concatenateArguments(ast) {
 	*/
 }
 
-function unmaskEverything(ast, source) {
-  const xor = getXorForDecodeFunction(ast);
-  const uri = getUriDataForDecodeFunction(ast);
-  const decoder = createDecodeFunction(xor, uri);
-  const funcNames = getFunctionMaskNames(ast);
-  const maskValues = getAllMaskValues(ast, funcNames);
-
-  traverse();
-}
 
 module.exports = {
   concatenateArguments,

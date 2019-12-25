@@ -29,13 +29,9 @@ const utils = {
       : false;
   },
 
-  hasStateHolder(path) {
-    return utils.getStateHolderName(path) && utils.getInitialState(path);
-  },
-
   hasGoToSibling(path) {
     return (
-      utils.hasStateHolder(path) && utils.getStateHolderName(path) == recast.print(path.get("test.left").node).code
+      utils.getStateHolderName(path) == recast.print(path.get("test.left").node).code
     );
   },
 

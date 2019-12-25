@@ -1,3 +1,22 @@
+const _ = require("lodash");
+const { structs } = require("./structs.js");
+
+const {
+  isMaybeNeeded,
+  getEleId,
+  toId,
+  toEdgeId,
+  getTargetFromEdgeId,
+  getEndStates,
+  getStateSuccessors,
+  getStateTransitions,
+  getSourcesToState,
+  getShortestPath,
+  isInsideLoop,
+} = require("./graph.js");
+
+const DEFAULT_MODE = Object.values(structs).reduce((sum, m) => sum + m);
+
 class Evaluator {
   constructor(graph) {
     this.graph = graph || cytoscape();
@@ -281,24 +300,6 @@ class Evaluator {
   }
 }
 
-const _ = require("lodash");
-const { structs } = require("./structs.js");
-
-const {
-  isMaybeNeeded,
-  getEleId,
-  toId,
-  toEdgeId,
-  getTargetFromEdgeId,
-  getEndStates,
-  getStateSuccessors,
-  getStateTransitions,
-  getSourcesToState,
-  getShortestPath,
-  isInsideLoop,
-} = require("./graph.js");
-
-const DEFAULT_MODE = Object.values(structs).reduce((sum, m) => sum + m);
 
 module.exports = {
   Evaluator,

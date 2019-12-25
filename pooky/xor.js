@@ -38,12 +38,12 @@ function cleanString(string, shouldDeepClean) {
   return XOR(string, string.length, string.length);
 }
 
-function XOR(g5Tk, J5Tk, m5Tk) {
+function XOR(g5Tk, J5Tk, m5Tk) {//This is basically a murmurhashv3. For now lets keep it this way in the future we need to convert it
   var A5Tk = 0xcc9e2d51,
     I5Tk = 0x1b873593;
   var K5Tk;
 
-  var k5Tk = true;
+
   var f5Tk = m5Tk;
   var F5Tk = J5Tk;
   F5Tk = F5Tk & ~0x3;
@@ -59,14 +59,13 @@ function XOR(g5Tk, J5Tk, m5Tk) {
     K5Tk = A2Tk(K5Tk, I5Tk);
 
     f5Tk ^= K5Tk;
-    if (k5Tk) {
-      f5Tk = ((f5Tk & 0x7ffff) << 13) | (f5Tk >>> 19);
-      f5Tk = (f5Tk * 5 + 0xe6546b64) | 0;
-    }
+    f5Tk = (f5Tk & 0x7ffff) << 13 | f5Tk >>> 19;
+    f5Tk = f5Tk * 5 + 0xe6546b64 | 0;
     z5Tk += 4;
   }
   K5Tk = 0;
   var f8Tk = J5Tk % 4;
+
   if (f8Tk === 3) {
     K5Tk = (g5Tk.charCodeAt(F5Tk + 2) & 0xff) << 16;
     K5Tk |= (g5Tk.charCodeAt(F5Tk + 1) & 0xff) << 8;
@@ -75,7 +74,6 @@ function XOR(g5Tk, J5Tk, m5Tk) {
     K5Tk = ((K5Tk & 0x1ffff) << 15) | (K5Tk >>> 17);
     K5Tk = A2Tk(K5Tk, I5Tk);
     f5Tk ^= K5Tk;
-
     f5Tk ^= J5Tk;
     f5Tk ^= f5Tk >>> 16;
     f5Tk = A2Tk(f5Tk, 0x85ebca6b);
@@ -119,18 +117,19 @@ function XOR(g5Tk, J5Tk, m5Tk) {
   return f5Tk;
 }
 
-function decodeFunction(funcSource, xorUri) {
-  function A2Tk(l5Tk, M5Tk) {
-    var a5Tk = M5Tk & 0xffff;
-    var Z5Tk = M5Tk - a5Tk;
-    return Z5Tk * l5Tk + a5Tk * l5Tk;
-  }
+function A2Tk(l5Tk, M5Tk) {
+  var a5Tk = M5Tk & 0xffff;
+  var Z5Tk = M5Tk - a5Tk;
+  return (Z5Tk * l5Tk | 0) + (a5Tk * l5Tk | 0) | 0;
+}
 
-  var S2Tk = XorString(decodeURIComponent(xorUri), cleanString(removeParenthesis(funcSource)), 5);
 
-  return S2Tk;
+function decodeEvalFunction(funcSource, xorUri) {
+  const evaledFunction = XorString(decodeURIComponent(xorUri), cleanString(removeParenthesis(funcSource)), 5);
+
+  return evaledFunction;
 }
 
 module.exports = {
-  decodeFunction,
+  decodeEvalFunction,
 };

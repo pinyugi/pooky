@@ -2,7 +2,7 @@ const fs = require("fs");
 const fromFile = require("../pooky/ast.js").fromFile;
 const traverse = require("@babel/traverse").default;
 
-const { StateManager, utils } = require("../pooky/flow");
+const { ControlFlow, utils } = require("../pooky/flow");
 
 let currentPooky = process.argv.slice(-1)[0];
 
@@ -13,17 +13,16 @@ let count = 0;
 const uniqueStates = new Set();
 
 CONTROL_FLOW_VISITOR = {
-  "ForStatement|WhileStatement"(path) {
+  "ForStatement"(path) {
     const states = {};
     if (utils.isForAControlFlow(path)) {
       const stateHolderName = utils.getStateHolderName(path);
 
-      const manager = StateManager.fromPath(path);
-      for (let st of Object.keys(manager.states)) {
-        const evaluated = manager.traverser.evaluator.interpret(st);
+      const flow = ControlFlow.fromPath(path);
+      for (let st of Object.keys(flow.states)) {
+        const evaluated = flow.traverser.evaluator.interpret(st);
 
         states[evaluated.result] = evaluated.result in states ? states[evaluated.result] + 1 : 1;
-        //console.log("state:", st, " evaluate:", manager.traverser.evaluator.interpret(st).result);
 
         allStates[evaluated.result] = evaluated.result in allStates ? allStates[evaluated.result] + 1 : 1;
       }
@@ -41,7 +40,6 @@ CONTROL_FLOW_VISITOR = {
 };
 
 let currentTree;
-//currentTree = fromFile(`fixtures/pooky.min.${currentPooky}.js`);
 currentTree = fromFile(`${currentPooky}`);
 traverse(currentTree, CONTROL_FLOW_VISITOR);
 

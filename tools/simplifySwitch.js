@@ -3,13 +3,13 @@ const recast = require("recast");
 const traverse = require("@babel/traverse").default;
 const generate = require("@babel/generator").default;
 
-const { StateManager, utils } = require("../pooky/flow");
+const { ControlFlow, utils } = require("../pooky/flow");
 
 CONTROL_FLOW_VISITOR = {
   ForStatement(path) {
     if (utils.isForAControlFlow(path)) {
       const stateHolderName = utils.getStateHolderName(path);
-      const manager = StateManager.fromPath(path);
+      const flow = ControlFlow.fromPath(path);
 
       if (part != "--all") {
         if (stateHolderName !== part) {
@@ -17,7 +17,7 @@ CONTROL_FLOW_VISITOR = {
         }
       }
 
-      manager.simplify(path);
+      flow.simplify(path);
     }
   },
 };

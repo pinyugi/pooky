@@ -1,3 +1,16 @@
+const { Evaluator } = require("./evaluator.js");
+const {
+  SimpleStruct,
+  EndStateStruct,
+  IfThenElseStruct,
+  WhileStruct,
+  DoWhileStruct,
+  SameTransitionStruct,
+  structs,
+} = require("./structs.js");
+
+const cytoscape = require("cytoscape");
+
 class StructTraverser {
   constructor(graph, initialState) {
     this.started = false;
@@ -130,6 +143,7 @@ module.exports = {
   StructTraverser,
 };
 
+/*
 const { Evaluator } = require("./evaluator.js");
 const {
   SimpleStruct,
@@ -142,3 +156,4 @@ const {
 } = require("./structs.js");
 
 const cytoscape = require("cytoscape");
+*/

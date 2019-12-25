@@ -1,7 +1,7 @@
 const fromFile = require("../pooky/ast.js").fromFile;
 const traverse = require("@babel/traverse").default;
 
-const { StateManager, utils } = require("../pooky/flow");
+const { ControlFlow, utils } = require("../pooky/flow");
 
 const tree = {
   "pooky": fromFile("fixtures/pooky.min.b7a5e4c22669c5887624.js"),
@@ -14,11 +14,11 @@ CONTROL_FLOW_VISITOR = {
     if (utils.isForAControlFlow(path)) {
       const stateHolderName = utils.getStateHolderName(path);
       if (stateHolderName == process.argv.slice(-1)[0]) {
-        const manager = StateManager.fromPath(path);
+        const flow = ControlFlow.fromPath(path);
 
-        for (let state in manager.states) {
+        for (let state in flow.states) {
           if (state == process.argv.slice(-2)[0]) {
-            const { result, meta } = manager.traverser.evaluator.interpret(state);
+            const { result, meta } = flow.traverser.evaluator.interpret(state);
             console.log("state:", state, " result:", result, " meta:", meta);
           }
         }
