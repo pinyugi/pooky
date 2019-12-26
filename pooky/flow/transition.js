@@ -1,12 +1,12 @@
-const t = require("@babel/types");
-const recast = require("recast");
+import * as t from "@babel/types";
+import * as recast from "recast";
 
 const transitions = {
   SINGLE_PATH: 1,
   DUAL_PATH: 2,
 };
 
-class Transition {
+export default class Transition {
   constructor(config) {
     this._states = [];
     this.setStates(config.states || this.states);
@@ -67,7 +67,7 @@ class Transition {
   }
 }
 
-function isTransition(path, stateHolderName) {
+export function isTransition(path, stateHolderName) {
   return (
     path.get("expression").type !== undefined &&
     path.get("expression").type == "AssignmentExpression" &&
@@ -75,11 +75,11 @@ function isTransition(path, stateHolderName) {
   );
 }
 
-function isConditionalTransition(path, stateHolderName) {
+export function isConditionalTransition(path, stateHolderName) {
   return isTransition(path, stateHolderName) && path.get("expression.right").type == "ConditionalExpression";
 }
 
-function createTransition(path) {
+export function createTransition(path) {
   return new Transition({
     type: transitions.SINGLE_PATH,
     states: [path.get("expression.right")],
@@ -87,7 +87,7 @@ function createTransition(path) {
   });
 }
 
-function createConditionalTransition(path) {
+export function createConditionalTransition(path) {
   return new Transition({
     type: transitions.DUAL_PATH,
     states: [path.get("expression.right.consequent"), path.get("expression.right.alternate")],
@@ -95,10 +95,3 @@ function createConditionalTransition(path) {
   });
 }
 
-module.exports = {
-  Transition,
-  isTransition,
-  isConditionalTransition,
-  createTransition,
-  createConditionalTransition,
-};

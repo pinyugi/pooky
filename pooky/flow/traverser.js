@@ -1,5 +1,5 @@
-const { Evaluator } = require("./evaluator.js");
-const {
+import Evaluator from "./evaluator.js";
+import {
   SimpleStruct,
   EndStateStruct,
   IfThenElseStruct,
@@ -7,11 +7,11 @@ const {
   DoWhileStruct,
   SameTransitionStruct,
   structs,
-} = require("./structs.js");
+} from "./structs.js";
 
-const cytoscape = require("cytoscape");
+import cytoscape from "cytoscape";
 
-class StructTraverser {
+export default class StructTraverser {
   constructor(graph, initialState) {
     this.started = false;
     this.graph = graph || cytoscape();
@@ -138,22 +138,3 @@ class StructTraverser {
     return this.currentState;
   }
 }
-
-module.exports = {
-  StructTraverser,
-};
-
-/*
-const { Evaluator } = require("./evaluator.js");
-const {
-  SimpleStruct,
-  EndStateStruct,
-  IfThenElseStruct,
-  WhileStruct,
-  DoWhileStruct,
-  SameTransitionStruct,
-  structs,
-} = require("./structs.js");
-
-const cytoscape = require("cytoscape");
-*/

@@ -1,7 +1,7 @@
-const t = require("@babel/types");
-const traverse = require("@babel/traverse").default;
+import * as t from "@babel/types";
+import traverse from "@babel/traverse";;
 
-function removeDebugger(ast) {
+export function removeDebugger(ast) {
   traverse(ast, {
     DebuggerStatement(path) {
       path.remove();
@@ -9,6 +9,3 @@ function removeDebugger(ast) {
   });
 }
 
-module.exports = {
-  removeDebugger,
-};

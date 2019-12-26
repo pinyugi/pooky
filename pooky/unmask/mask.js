@@ -1,8 +1,8 @@
-const recast = require("recast");
-const traverse = require("@babel/traverse").default;
-const fromString = require("../pooky/ast.js").fromString;
+import * as recast from "recast";
+import traverse from "@babel/traverse";;
+import { fromString } from "../pooky/ast.js";
 
-function getFunctionMaskNames(ast) {
+export function getFunctionMaskNames(ast) {
   const funcMaskNames = [];
   const body = ast.program.body;
 
@@ -19,7 +19,7 @@ function getFunctionMaskNames(ast) {
   return funcMaskNames;
 }
 
-function getAllMaskValues(ast, funcMaskNames) {
+export function getAllMaskValues(ast, funcMaskNames) {
   const maskValues = {};
   const body = ast.program.body;
 
@@ -37,7 +37,7 @@ function getAllMaskValues(ast, funcMaskNames) {
   return maskValues;
 }
 
-function createDecodeFunction(xor, uriData) {
+export function createDecodeFunction(xor, uriData) {
   var n18 = "",
     E18 = decodeURI(uriData);
   var K18 = 0,
@@ -95,7 +95,7 @@ function createDecodeFunction(xor, uriData) {
 }
 
 
-function getXorForDecodeFunction(ast) {
+export function getXorForDecodeFunction(ast) {
   function findDecodeFunction(node) {
 
     const isMaybeDecodeFunction = (node) => {
@@ -157,7 +157,7 @@ function getXorForDecodeFunction(ast) {
   return { xorParam, xorFuncName}
 }
 
-function getUriDataForDecodeFunction(ast) {
+export function getUriDataForDecodeFunction(ast) {
 
   function isUriDataFunction(node) {
     return (
@@ -179,7 +179,7 @@ function getUriDataForDecodeFunction(ast) {
   }
 }
 
-function getAliasForDecodeFunction(ast, funcName){
+export function getAliasForDecodeFunction(ast, funcName){
 
   function isMaybeAliasForDecodeFunction(node) {
     return (
@@ -211,7 +211,7 @@ function getAliasForDecodeFunction(ast, funcName){
   return aliasFuncNames;
 }
 
-function unmaskEverything(config) {
+export function unmaskEverything(config) {
   
   const ast = config.ast;
   const decoder = config.decoder;
@@ -233,12 +233,3 @@ function unmaskEverything(config) {
   //traverse();
 }
 
-module.exports = {
-  getFunctionMaskNames,
-  getAllMaskValues,
-  getXorForDecodeFunction,
-  getUriDataForDecodeFunction,
-  getAliasForDecodeFunction,
-  createDecodeFunction,
-  unmaskEverything
-};

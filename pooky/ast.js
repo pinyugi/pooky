@@ -1,7 +1,7 @@
-const fs = require("fs");
-const parser = require("@babel/parser").parse;
+import * as fs from 'fs';
+import { parser } from "@babel/parser"; 
 
-const fromFile = (file) => {
+export function fromFile(file) {
   const ast = parser(
     fs
       .readFileSync(file, {
@@ -12,13 +12,9 @@ const fromFile = (file) => {
   delete ast.comments;
   return ast;
 };
-const fromString = (string) => {
+export function fromString(string){
   const ast = parser(string);
   delete ast.comments;
   return ast;
 };
 
-module.exports = {
-  fromFile: fromFile,
-  fromString: fromString,
-};

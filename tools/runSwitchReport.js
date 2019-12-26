@@ -1,8 +1,7 @@
-const fs = require("fs");
-const fromFile = require("../pooky/ast.js").fromFile;
-const traverse = require("@babel/traverse").default;
-
-const { ControlFlow, utils } = require("../pooky/flow");
+import * as fs from 'fs';
+import { fromFile } from "../pooky/ast.js";
+import traverse from "@babel/traverse";;
+import { ControlFlow, isForAControlFlow, getStateHolderName } from "../pooky/flow";
 
 let currentPooky = process.argv.slice(-1)[0];
 
@@ -15,8 +14,8 @@ const uniqueStates = new Set();
 CONTROL_FLOW_VISITOR = {
   "ForStatement"(path) {
     const states = {};
-    if (utils.isForAControlFlow(path)) {
-      const stateHolderName = utils.getStateHolderName(path);
+    if (isForAControlFlow(path)) {
+      const stateHolderName = getStateHolderName(path);
 
       const flow = ControlFlow.fromPath(path);
       for (let st of Object.keys(flow.states)) {

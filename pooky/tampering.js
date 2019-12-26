@@ -1,38 +1,8 @@
-const t = require("@babel/types");
-const traverse = require("@babel/traverse").default;
-const fromFile = require("../pooky/ast.js").fromFile;
-const fs = require("fs");
-const generate = require("@babel/generator").default;
-
-function getEvalFuncName(ast) {
-  const body = ast.program.body;
-  const node = body.slice(-1)[0].type == "FunctionDeclaration" ? body.slice(-2)[0] : body.slice(-1)[0];
-  return node.expression.callee.callee.id.name;
-}
-
-function getEvalFuncArguments(ast) {
-  const body = ast.program.body;
-  const node = body.slice(-1)[0].type == "FunctionDeclaration" ? body.slice(-2)[0] : body.slice(-1)[0];
-
-  const rawArguments = [node.expression.callee.arguments[0].value];
-
-  const elements = node.expression.arguments[0].elements;
-  for (let i = 0; i < elements.length; i++) {
-    rawArguments.push(elements[i].arguments[0].value);
-  }
-  return rawArguments;
-}
-
-function cutEvalFunctionSourceCode(data, funcName) {
-  const sources = data.split(`function ${funcName}(`);
-  sources.shift();
-
-  for (let i = 0; i < sources.length; i++) {
-    sources[i] = sources[i].split('}("%')[0];
-    sources[i] = `function ${funcName}(${sources[i]}\}`;
-  }
-  return sources;
-}
+import * as t from "@babel/types";
+import traverse from "@babel/traverse";;
+import { fromFile } from "../pooky/ast.js";
+import * as fs from 'fs';
+import generate from "@babel/generator";
 
 function isTamperingCheck(path, funcName) {
   return (
@@ -55,7 +25,37 @@ function isEvalSourceCode(path, funcName) {
   );
 }
 
-function removeTamperingChecks(ast, fileName, addLocalStorage = false) {
+export function getEvalFuncName(ast) {
+  const body = ast.program.body;
+  const node = body.slice(-1)[0].type == "FunctionDeclaration" ? body.slice(-2)[0] : body.slice(-1)[0];
+  return node.expression.callee.callee.id.name;
+}
+
+export function getEvalFuncArguments(ast) {
+  const body = ast.program.body;
+  const node = body.slice(-1)[0].type == "FunctionDeclaration" ? body.slice(-2)[0] : body.slice(-1)[0];
+
+  const rawArguments = [node.expression.callee.arguments[0].value];
+
+  const elements = node.expression.arguments[0].elements;
+  for (let i = 0; i < elements.length; i++) {
+    rawArguments.push(elements[i].arguments[0].value);
+  }
+  return rawArguments;
+}
+
+export function cutEvalFunctionSourceCode(data, funcName) {
+  const sources = data.split(`function ${funcName}(`);
+  sources.shift();
+
+  for (let i = 0; i < sources.length; i++) {
+    sources[i] = sources[i].split('}("%')[0];
+    sources[i] = `function ${funcName}(${sources[i]}\}`;
+  }
+  return sources;
+}
+
+export function removeTamperingChecks(ast, fileName, addLocalStorage = false) {
   const data = fs.readFileSync(fileName, "utf8");
   const funcName = getEvalFuncName(ast);
   const sourceCodes = cutEvalFunctionSourceCode(data, funcName);
@@ -100,10 +100,3 @@ function removeTamperingChecks(ast, fileName, addLocalStorage = false) {
   const { code } = generate(ast, { compact: true, retainLines: true });
   return code;
 }
-
-module.exports = {
-  getEvalFuncName,
-  getEvalFuncArguments,
-  cutEvalFunctionSourceCode,
-  removeTamperingChecks,
-};

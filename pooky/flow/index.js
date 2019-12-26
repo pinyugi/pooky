@@ -1,20 +1,21 @@
-const {
+import {
   isTransition,
   isConditionalTransition,
   createTransition,
   createConditionalTransition,
-} = require("./transition.js");
+} from "./transition.js";
 
-const t = require("@babel/types");
-const cytoscape = require("cytoscape");
-const { State } = require("./state.js");
-const { StructTraverser } = require("./traverser.js");
-const { optimizeNodes } = require("./optimize.js");
-const { structs } = require("./structs.js");
-const utils = require("./utils.js");
+import * as t from "@babel/types";
+import cytoscape from "cytoscape";
+import State  from "./state.js";
+import { StructTraverser } from "./traverser.js";
+import { optimizeNodes }  from "./optimize.js";
+import { structs } from "./structs.js";
+
+export import { getStateHolderName, getInitialState, getStateHolderType, isWhileAControlFlow, isForAControlFlow, hasGoToSibling } from "./utils.js";
 
 
-class ControlFlow {
+export class ControlFlow {
   constructor(states) {
     this.states = {};
     this.graph = cytoscape();
@@ -173,7 +174,7 @@ class ControlFlow {
 
   static fromWhile(path, debug = false) {
     const flow = new ControlFlow();
-    const stateHolderName = utils.getStateHolderName(path);
+    const stateHolderName = getStateHolderName(path);
 
     let query = "body";
     let keepLooping = true;
@@ -201,7 +202,7 @@ class ControlFlow {
 
   static fromSwitch(path, debug = false) {
     const flow = new ControlFlow();
-    const stateHolderName = utils.getStateHolderName(path);
+    const stateHolderName = getStateHolderName(path);
 
     path.get("body.body.0.cases").forEach(function(_case) {
       const stateName = _case.get("test.value").node;
@@ -239,7 +240,7 @@ class ControlFlow {
       flow = ControlFlow.fromWhile(path, debug);
       explicitTerminalState = path.get("test.right.value").node;
     }
-    flow.setInitialState(utils.getInitialState(path));
+    flow.setInitialState(getInitialState(path));
 
     flow.addState(new State(explicitTerminalState));
     flow.markTerminalState(explicitTerminalState);
@@ -253,10 +254,4 @@ class ControlFlow {
     return flow;
   }
 }
-
-
-module.exports = {
-  ControlFlow,
-  utils
-};
 

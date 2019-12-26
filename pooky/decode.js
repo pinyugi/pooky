@@ -1,6 +1,6 @@
-const t = require("@babel/types");
-const recast = require("recast");
-const traverse = require("@babel/traverse").default;
+import * as t from "@babel/types";
+import * as recast from "recast";
+import traverse from "@babel/traverse";;
 
 function isDecoderVarDec(path) {
   return (
@@ -38,7 +38,7 @@ function hasXORedIdentifier(path, xoredIdentifiers) {
   const name = path.get("object.name").node;
   return xoredIdentifiers.hasOwnProperty(name);
 }
-function replaceXORedIdentifiers(ast) {
+export function replaceXORedIdentifiers(ast) {
   const xoredIdentifiers = {};
 
   traverse(ast, {
@@ -60,7 +60,3 @@ function replaceXORedIdentifiers(ast) {
     },
   });
 }
-
-module.exports = {
-  replaceXORedIdentifiers,
-};

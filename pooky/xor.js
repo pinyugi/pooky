@@ -124,12 +124,9 @@ function A2Tk(l5Tk, M5Tk) {
 }
 
 
-function decodeEvalFunction(funcSource, xorUri) {
+export function decodeEvalFunction(funcSource, xorUri) {
   const evaledFunction = XorString(decodeURIComponent(xorUri), cleanString(removeParenthesis(funcSource)), 5);
 
   return evaledFunction;
 }
 
-module.exports = {
-  decodeEvalFunction,
-};

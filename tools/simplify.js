@@ -1,12 +1,12 @@
-const fromFile = require("../pooky/ast.js").fromFile;
-const traverse = require("@babel/traverse").default;
-const generate = require("@babel/generator").default;
+import { fromFile } from "../pooky/ast.js";
+import traverse from "@babel/traverse";;
+import generate from "@babel/generator";
 
-const { ControlFlow, utils } = require("../pooky/flow");
+import { ControlFlow, isForAControlFlow, isWhileAControlFlow } from "../pooky/flow";
 
 CONTROL_FLOW_VISITOR = {
   ForStatement(path) {
-    if (utils.isForAControlFlow(path)) {
+    if (isForAControlFlow(path)) {
       const flow = ControlFlow.fromPath(path);
       flow.simplify(path);
     }
@@ -15,7 +15,7 @@ CONTROL_FLOW_VISITOR = {
 
 CONTROL_FLOW_VISITOR_WHILE = {
   WhileStatement(path) {
-    if (utils.isWhileAControlFlow(path)) {
+    if (isWhileAControlFlow(path)) {
       const flow = ControlFlow.fromPath(path);
       flow.simplify(path);
     }

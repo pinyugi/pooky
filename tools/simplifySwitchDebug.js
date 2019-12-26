@@ -1,13 +1,13 @@
-const fromFile = require("../pooky/ast.js").fromFile;
-const recast = require("recast");
-const traverse = require("@babel/traverse").default;
+import { fromFile } from "../pooky/ast.js";
+import * as recast from "recast";
+import traverse from "@babel/traverse";;
 
-const { ControlFlow, utils } = require("../pooky/flow");
+import { ControlFlow, isForAControlFlow, getStateHolderName } from "../pooky/flow";
 
 CONTROL_FLOW_VISITOR = {
-  "ForStatement|WhileStatement"(path) {
-    if (utils.isForAControlFlow(path)) {
-      const stateHolderName = utils.getStateHolderName(path);
+  "ForStatement"(path) {
+    if (isForAControlFlow(path)) {
+      const stateHolderName = getStateHolderName(path);
       const flow = ControlFlow.fromPath(path, (debug = true));
 
       if (part != "--all") {

@@ -1,14 +1,14 @@
-const fromFile = require("../pooky/ast.js").fromFile;
-const traverse = require("@babel/traverse").default;
+import { fromFile } from "../pooky/ast.js";
+import traverse from "@babel/traverse";;
 
-const { ControlFlow, utils } = require("../pooky/flow");
+import { ControlFlow, isForAControlFlow, getStateHolderName } from "../pooky/flow";
 
 const uniqueStates = new Set();
 const count = {};
 CONTROL_FLOW_VISITOR = {
   "ForStatement|WhileStatement"(path) {
-    if (utils.isForAControlFlow(path)) {
-      const stateHolderName = utils.getStateHolderName(path);
+    if (isForAControlFlow(path)) {
+      const stateHolderName = getStateHolderName(path);
       const flow = ControlFlow.fromPath(path);
 
       if (stateHolderName !== part) {
@@ -41,7 +41,3 @@ let part = process.argv.slice(-1)[0];
 
 let currentTree = fromFile(`${currentPooky}`);
 traverse(currentTree, CONTROL_FLOW_VISITOR);
-
-const uniqueCount = Array.from(uniqueStates).map(function(e, i) {
-  return `Count:${count[e]} ${e}`;
-});

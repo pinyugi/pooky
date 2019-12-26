@@ -1,7 +1,7 @@
-const t = require("@babel/types");
-const { Transition } = require("./transition.js");
+import * as t from "@babel/types";
+import Transition from "./transition.js";
 
-class State {
+export default class State {
   constructor(name) {
     this._name = name;
     this.nodes = [];
@@ -37,7 +37,3 @@ class State {
     this.nodes.push(node);
   }
 }
-
-module.exports = {
-  State,
-};

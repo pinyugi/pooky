@@ -1,6 +1,6 @@
-const fs = require("fs");
-const fromFile = require("../pooky/ast.js").fromFile;
-const { getEvalFuncArguments, getEvalFuncName, cutEvalFunctionSourceCode } = require("../pooky/tampering.js");
+import * as fs from 'fs';
+import { fromFile } from "../pooky/ast.js";
+import { getEvalFuncArguments, getEvalFuncName, cutEvalFunctionSourceCode } from "../pooky/tampering.js";
 
 let currentPooky = process.argv.slice(-2)[0];
 let saveLocation = process.argv.slice(-1)[0];

@@ -1,7 +1,7 @@
-const fromFile = require("../pooky/ast.js").fromFile;
-const traverse = require("@babel/traverse").default;
+import { fromFile } from "../pooky/ast.js";
+import traverse from "@babel/traverse";;
 
-const { ControlFlow, utils } = require("../pooky/flow");
+import { ControlFlow, getStateHolderName, isForAControlFlow } from "../pooky/flow";
 
 const tree = {
   "pooky": fromFile("fixtures/pooky.min.b7a5e4c22669c5887624.js"),
@@ -11,8 +11,8 @@ const tree = {
 
 CONTROL_FLOW_VISITOR = {
   "ForStatement|WhileStatement"(path) {
-    if (utils.isForAControlFlow(path)) {
-      const stateHolderName = utils.getStateHolderName(path);
+    if (isForAControlFlow(path)) {
+      const stateHolderName = getStateHolderName(path);
       if (stateHolderName == process.argv.slice(-1)[0]) {
         const flow = ControlFlow.fromPath(path);
 

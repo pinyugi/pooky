@@ -1,14 +1,14 @@
-const t = require("@babel/types");
-const recast = require("recast");
-const traverse = require("@babel/traverse").default;
+import * as t from "@babel/types";
+import * as recast from "recast";
+import traverse from "@babel/traverse";;
 
-const {
+import {
   getFunctionMaskNames,
   getAllMaskValues,
   createDecodeFunction,
   getXorForDecodeFunction,
   getUriDataForDecodeFunction,
-} = require("./mask.js");
+} from "./mask.js";
 
 // path.get("declarations.0.id.name").node
 function isVarDecArguments(path) {
@@ -29,7 +29,7 @@ function maybeAssignment(path, name) {
   );
 }
 
-function concatenateArguments(ast) {
+export function concatenateArguments(ast) {
   const { xorParam, xorFuncName } = getXorForDecodeFunction(ast);
   //const uri = getUriDataForDecodeFunction(ast);
   //const decoder = createDecodeFunction(xor, uri);
@@ -76,6 +76,3 @@ function concatenateArguments(ast) {
 }
 
 
-module.exports = {
-  concatenateArguments,
-};

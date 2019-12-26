@@ -1,6 +1,6 @@
-const { removeTamperingChecks } = require("../pooky/tampering.js");
-const fromFile = require("../pooky/ast.js").fromFile;
-const generate = require("@babel/generator").default;
+import { removeTamperingChecks }  from "../pooky/tampering.js";
+import { fromFile } from "../pooky/ast.js";
+import generate from "@babel/generator";
 
 let addLocalStorage = process.argv.slice(-1)[0];
 let currentPooky = process.argv.slice(-2)[0];

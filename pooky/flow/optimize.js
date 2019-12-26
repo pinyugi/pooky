@@ -1,5 +1,5 @@
-const t = require("@babel/types");
-const recast = require("recast");
+import * as t from "@babel/types";
+import * as recast from "recast";
 
 function optimizeWhileLoop(whileNode) {
   if (whileNode.test.operator == "!==") {
@@ -102,7 +102,7 @@ function removeDeadBranches(ifThenElseNode, outsideNodes, nodes) {
   }
 }
 
-function optimizeNodes(nodes) {
+export function optimizeNodes(nodes) {
   const cleanedNodes = [];
   nodes.forEach((node) => {
     switch (node.type) {
@@ -122,6 +122,3 @@ function optimizeNodes(nodes) {
   return cleanedNodes;
 }
 
-module.exports = {
-  optimizeNodes,
-};

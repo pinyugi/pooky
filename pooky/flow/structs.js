@@ -1,6 +1,6 @@
-const t = require("@babel/types");
+import * as t from "@babel/types";
 
-const structs = {
+export const structs = {
   UNKNOWN: 0,
   INFINITE_LOOP: 1,
   SIMPLE: 2,
@@ -13,7 +13,7 @@ const structs = {
   END_OF_DO_WHILE: 256,
 };
 
-class Struct {
+export class Struct {
   constructor(opts) {
     this.state = parseInt(opts.state, 10);
     this.states = opts.states;
@@ -150,7 +150,7 @@ class Struct {
   }
 }
 
-class SimpleStruct extends Struct {
+export class SimpleStruct extends Struct {
   constructor(opts) {
     super(opts);
   }
@@ -185,7 +185,7 @@ class SimpleStruct extends Struct {
   }
 }
 
-class IfThenElseStruct extends Struct {
+export class IfThenElseStruct extends Struct {
   constructor(opts) {
     super(opts);
   }
@@ -251,7 +251,7 @@ class IfThenElseStruct extends Struct {
   }
 }
 
-class WhileStruct extends Struct {
+export class WhileStruct extends Struct {
   constructor(opts) {
     super(opts);
   }
@@ -299,7 +299,7 @@ class WhileStruct extends Struct {
   }
 }
 
-class DoWhileStruct extends Struct {
+export class DoWhileStruct extends Struct {
   constructor(opts) {
     super(opts);
   }
@@ -341,7 +341,7 @@ class DoWhileStruct extends Struct {
   }
 }
 
-class SameTransitionStruct extends Struct {
+export class SameTransitionStruct extends Struct {
   constructor(opts) {
     super(opts);
   }
@@ -361,7 +361,7 @@ class SameTransitionStruct extends Struct {
   }
 }
 
-class EndStateStruct extends Struct {
+export class EndStateStruct extends Struct {
   constructor(opts) {
     super(opts);
   }
@@ -379,12 +379,3 @@ class EndStateStruct extends Struct {
   }
 }
 
-module.exports = {
-  SimpleStruct,
-  EndStateStruct,
-  IfThenElseStruct,
-  WhileStruct,
-  DoWhileStruct,
-  SameTransitionStruct,
-  structs,
-};
