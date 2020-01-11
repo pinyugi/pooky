@@ -1,6 +1,7 @@
 const fromFile = require("../pooky/ast.js").fromFile;
 const traverse = require("@babel/traverse").default;
 const generate = require("@babel/generator").default;
+const recast = require("recast");
 
 const { ControlFlow, utils } = require("../pooky/flow");
 
@@ -26,6 +27,8 @@ let currentPooky = process.argv.slice(-1)[0];
 
 let currentTree = fromFile(`${currentPooky}`);
 traverse(currentTree, CONTROL_FLOW_VISITOR);
+
 traverse(currentTree, CONTROL_FLOW_VISITOR_WHILE);
-const { code } = generate(currentTree, { compact: true, retainLines: true });
-console.log(code);
+//const { code } = generate(currentTree);
+//console.log(code);
+console.log(recast.print(currentTree).code);

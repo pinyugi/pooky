@@ -160,8 +160,6 @@ class SimpleStruct extends Struct {
     let finalResult = result;
     this.history.push(this.state);
 
-    //console.log("this.history:", this.history, "before state:", this.state);
-    //this.traverser.currentState = transitions[0];
 
     if (this.isContinueLoop(transitions[0])) {
       nodes.push(t.continueStatement());
@@ -172,7 +170,6 @@ class SimpleStruct extends Struct {
     } else if (endStates.includes(transitions[0])) {
       this.traverser.currentState = transitions[0];
     } else {
-      //console.log("state:", this.state, this.history, "transitions[0]", transitions[0], "finalRestul:", finalResult);
       this.traverser.currentState = transitions[0];
     }
 
@@ -280,7 +277,6 @@ class WhileStruct extends Struct {
         this.traverser.currentState == 0 ||
         this.traverser.currentState == whileStart
       ) {
-        //console.log("loopResult:", loopResult, "this.traverser.currentState", this.traverser.currentState);
         keepLooping = false;
       }
     }

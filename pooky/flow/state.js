@@ -21,9 +21,7 @@ class State {
       if (this.transition === null) {
         this.transition = transition;
       } else {
-        if (this.transition.hash() == transition.hash()) {
-          if (update) this.transition = transition;
-        }
+        this.transition.hash() == transition.hash() && update && (this.transition = transition, 1)
       }
     }
   }
