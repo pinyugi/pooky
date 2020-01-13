@@ -1,3 +1,5 @@
+const recast = require("recast");
+
 const utils = {
   getStateHolderType(path) {
     const prev = path.getPrevSibling();
@@ -57,5 +59,3 @@ const utils = {
 };
 
 module.exports = utils;
-
-const recast = require("recast");

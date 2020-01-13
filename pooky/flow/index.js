@@ -37,6 +37,10 @@ class ControlFlow {
     return this.states.hasOwnProperty(name) ? this.states[name] : 0;
   }
 
+  getStateTransition(state){
+    return this.getState(state) ? this.getState(state).transition : 0;
+  }
+
   getStateNodes(state) {
     const _state = this.getState(state);
     return _state ? _state.getNodes() : 0;
@@ -120,8 +124,9 @@ class ControlFlow {
     let nodez = [];
 
     Object.keys(this.states).forEach((stateName) => {
-      states[stateName]["nodes"] = this.states[stateName]["nodes"];
-      states[stateName]["transition"] = this.states[stateName]["transition"];
+
+      states[stateName]["nodes"] = this.getStateNodes(stateName);
+      states[stateName]["transition"] = this.getStateTransition(stateName);
     });
 
     let getNextStruct = true;

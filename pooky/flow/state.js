@@ -16,6 +16,10 @@ class State {
     this._name = value;
   }
 
+  getNodes() {
+    return this.nodes;
+  }
+
   setTransition(transition, update = 1) {
     if (transition !== null && transition instanceof Transition) {
       if (this.transition === null) {

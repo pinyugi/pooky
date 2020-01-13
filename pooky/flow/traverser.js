@@ -13,23 +13,18 @@ const cytoscape = require("cytoscape");
 
 class StructTraverser {
   constructor(graph, initialState) {
-    this.started = false;
+
     this.graph = graph || cytoscape();
     this.initialState = initialState;
     this.currentState = null;
     this.evaluator = new Evaluator(this.graph);
-    this.structsCounter = {
-      [structs.IF_THEN_ELSE]: 0,
-      [structs.WHILE_LOOP]: 0,
-      [structs.DO_WHILE_LOOP]: 0,
-    };
+
   }
 
   getNextStruct(opts) {
-    const { state, states } = opts;
+    const { states } = opts;
     const currentState = this.getCurrentState();
 
-    this.started = this.started ? true : true;
     states["whileStates"] = "whileStates" in states ? states["whileStates"] : [];
     states["doWhileStates"] = "doWhileStates" in states ? states["doWhileStates"] : [];
     states["isFirstNode"] = "isFirstNode" in states ? states["isFirstLoop"] : false;
@@ -142,18 +137,3 @@ class StructTraverser {
 module.exports = {
   StructTraverser,
 };
-
-/*
-const { Evaluator } = require("./evaluator.js");
-const {
-  SimpleStruct,
-  EndStateStruct,
-  IfThenElseStruct,
-  WhileStruct,
-  DoWhileStruct,
-  SameTransitionStruct,
-  structs,
-} = require("./structs.js");
-
-const cytoscape = require("cytoscape");
-*/
