@@ -13,11 +13,18 @@ const utils = {
     const prev = path.getPrevSibling();
     const _type = utils.getStateHolderType(path);
 
-    return _type == "vardec"
-      ? recast.print(prev.get("declarations.0.id").node).code
-      : _type == "assignment"
-      ? recast.print(prev.get("expression.left").node).code
-      : false;
+    const hasOpaqueValue = (path) => path.type == "ConditionalExpression";
+    switch(_type){
+      case "vardec":
+        return hasOpaqueValue(prev.get("declarations.0.init")) ? false : recast.print(prev.get("declarations.0.id").node).code;
+      case "assignment":
+        return hasOpaqueValue(prev.get("expression.right")) ? false : recast.print(prev.get("expression.left").node).code;
+
+      default:
+        return false;
+
+    }
+
   },
 
   getInitialState(path) {
@@ -32,9 +39,7 @@ const utils = {
   },
 
   hasGoToSibling(path) {
-    return (
-      utils.getStateHolderName(path) == recast.print(path.get("test.left").node).code
-    );
+    return utils.getStateHolderName(path) == recast.print(path.get("test.left").node).code 
   },
 
   isForAControlFlow(path) {

@@ -159,12 +159,13 @@ class ControlFlow {
   }
 
   static setupFlowNodes(_block, flow, stateName, stateHolderName, debug) {
+    
     if (isTransition(_block, stateHolderName)) {
       const transition = isConditionalTransition(_block, stateHolderName)
         ? createConditionalTransition(_block)
         : createTransition(_block);
-
       flow.getState(stateName).setTransition(transition);
+
     } else {
       if (_block.type == "ReturnStatement") {
         flow.markTerminalState(stateName);
