@@ -13,7 +13,7 @@ const utils = {
     const prev = path.getPrevSibling();
     const _type = utils.getStateHolderType(path);
 
-    const hasOpaqueValue = (path) => path.type == "ConditionalExpression";
+    const hasOpaqueValue = (path) => path.type != "NumericalLiteral";
     switch(_type){
       case "vardec":
         return hasOpaqueValue(prev.get("declarations.0.init")) ? false : recast.print(prev.get("declarations.0.id").node).code;
