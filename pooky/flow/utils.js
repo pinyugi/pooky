@@ -13,18 +13,11 @@ const utils = {
     const prev = path.getPrevSibling();
     const _type = utils.getStateHolderType(path);
 
-    const hasOpaqueValue = (path) => path.type != "NumericalLiteral";
-    switch(_type){
-      case "vardec":
-        return hasOpaqueValue(prev.get("declarations.0.init")) ? false : recast.print(prev.get("declarations.0.id").node).code;
-      case "assignment":
-        return hasOpaqueValue(prev.get("expression.right")) ? false : recast.print(prev.get("expression.left").node).code;
-
-      default:
-        return false;
-
-    }
-
+    return _type == "vardec"
+      ? recast.print(prev.get("declarations.0.id").node).code
+      : _type == "assignment"
+      ? recast.print(prev.get("expression.left").node).code
+      : false;
   },
 
   getInitialState(path) {
@@ -38,8 +31,14 @@ const utils = {
       : false;
   },
 
+  hasStateHolder(path) {
+    return utils.getStateHolderName(path) && utils.getInitialState(path);
+  },
+
   hasGoToSibling(path) {
-    return utils.getStateHolderName(path) == recast.print(path.get("test.left").node).code 
+    return (
+      utils.hasStateHolder(path) && utils.getStateHolderName(path) == recast.print(path.get("test.left").node).code
+    );
   },
 
   isForAControlFlow(path) {
@@ -52,7 +51,6 @@ const utils = {
       utils.hasGoToSibling(path)
     );
   },
-
   isWhileAControlFlow(path) {
     return (
       path.type == "WhileStatement" &&
@@ -60,7 +58,9 @@ const utils = {
       path.get("test.operator").node == "!==" &&
       utils.hasGoToSibling(path)
     );
-  },
+  }
+
 };
 
 module.exports = utils;
+

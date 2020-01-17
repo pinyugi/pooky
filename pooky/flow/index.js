@@ -165,13 +165,9 @@ class ControlFlow {
         ? createConditionalTransition(_block)
         : createTransition(_block);
 
-      //console.log("stateHolderName", stateHolderName, "stateName", stateName);
-      //console.log("flow:", flow.states);
       flow.getState(stateName).setTransition(transition);
 
     } else {
-      console.log("stateHolderName", stateHolderName, "stateName", stateName);
-      console.log("flow:", flow.states);
       if (_block.type == "ReturnStatement") {
         flow.markTerminalState(stateName);
       }
