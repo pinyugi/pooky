@@ -30,10 +30,6 @@ class State {
     }
   }
 
-  hasConditionalTransition() {
-    return this.transition === null ? false : this.transition.isConditional();
-  }
-
   addNode(node) {
     t.assertNode(node);
     this.nodes.push(node);

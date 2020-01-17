@@ -92,7 +92,6 @@ class ControlFlow {
       elems.push({
         group: "nodes",
         data: {
-          isConditional: state.hasConditionalTransition(),
           id: sourceState,
         },
       });
@@ -106,7 +105,6 @@ class ControlFlow {
             data: {
               id: `${sourceState}->${targetState}`,
               test: transition.test,
-              isConditional: transition.isConditional(),
               source: sourceState,
               target: targetState,
             },
