@@ -39,7 +39,7 @@ class Transition {
     for (let state of states) {
       try {
         t.assertNode(state);
-        this._states.push(state.node.value);
+        this._states.push(state);
       } catch (e) {
         if (!state || !(state instanceof String)) {
           throw Error(
@@ -82,7 +82,7 @@ function isConditionalTransition(path, stateHolderName) {
 function createTransition(path) {
   return new Transition({
     type: transitions.SINGLE_PATH,
-    states: [path.get("expression.right")],
+    states: [path.get("expression.right").node.value],
     test: null,
   });
 }
@@ -90,7 +90,7 @@ function createTransition(path) {
 function createConditionalTransition(path) {
   return new Transition({
     type: transitions.DUAL_PATH,
-    states: [path.get("expression.right.consequent"), path.get("expression.right.alternate")],
+    states: [path.get("expression.right.consequent").node.value, path.get("expression.right.alternate").node.value],
     test: path.get("expression.right.test"),
   });
 }
