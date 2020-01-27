@@ -92,7 +92,6 @@ class ControlFlow {
       elems.push({
         group: "nodes",
         data: {
-          isConditional: state.hasConditionalTransition(),
           id: sourceState,
         },
       });
@@ -106,7 +105,6 @@ class ControlFlow {
             data: {
               id: `${sourceState}->${targetState}`,
               test: transition.test,
-              isConditional: transition.isConditional(),
               source: sourceState,
               target: targetState,
             },
@@ -165,13 +163,9 @@ class ControlFlow {
         ? createConditionalTransition(_block)
         : createTransition(_block);
 
-      //console.log("stateHolderName", stateHolderName, "stateName", stateName);
-      //console.log("flow:", flow.states);
       flow.getState(stateName).setTransition(transition);
 
     } else {
-      console.log("stateHolderName", stateHolderName, "stateName", stateName);
-      console.log("flow:", flow.states);
       if (_block.type == "ReturnStatement") {
         flow.markTerminalState(stateName);
       }
