@@ -68,7 +68,7 @@ class StructTraverser {
           ...opts,
         }).simplify();
 
-      case structs.SAME_TRANSITION | structs.DO_WHILE_LOOP | structs.WHILE_LOOP | structs.IF_THEN: // 88
+      case structs.SAME_TRANSITION | structs.DO_WHILE_LOOP | structs.WHILE_LOOP | structs.IF_THEN: 
         return new SameTransitionStruct({
           state: currentState,
           traverser: this,
