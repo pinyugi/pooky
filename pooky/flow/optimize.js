@@ -67,9 +67,8 @@ function optimizeIfThenElse(ifThenElseNode) {
     }
   }
 
-  //removeDeadBranches(ifThenElseNode, outsideNodes, nodes);
-  nodes.push(ifThenElseNode);
-  nodes.push(...optimizeNodes(outsideNodes));
+  removeDeadBranches(ifThenElseNode, outsideNodes, nodes);
+
   return [...nodes];
 }
 
@@ -97,8 +96,8 @@ function removeDeadBranches(ifThenElseNode, outsideNodes, nodes) {
   } else {
     if (ifThenElseNode !== null) {
       nodes.push(ifThenElseNode);
+    } else {
     }
-    
     nodes.push(...optimizeNodes(outsideNodes));
   }
 }
